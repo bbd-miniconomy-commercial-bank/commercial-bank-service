@@ -1,0 +1,38 @@
+name: Application CI
+
+on:
+  workflow_call:
+
+permissions:
+  checks: write
+  contents: read
+  id-token: write
+  security-events: write
+
+jobs:
+  app-ci:
+    name: App CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@main
+        with:
+          role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
+          aws-region: eu-west-1
+          role-session-name: API_CD_GitHub_to_AWS_via_FederatedOIDC
+
+      - name: Retrieve parameters from AWS Parameter Store
+        run: |
+          aws ssm get-parameters-by-path --path "/my/application" --recursive --with-decryption > parameters.json
+  
+      - name: Create .env file
+        run: |
+          jq -r '.Parameters[] | "\(.Name | split("/")[-1])=\(.Value)"' parameters.json > .env
+
+      - name: Test service
+        run: |
+          ./gradlew test
