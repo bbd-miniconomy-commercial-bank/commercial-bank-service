@@ -13,6 +13,7 @@ jobs:
   app-ci:
     name: App CI
     runs-on: ubuntu-latest
+    environment: Testing
 
     steps:
       - name: Checkout source code

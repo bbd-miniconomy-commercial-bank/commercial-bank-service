@@ -16,7 +16,13 @@ jobs:
     uses: ./.github/workflows/ci.yaml
     secrets: inherit
 
+  db-cd: 
+    name: Database CD
+    uses: ./.github/workflows/db-cd.yaml
+    secrets: inherit
+
   app-cd:
     name: Application CD
+    needs: db-cd
     secrets: inherit
     uses: ./.github/workflows/app-cd.yaml

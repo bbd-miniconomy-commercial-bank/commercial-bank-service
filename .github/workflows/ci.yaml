@@ -13,6 +13,11 @@ permissions:
 
 jobs:
 
+  db-cd: 
+    name: Database CI
+    uses: ./.github/workflows/db-ci.yaml
+    secrets: inherit
+
   app-ci:
     name: App CI
     secrets: inherit
