@@ -24,7 +24,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
           aws-region: eu-west-1
-          role-session-name: API_CD_GitHub_to_AWS_via_FederatedOIDC
+          role-session-name: Service_CD_GitHub_to_AWS_via_FederatedOIDC
 
       - name: Build service
         run: |

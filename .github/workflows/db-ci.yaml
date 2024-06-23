@@ -26,15 +26,8 @@ jobs:
           - 5432:5432
 
     steps:
-      - name: Checkout Repo
+      - name: Checkout source code
         uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-session-name: DB_SCHEMA_CI_GitHub_to_AWS_via_FederatedOIDC
 
       - name: Install psql
         run: |
@@ -57,11 +50,11 @@ jobs:
           echo "username: ${{ secrets.TEST_DB_USERNAME }}" >> liquibase.properties
           echo "password: ${{ secrets.TEST_DB_PASSWORD }}" >> liquibase.properties
 
-      - name: Test Migration and Rollback
+      - name: Test migration and rollback
         run: ./liquibase/liquibase update-testing-rollback --rollback-on-error=true
 
   test_prod_db:
-    name: Test Dev Replica DB Migration
+    name: Test Replica DB Migration
     runs-on: ubuntu-latest
     environment: Testing
 
@@ -77,14 +70,15 @@ jobs:
           - 5432:5432
 
     steps:
-      - name: Checkout Repo
+      - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
           aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: DB_SCHEMA_CI_GitHub_to_AWS_via_FederatedOIDC
 
       - name: Install psql
         run: |
