@@ -7,12 +7,12 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class BaseResponse {
+public class BasicResponse {
 
     int status;
     String message;
 
-    public BaseResponse(String message) {
+    public BasicResponse(String message) {
         this.status = HttpStatus.OK.value();
         this.message = message;
     }
