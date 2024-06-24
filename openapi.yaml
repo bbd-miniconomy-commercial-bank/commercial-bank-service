@@ -1,0 +1,628 @@
+openapi: 3.0.1
+info:
+  title: Commercial Bank Service API
+  description: |-
+    API mappings for the Commercial Bank Service
+  version: 1.0.0
+tags:
+  - name: account
+    description: Queries related to account
+  - name: transactions
+    description: Queries related to transactions
+  - name: loans
+    description: Queries related to loans
+paths:
+  /account/balance:
+    get:
+      tags:
+        - account
+      summary: Get the account balance of the requesting user
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+      responses:
+        "200":
+          $ref: "#/components/responses/accountBalanceResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+  /account/summary:
+    get:
+      tags:
+        - account
+      summary: Get the account summary of the requesting user
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+        - in: query
+          name: page
+          description: Page number
+          schema:
+            type: integer
+        - in: query
+          name: itemsPerPage
+          description: Number of items per page
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/accountSummaryResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+  /transactions:
+    get:
+      tags:
+        - transactions
+      summary: Get the transactions of the requesting user
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+        - in: query
+          name: page
+          description: Page number
+          schema:
+            type: integer
+        - in: query
+          name: itemsPerPage
+          description: Number of items per page
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/transactionsResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+  /transactions/{id}:
+    get:
+      tags:
+        - transactions
+      summary: Get the details of the requested transaction
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+        - in: path
+          required: true
+          name: id
+          description: id of the transaction
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/transactionResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+  /transactions/create:
+    post:
+      tags:
+        - transactions
+      summary: Make one or more transactions
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+      requestBody:
+        $ref: "#/components/requestBodies/transactionSendRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/transactionSendResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+  /debitOrders:
+    get:
+      tags:
+        - transactions
+      summary: Get the debit orders of the requesting user
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+        - in: query
+          name: page
+          description: Page number
+          schema:
+            type: integer
+        - in: query
+          name: itemsPerPage
+          description: Number of items per page
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/debitOrdersResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+  /debitOrders/{id}:
+    get:
+      tags:
+        - transactions
+      summary: Get the debit order with the corresponding id
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+        - in: path
+          required: true
+          name: id
+          description: id of the debit order
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/debitOrderResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+    post:
+      tags:
+        - transactions
+      summary: Update the debit order with the corresponding id
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+        - in: path
+          required: true
+          name: id
+          description: id of the debit order
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/debitOrderResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+    delete:
+      tags:
+        - transactions
+      summary: Cancel the debit order with the corresponding id
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+        - in: path
+          required: true
+          name: id
+          description: id of the debit order
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/debitOrderDeleteResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+  /debitOrders/create:
+    post:
+      tags:
+        - transactions
+      summary: Create one or more debit order
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+      requestBody:
+        $ref: "#/components/requestBodies/debitOrderSendRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/debitOrderSendResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+  /loans:
+    get:
+      tags:
+        - loans
+      summary: Get the loans of the requesting user
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+        - in: query
+          name: page
+          description: Page number
+          schema:
+            type: integer
+        - in: query
+          name: itemsPerPage
+          description: Number of items per page
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/loansResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+  /loans/{id}:
+    get:
+      tags:
+        - loans
+      summary: Get the loan with the corresponding id
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+        - in: path
+          required: true
+          name: id
+          description: id of the loan
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: "#/components/responses/loanResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+  /loans/apply:
+    post:
+      tags:
+        - loans
+      summary: Apply for a loan
+      parameters:
+        - in: header
+          name: authentication
+          description: Bearer token
+          schema:
+           type: string
+           example: "Bearer {token}"
+      requestBody:
+        $ref: "#/components/requestBodies/loanSendRequest"
+      responses:
+        "200":
+          $ref: "#/components/responses/loanSendResponse"
+        "400":
+          $ref: "#/components/responses/400ErrorResponse"
+        "429":
+          $ref: "#/components/responses/429ErrorResponse"
+        "500":
+          $ref: "#/components/responses/500ErrorResponse"
+          
+components:
+  schemas:
+    400ErrorResponse:
+      type: object
+      properties:
+        reason:
+          type: string
+    429ErrorResponse:
+      type: object
+      required:
+        - errorCode
+        - errorMessage
+      properties:
+        errorCode:
+          type: integer
+          description: Error Codes
+        errorMessage:
+          type: string
+          description: Too many requests. The user has sent too many requests in a given amount of time.
+    500ErrorResponse:
+      type: object
+      required:
+        - responseCode
+        - message
+      properties:
+        responseCode:
+          type: integer
+          description: Error Codes
+        message:
+          type: string
+          description: Detailed error message
+          
+  requestBodies:
+    transactionSendRequest:
+      description: Send transactions for processing
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              inputArray:
+                maxItems: 1000
+          example:
+            - receiver: "Property Manager"
+              amount: 586.00
+              description: "Rent"
+            - receiver: "Electronics Retailer"
+              amount: 346.00
+              description: "Purchase"
+            - receiver: "Commercial Bank"
+              amount: 53.00
+              description: "Bank Charges"
+    debitOrderSendRequest:
+      description: Create debit orders
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              inputArray:
+                maxItems: 1000
+          example:
+            - receiver: "Property Manager"
+              amount: 586.00
+              description: "Rent"
+              frequency: "Monthly"
+            - receiver: "Jonh Smith"
+              amount: 346.00
+              description: "Salary"
+              frequency: "Monthly"
+    loanSendRequest:
+      description: Apply for a loan
+      content:
+        application/json:
+          example:
+            amount: 100000.00
+            type: "Long-Term"
+              
+  responses:
+    accountBalanceResponse:
+      description: Response for getting account balance
+      content:
+        application/json:
+          example:
+            holder: "Food Retailer"
+            balance: 53464.67
+    accountSummaryResponse:
+      description: Response for getting a summary of the account
+      content:
+        application/json:
+          example:
+            holder: "Food Retailer"
+            balance: 34839.43
+            transactions:
+              - sender: "Food Retailer"
+                receiver: "Property Manager"
+                amount: 586.00
+                status: "Success"
+                description: "Rent"
+                date: "2024/06/24"
+              - sender: "John Smith"
+                receiver: "Food Retailer"
+                amount: 9897.00
+                status: "Pending"
+                description: "Sale"
+                date: "2024/06/23"
+            page: 3
+            itemsPerPage: 2
+    transactionResponse:
+      description: Response for getting a transaction
+      content:
+        application/json:
+          example:
+              sender: "Food Retailer"
+              receiver: "Property Manager"
+              amount: 586.00
+              status: "Success"
+              description: "Rent"
+              date: "2024/06/24"
+    transactionsResponse:
+      description: Response for getting transactions
+      content:
+        application/json:
+          example:
+            transactions:
+              - sender: "Food Retailer"
+                receiver: "Property Manager"
+                amount: 586.00
+                status: "Success"
+                description: "Rent"
+                date: "2024/06/24"
+              - sender: "John Smith"
+                receiver: "Food Retailer"
+                amount: 9897.00
+                status: "Pending"
+                description: "Sale"
+                date: "2024/06/23"
+            page: 3
+            itemsPerPage: 2
+    transactionSendResponse:
+      description: Response for making a transaction
+      content:
+        application/json:
+          example:
+            - receiver: "Property Manager"
+              amount: 586.00
+              status: "Success"
+              description: "Rent"
+              date: "2024/06/24"
+            - receiver: "Electronics Retailer"
+              amount: 346.00
+              status: "Pending"
+              description: "Purchase"
+              date: "2024/06/24"
+            - receiver: "Commercial Bank"
+              amount: 53.00
+              status: "Failed"
+              description: "Bank Charges"
+              date: "2024/06/24"
+    debitOrderResponse:
+      description: Response for getting a debit order
+      content:
+        application/json:
+          example:
+            receiver: "John Smith"
+            amount: 3000.00
+            description: "Salary"
+            frequency: "Monthly"
+    debitOrdersResponse:
+      description: Response for getting debit orders
+      content:
+        application/json:
+          example:
+            debitOrders:
+              - id: 1
+                receiver: "John Smith"
+                amount: 3000.00
+                description: "Salary"
+                frequency: "Monthly"
+              - id: 2
+                receiver: "Jane Doe"
+                amount: 3000.00
+                description: "Salary"
+                frequency: "Monthly"
+              - id: 3
+                receiver: "Property Manager"
+                amount: 10000.00
+                description: "Rent"
+                frequency: "Monthly"
+            page: 1
+            itemsPerPage: 3
+    debitOrderDeleteResponse:
+      description: Response for deleting a debit order
+      content:
+        application/json:
+          example:
+            status: "Successfully cancelled"
+    debitOrderSendResponse:
+      description: Response for creating debit orders
+      content:
+        application/json:
+          example:
+            status: "Successfully created"
+    loanResponse:
+      description: Response for getting a loan
+      content:
+        application/json:
+          example:
+            originalAmount: 60000.00
+            amountOwing: 58600.00
+            type: "Long-Term"
+            dateOpened: "2024/06/24"
+    loansResponse:
+      description: Response for getting loans of a user
+      content:
+        application/json:
+          example:
+            loans:
+              - originalAmount: 60000.00
+                amountOwing: 58600.00
+                type: "Long Term"
+                dateOpened: "2024/06/24"
+              - originalAmount: 45000.00
+                amountOwing: 0
+                type: "Short-Term"
+                dateOpened: "2023/06/24"
+            page: 1
+            itemsPerPage: 2
+    loanSendResponse:
+      description: Response for applying for loan
+      content:
+        application/json:
+          examples:
+            Accepted:
+                summary: "Accepted response"
+                value:
+                  status: "Accepted"
+            Denied:
+              summary: "Denied response"
+              value:
+                status: "Denied"
+            
+    400ErrorResponse:
+      description: Error Response Schema API Errors
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/400ErrorResponse"
+          example:
+            reason: "Bad request"
+    429ErrorResponse:
+      description: Error Response Schema API Errors
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/429ErrorResponse"
+          example:
+            reason: "Too many requests"
+    500ErrorResponse:
+      description: Error Response Schema API Errors
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/500ErrorResponse"
+          example:
+            reason: "Internal Server Error"
