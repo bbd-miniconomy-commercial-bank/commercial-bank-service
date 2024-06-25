@@ -50,8 +50,8 @@ jobs:
         run: |
           echo "changelog-file: db-changelog.yaml" >> liquibase.properties
           echo "url: jdbc:postgresql://${{ env.DB_ENDPOINT }}:5432/prod" >> liquibase.properties
-          echo "username: ${{ env.DB_DETAILS_PASSWORD }}" >> liquibase.properties
-          echo "password: ${{ env.DB_DETAILS_USERNAME }}" >> liquibase.properties
+          echo "username: ${{ env.DB_DETAILS_USERNAME }}" >> liquibase.properties
+          echo "password: ${{ env.DB_DETAILS_PASSWORD }}" >> liquibase.properties
 
       - name: Migrate DB schema
         run: ./liquibase/liquibase update-testing-rollback --rollback-on-error=true
