@@ -37,7 +37,7 @@ jobs:
 
       - name: Fetch AWS RDS endpoint
         run: |
-          echo "DB_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier noinfluence --query 'DBInstances[0].Endpoint.Address' --output text)" >> $GITHUB_ENV
+          echo "DB_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${{ secrets.DB_INSTANCE_NAME }} --query 'DBInstances[0].Endpoint.Address' --output text)" >> $GITHUB_ENV
     
       - name: Install Liquibase
         run: |

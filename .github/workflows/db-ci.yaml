@@ -105,7 +105,7 @@ jobs:
 
       - name: Fetch AWS RDS endpoint
         run: |
-          echo "DB_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${{ env.DB_DEPLOYED_INSTANCE_NAME }} --query 'DBInstances[0].Endpoint.Address' --output text)" >> $GITHUB_ENV
+          echo "DB_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${{ secrets.DB_INSTANCE_NAME }} --query 'DBInstances[0].Endpoint.Address' --output text)" >> $GITHUB_ENV
 
       - name: Create PROD DB replica
         run: |
