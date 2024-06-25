@@ -1,1 +1,17 @@
 databaseChangeLog:
+   - include:
+      file: sql/account.sql
+   - include:
+      file: sql/debit_order.sql
+   - include:
+      file: sql/transaction_status.sql
+   - include:
+      file: sql/transaction.sql
+   - include:
+      file: sql/loan.sql
+   - include:
+      file: sql/loan_interest.sql
+   - include:
+      file: sql/loan_transaction.sql      
+   - include:
+      file: sql/debit_order_transaction.sql
