@@ -110,7 +110,7 @@ jobs:
       - name: Create PROD DB replica
         run: |
           export PGPASSWORD="${{ env.DB_DETAILS_PASSWORD }}"
-          pg_dump "postgresql://${{ env.DB_DETAILS_USERNAME }}@${{ env.DB_ENDPOINT }}/dbname" > dump.sql
+          pg_dump "postgresql://${{ env.DB_DETAILS_USERNAME }}@${{ env.DB_ENDPOINT }}/prod" > dump.sql
           export PGPASSWORD="${{ secrets.TEST_DB_PASSWORD }}"
           psql "postgresql://${{ secrets.TEST_DB_USERNAME }}@localhost:5432/${{ secrets.TEST_DB_NAME }}" -f dump.sql
           
