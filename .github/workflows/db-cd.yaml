@@ -25,7 +25,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
-          aws-region: "eu-west-1"
+          aws-region: eu-west-1
           role-session-name: DB_SCHEMA_CD_GitHub_to_AWS_via_FederatedOIDC
 
       - name: Get DB credentials
