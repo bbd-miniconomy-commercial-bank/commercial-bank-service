@@ -7,13 +7,18 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class BasicResponse {
+public class BasicResponse<T> {
 
     int status;
-    String message;
+    T body;
 
-    public BasicResponse(String message) {
+    // public BasicResponse(T message) {
+    //     this.status = HttpStatus.OK.value();
+    //     this.body = message;
+    // }
+
+    public BasicResponse(T body) {
         this.status = HttpStatus.OK.value();
-        this.message = message;
+        this.body = body;
     }
 }

@@ -27,7 +27,7 @@ class HealthController {
         description = "Allows other services to check the service's current health status"
     )
     @GetMapping(value = "/", produces = "application/json")
-    public BasicResponse getHealthStatus () {
+    public BasicResponse<String> getHealthStatus () {
         return this.healthService.retrieveHealthStatus();
     }
 
