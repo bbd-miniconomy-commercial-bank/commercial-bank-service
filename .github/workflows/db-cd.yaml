@@ -25,7 +25,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
-          aws-region: "eu-west-1"
+          aws-region: eu-west-1
           role-session-name: DB_SCHEMA_CD_GitHub_to_AWS_via_FederatedOIDC
 
       - name: Get DB credentials
@@ -37,7 +37,7 @@ jobs:
 
       - name: Fetch AWS RDS endpoint
         run: |
-          echo "DB_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier noinfluence --query 'DBInstances[0].Endpoint.Address' --output text)" >> $GITHUB_ENV
+          echo "DB_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${{ secrets.DB_INSTANCE_NAME }} --query 'DBInstances[0].Endpoint.Address' --output text)" >> $GITHUB_ENV
     
       - name: Install Liquibase
         run: |
@@ -48,10 +48,10 @@ jobs:
         
       - name: Create Liquibase properties file
         run: |
-          echo "changelog-file: changelog.yaml" >> liquibase.properties
-          echo "url: jdbc:postgresql://${{ env.DB_ENDPOINT }}:5432/${{ secrets.TEST_DB_NAME }}" >> liquibase.properties
-          echo "username: ${{ secrets.TEST_DB_USERNAME }}" >> liquibase.properties
-          echo "password: ${{ secrets.TEST_DB_PASSWORD }}" >> liquibase.properties
+          echo "changelog-file: db-changelog.yaml" >> liquibase.properties
+          echo "url: jdbc:postgresql://${{ env.DB_ENDPOINT }}:5432/prod" >> liquibase.properties
+          echo "username: ${{ env.DB_DETAILS_USERNAME }}" >> liquibase.properties
+          echo "password: ${{ env.DB_DETAILS_PASSWORD }}" >> liquibase.properties
 
       - name: Migrate DB schema
         run: ./liquibase/liquibase update-testing-rollback --rollback-on-error=true

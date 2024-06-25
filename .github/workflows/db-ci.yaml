@@ -18,9 +18,9 @@ jobs:
       postgres:
         image: postgres:16.1
         env:
-          POSTGRES_USER: ${{ secrets.TEST_DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.TEST_DB_NAME }}
+          POSTGRES_USER: ${{ vars.TEST_DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ vars.TEST_DB_PASSWORD }}
+          POSTGRES_DB: ${{ vars.TEST_DB_NAME }}
           POSTGRES_PORT: 5432
         ports:
           - 5432:5432
@@ -28,13 +28,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
-      - name: Install psql
-        run: |
-          sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-          sudo apt-get update
-          sudo apt-get -y install postgresql
       
       - name: Install Liquibase
         run: |
@@ -45,10 +38,10 @@ jobs:
       
       - name: Create Liquibase properties file
         run: |
-          echo "changelog-file: changelog.yaml" >> liquibase.properties
-          echo "url: jdbc:postgresql://localhost:5432/${{ secrets.TEST_DB_NAME }}" >> liquibase.properties
-          echo "username: ${{ secrets.TEST_DB_USERNAME }}" >> liquibase.properties
-          echo "password: ${{ secrets.TEST_DB_PASSWORD }}" >> liquibase.properties
+          echo "changelog-file: db-changelog.yaml" >> liquibase.properties
+          echo "url: jdbc:postgresql://localhost:5432/${{ vars.TEST_DB_NAME }}" >> liquibase.properties
+          echo "username: ${{ vars.TEST_DB_USERNAME }}" >> liquibase.properties
+          echo "password: ${{ vars.TEST_DB_PASSWORD }}" >> liquibase.properties
 
       - name: Test migration and rollback
         run: ./liquibase/liquibase update-testing-rollback --rollback-on-error=true
@@ -62,9 +55,9 @@ jobs:
       postgres:
         image: postgres:16.1
         env:
-          POSTGRES_USER: ${{ secrets.TEST_DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.TEST_DB_NAME }}
+          POSTGRES_USER: ${{ vars.TEST_DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ vars.TEST_DB_PASSWORD }}
+          POSTGRES_DB: ${{ vars.TEST_DB_NAME }}
           POSTGRES_PORT: 5432
         ports:
           - 5432:5432
@@ -77,7 +70,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: eu-west-1
           role-session-name: DB_SCHEMA_CI_GitHub_to_AWS_via_FederatedOIDC
 
       - name: Install psql
@@ -105,21 +98,21 @@ jobs:
 
       - name: Fetch AWS RDS endpoint
         run: |
-          echo "DB_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${{ env.DB_DEPLOYED_INSTANCE_NAME }} --query 'DBInstances[0].Endpoint.Address' --output text)" >> $GITHUB_ENV
+          echo "DB_ENDPOINT=$(aws rds describe-db-instances --db-instance-identifier ${{ secrets.DB_INSTANCE_NAME }} --query 'DBInstances[0].Endpoint.Address' --output text)" >> $GITHUB_ENV
 
       - name: Create PROD DB replica
         run: |
-          export PGPASSWORD=${{ env.DB_DETAILS_PASSWORD }}
-          pg_dump "postgresql://${{ env.DB_DETAILS_USERNAME }}@${{ env.DB_ENDPOINT }}/dbname" > dump.sql
-          export PGPASSWORD="${{ secrets.TEST_DB_PASSWORD }}"
-          psql "postgresql://${{ secrets.TEST_DB_USERNAME }}@localhost:5432/${{ secrets.TEST_DB_NAME }}" -f dump.sql
+          export PGPASSWORD="${{ env.DB_DETAILS_PASSWORD }}"
+          pg_dump "postgresql://${{ env.DB_DETAILS_USERNAME }}@${{ env.DB_ENDPOINT }}/prod" > dump.sql
+          export PGPASSWORD="${{ vars.TEST_DB_PASSWORD }}"
+          psql "postgresql://${{ vars.TEST_DB_USERNAME }}@localhost:5432/${{ vars.TEST_DB_NAME }}" -f dump.sql
           
       - name: Create Liquibase properties file
         run: |
-          echo "changelog-file: changelog.yaml" >> liquibase.properties
-          echo "url: jdbc:postgresql://localhost:5432/${{ secrets.TEST_DB_NAME }}" >> liquibase.properties
-          echo "username: ${{ secrets.TEST_DB_USERNAME }}" >> liquibase.properties
-          echo "password: ${{ secrets.TEST_DB_PASSWORD }}" >> liquibase.properties
+          echo "changelog-file: db-changelog.yaml" >> liquibase.properties
+          echo "url: jdbc:postgresql://localhost:5432/${{ vars.TEST_DB_NAME }}" >> liquibase.properties
+          echo "username: ${{ vars.TEST_DB_USERNAME }}" >> liquibase.properties
+          echo "password: ${{ vars.TEST_DB_PASSWORD }}" >> liquibase.properties
 
       - name: Test migration and rollback
         run: ./liquibase/liquibase update-testing-rollback --rollback-on-error=true

@@ -18,6 +18,7 @@ jobs:
 
   db-cd: 
     name: Database CD
+    needs: ci
     uses: ./.github/workflows/db-cd.yaml
     secrets: inherit
 
