@@ -38,7 +38,7 @@ jobs:
           ./gradlew build
 
       - name: Create deployment package
-        working-directory: ./apps/api/build/libs
+        working-directory: ./build/libs
         run: zip -r deployment.zip .
 
       - name: Deploy to Elastic Beanstalk
