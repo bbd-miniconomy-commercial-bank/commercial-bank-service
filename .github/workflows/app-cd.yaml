@@ -39,7 +39,7 @@ jobs:
 
       - name: Create deployment package
         working-directory: ./build/libs
-        run: zip -r deployment.zip .
+        run: zip -r ../../deployment.zip .
 
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v22
