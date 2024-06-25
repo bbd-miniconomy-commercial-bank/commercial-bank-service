@@ -18,9 +18,9 @@ jobs:
       postgres:
         image: postgres:16.1
         env:
-          POSTGRES_USER: ${{ secrets.TEST_DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.TEST_DB_NAME }}
+          POSTGRES_USER: ${{ vars.TEST_DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ vars.TEST_DB_PASSWORD }}
+          POSTGRES_DB: ${{ vars.TEST_DB_NAME }}
           POSTGRES_PORT: 5432
         ports:
           - 5432:5432
@@ -46,9 +46,9 @@ jobs:
       - name: Create Liquibase properties file
         run: |
           echo "changelog-file: db-changelog.yaml" >> liquibase.properties
-          echo "url: jdbc:postgresql://localhost:5432/${{ secrets.TEST_DB_NAME }}" >> liquibase.properties
-          echo "username: ${{ secrets.TEST_DB_USERNAME }}" >> liquibase.properties
-          echo "password: ${{ secrets.TEST_DB_PASSWORD }}" >> liquibase.properties
+          echo "url: jdbc:postgresql://localhost:5432/${{ vars.TEST_DB_NAME }}" >> liquibase.properties
+          echo "username: ${{ vars.TEST_DB_USERNAME }}" >> liquibase.properties
+          echo "password: ${{ vars.TEST_DB_PASSWORD }}" >> liquibase.properties
 
       - name: Test migration and rollback
         run: ./liquibase/liquibase update-testing-rollback --rollback-on-error=true
@@ -62,9 +62,9 @@ jobs:
       postgres:
         image: postgres:16.1
         env:
-          POSTGRES_USER: ${{ secrets.TEST_DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.TEST_DB_NAME }}
+          POSTGRES_USER: ${{ vars.TEST_DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ vars.TEST_DB_PASSWORD }}
+          POSTGRES_DB: ${{ vars.TEST_DB_NAME }}
           POSTGRES_PORT: 5432
         ports:
           - 5432:5432
@@ -111,15 +111,15 @@ jobs:
         run: |
           export PGPASSWORD="${{ env.DB_DETAILS_PASSWORD }}"
           pg_dump "postgresql://${{ env.DB_DETAILS_USERNAME }}@${{ env.DB_ENDPOINT }}/prod" > dump.sql
-          export PGPASSWORD="${{ secrets.TEST_DB_PASSWORD }}"
-          psql "postgresql://${{ secrets.TEST_DB_USERNAME }}@localhost:5432/${{ secrets.TEST_DB_NAME }}" -f dump.sql
+          export PGPASSWORD="${{ vars.TEST_DB_PASSWORD }}"
+          psql "postgresql://${{ vars.TEST_DB_USERNAME }}@localhost:5432/${{ vars.TEST_DB_NAME }}" -f dump.sql
           
       - name: Create Liquibase properties file
         run: |
           echo "changelog-file: db-changelog.yaml" >> liquibase.properties
-          echo "url: jdbc:postgresql://localhost:5432/${{ secrets.TEST_DB_NAME }}" >> liquibase.properties
-          echo "username: ${{ secrets.TEST_DB_USERNAME }}" >> liquibase.properties
-          echo "password: ${{ secrets.TEST_DB_PASSWORD }}" >> liquibase.properties
+          echo "url: jdbc:postgresql://localhost:5432/${{ vars.TEST_DB_NAME }}" >> liquibase.properties
+          echo "username: ${{ vars.TEST_DB_USERNAME }}" >> liquibase.properties
+          echo "password: ${{ vars.TEST_DB_PASSWORD }}" >> liquibase.properties
 
       - name: Test migration and rollback
         run: ./liquibase/liquibase update-testing-rollback --rollback-on-error=true
