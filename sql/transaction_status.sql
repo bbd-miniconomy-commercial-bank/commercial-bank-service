@@ -1,4 +1,0 @@
-CREATE TABLE transactionstatus (
-    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    transaction_status VARCHAR(50) NOT NULL
-);
