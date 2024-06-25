@@ -48,10 +48,10 @@ jobs:
         
       - name: Create Liquibase properties file
         run: |
-          echo "changelog-file: changelog.yaml" >> liquibase.properties
-          echo "url: jdbc:postgresql://${{ env.DB_ENDPOINT }}:5432/${{ secrets.TEST_DB_NAME }}" >> liquibase.properties
-          echo "username: ${{ secrets.TEST_DB_USERNAME }}" >> liquibase.properties
-          echo "password: ${{ secrets.TEST_DB_PASSWORD }}" >> liquibase.properties
+          echo "changelog-file: 'changelog.yaml'" >> liquibase.properties
+          echo "url: 'jdbc:postgresql://${{ env.DB_ENDPOINT }}:5432/'${{ secrets.TEST_DB_NAME }}" >> liquibase.properties
+          echo "username: '${{ secrets.TEST_DB_USERNAME }}'" >> liquibase.properties
+          echo "password: '${{ secrets.TEST_DB_PASSWORD }}'" >> liquibase.properties
 
       - name: Migrate DB schema
         run: ./liquibase/liquibase update-testing-rollback --rollback-on-error=true
