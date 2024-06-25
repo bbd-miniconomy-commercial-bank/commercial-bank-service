@@ -26,6 +26,13 @@ jobs:
           aws-region: eu-west-1
           role-session-name: Service_CD_GitHub_to_AWS_via_FederatedOIDC
 
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          java-package: jdk
+
       - name: Build service
         run: |
           ./gradlew build

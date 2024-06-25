@@ -26,6 +26,13 @@ jobs:
           aws-region: eu-west-1
           role-session-name: Service_CI_GitHub_to_AWS_via_FederatedOIDC
 
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          java-package: jdk
+
       - name: Retrieve Service config from AWS Parameter Store
         run: |
           aws ssm get-parameters-by-path --path "/commercial-bank-service/config" --recursive --with-decryption > parameters.json
