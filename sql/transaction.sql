@@ -14,7 +14,7 @@ CREATE TABLE transaction (
     credit_ref VARCHAR(50) NOT NULL,
     debit_ref VARCHAR(50) NOT NULL,
     transaction_status transaction_status_enum NOT NULL,
-    FOREIGN KEY (credit_acc_id) REFERENCES account(id) ON DELETE CASCADE,
-    FOREIGN KEY (debit_acc_id) REFERENCES account(id) ON DELETE CASCADE
+    FOREIGN KEY (credit_acc_id) REFERENCES account(id),
+    FOREIGN KEY (debit_acc_id) REFERENCES account(id)
 );
 -- rollback DROP TABLE transaction

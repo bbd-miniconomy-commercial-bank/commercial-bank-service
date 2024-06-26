@@ -7,6 +7,6 @@ CREATE TABLE loaninterest (
     interest_rate INTEGER NOT NULL,
     interest_amount NUMERIC(10, 2) NOT NULL,
     datecreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (loan_id) REFERENCES loan(id) ON DELETE CASCADE
+    FOREIGN KEY (loan_id) REFERENCES loan(id)
 );
 -- rollback DROP TABLE loaninterest

@@ -9,7 +9,7 @@ CREATE TABLE debitorder (
     db_order_receiver_ref VARCHAR(50) NOT NULL,
     db_order_amount NUMERIC(10, 2) NOT NULL,
     db_order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (credit_acc_id) REFERENCES account(id) ON DELETE CASCADE,
-    FOREIGN KEY (debit_acc_id) REFERENCES account(id) ON DELETE CASCADE
+    FOREIGN KEY (credit_acc_id) REFERENCES account(id),
+    FOREIGN KEY (debit_acc_id) REFERENCES account(id)
 );
 -- rollback DROP TABLE debitorder
