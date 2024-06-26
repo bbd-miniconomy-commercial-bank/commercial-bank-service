@@ -6,15 +6,13 @@ CREATE TYPE transaction_status_enum AS ENUM ('pending', 'completed');
 
 -- changeset devwasabi2:create-transaction-table
 CREATE TABLE transaction (
-    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    credit_acc_id INTEGER NOT NULL,
-    debit_acc_id INTEGER NOT NULL,
-    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    transaction_amount NUMERIC(10, 2) NOT NULL,
+    transaction_id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    credit_account_id UUID NOT NULL,
+    debit_account_id UUID NOT NULL,
+    transaction_date CHAR(8) NOT NULL,
+    transaction_amount NUMERIC(13, 3) NOT NULL,
     credit_ref VARCHAR(50) NOT NULL,
     debit_ref VARCHAR(50) NOT NULL,
-    transaction_status transaction_status_enum NOT NULL,
-    FOREIGN KEY (credit_acc_id) REFERENCES account(id),
-    FOREIGN KEY (debit_acc_id) REFERENCES account(id)
+    transaction_status transaction_status_enum NOT NULL
 );
 -- rollback DROP TABLE transaction

@@ -1,15 +1,13 @@
 -- liquibase formatted sql
 
 -- changeset devwasabi2:create-debit-order-table
-CREATE TABLE debitorder (
-    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    credit_acc_id INTEGER NOT NULL,
-    debit_acc_id INTEGER NOT NULL,
-    db_order_sender_ref VARCHAR(50) NOT NULL,
-    db_order_receiver_ref VARCHAR(50) NOT NULL,
-    db_order_amount NUMERIC(10, 2) NOT NULL,
-    db_order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (credit_acc_id) REFERENCES account(id),
-    FOREIGN KEY (debit_acc_id) REFERENCES account(id)
+CREATE TABLE debit_order (
+    debit_order_id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    credit_account_id UUID NOT NULL,
+    debit_account_id UUID NOT NULL,
+    debit_order_sender_ref VARCHAR(50) NOT NULL,
+    debit_order_receiver_ref VARCHAR(50) NOT NULL,
+    debit_order_amount NUMERIC(13, 3) NOT NULL,
+    debit_order_created_date CHAR(8) NOT NULL
 );
--- rollback DROP TABLE debitorder
+-- rollback DROP TABLE debit_order

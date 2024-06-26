@@ -13,3 +13,5 @@ databaseChangeLog:
       file: sql/loan_transaction.sql      
    - include:
       file: sql/debit_order_transaction.sql
+   - include:
+      file: sql/references.sql
