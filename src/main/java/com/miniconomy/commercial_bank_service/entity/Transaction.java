@@ -12,6 +12,7 @@ import lombok.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "transaction")
 public class Transaction
 {
   @Id
