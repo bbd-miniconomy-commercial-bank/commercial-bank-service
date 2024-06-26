@@ -1,5 +1,7 @@
 package com.miniconomy.commercial_bank_service.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,7 +16,7 @@ public class Transaction
   private Long creditAccountId;
   private Long debitAccountId;
   private String transactionDate;
-  private Double transactionAmount;
+  private BigDecimal transactionAmount;
   private String creditRef;
   private String debitRef;
   private String transactionStatus;
@@ -40,7 +42,7 @@ public class Transaction
     return transactionDate;
   }
 
-  public Double getTransactionAmount() 
+  public BigDecimal getTransactionAmount() 
   {
     return transactionAmount;
   }
@@ -81,7 +83,7 @@ public class Transaction
     this.transactionDate = transactionDate;
   }
 
-  public void setTransactionAmount(Double transactionAmount) 
+  public void setTransactionAmount(BigDecimal transactionAmount) 
   {
     this.transactionAmount = transactionAmount;
   }

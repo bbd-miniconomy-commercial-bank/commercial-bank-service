@@ -1,5 +1,7 @@
 package com.miniconomy.commercial_bank_service.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,7 +16,7 @@ public class DebitOrder
   private Long creditAccountId;
   private Long debitAccountId;
   private String debitOrderCreatedDate;
-  private Double debitOrderAmount;
+  private BigDecimal debitOrderAmount;
   private String debitOrderReceiverRef;
   private String debitOrderSenderRef;
 
@@ -58,12 +60,12 @@ public class DebitOrder
     this.debitOrderCreatedDate = debitOrderCreatedDate;
   }
 
-  public Double getDebitOrderAmount()
+  public BigDecimal getDebitOrderAmount()
   {
     return debitOrderAmount;
   }
 
-  public void setDebitOrderAmount(Double debitOrderAmount)
+  public void setDebitOrderAmount(BigDecimal debitOrderAmount)
   {
     this.debitOrderAmount = debitOrderAmount;
   }

@@ -1,5 +1,7 @@
 package com.miniconomy.commercial_bank_service.response;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,5 +10,5 @@ import lombok.Data;
 public class AccountResponse
 {
   private String accountName;
-  private Double accountBalance;  
+  private BigDecimal accountBalance;  
 }

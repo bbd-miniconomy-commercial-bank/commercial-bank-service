@@ -34,7 +34,7 @@ class AccountController {
   public BasicResponse<AccountResponse> getAccountBalance(@RequestParam String accountName)
   {
     Account account = this.accountService.retrieveAccountBalance(accountName);
-    AccountResponse response = new AccountResponse(account.getAccountName(), 4000.0);
+    AccountResponse response = new AccountResponse(account.getAccountName(), null); //TODO: Calculate balance from transactions
     return new BasicResponse<AccountResponse>(response);
   }
 
