@@ -1,5 +1,7 @@
 package com.miniconomy.commercial_bank_service.entity;
 
+import java.util.UUID;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
@@ -8,6 +10,6 @@ import lombok.Data;
 @Entity
 public class Account {
   @Id
-  private Long accountId;
+  private UUID accountId;
   private String accountName;
 }

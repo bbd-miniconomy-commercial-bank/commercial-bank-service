@@ -8,10 +8,8 @@ import com.miniconomy.commercial_bank_service.entity.Transaction;
 import com.miniconomy.commercial_bank_service.response.TransactionResponse;
 import com.miniconomy.commercial_bank_service.service.TransactionService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
@@ -45,17 +43,11 @@ class TransactionController {
   @GetMapping(value = "", produces = "application/json")
   public ResponseEntity<?> getTransactions(@PageableDefault(size = 10) Pageable pageable)
   {
-    UUID creditAccountId = UUID.fromString("3d807dc5-5a12-455c-9b66-6876906e70d6");
-    List<Transaction> transactions = this.transactionService.retrieveTransactions(creditAccountId, pageable);
+    UUID accountId = UUID.fromString("3d807dc5-5a12-455c-9b66-6876906e70d6");
+    List<TransactionResponse> transactions = this.transactionService.retrieveTransactions(accountId, pageable);
     if(transactions.size() > 0)
     {
-      List<TransactionResponse> responseArray = new ArrayList<>();
-      for(Transaction transaction: transactions)
-      {
-        TransactionResponse response = new TransactionResponse(transaction.getDebitAccountId(), transaction.getCreditAccountId(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
-        responseArray.add(response);
-      }
-      return new ResponseEntity<>(responseArray, HttpStatus.OK);
+      return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
     else
     {
@@ -72,10 +64,8 @@ class TransactionController {
   {
     try
     {
-      Optional<Transaction> optionalTransaction = this.transactionService.retrieveTransactionsById(id);
-      Transaction transaction = optionalTransaction.get();
-      TransactionResponse response = new TransactionResponse(transaction.getDebitAccountId(), transaction.getCreditAccountId(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
-      return new ResponseEntity<>(response, HttpStatus.OK);
+      TransactionResponse transaction = this.transactionService.retrieveTransactionsById(id);
+      return new ResponseEntity<>(transaction, HttpStatus.OK);
     }
     catch(NoSuchElementException error)
     {
