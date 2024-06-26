@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.dto.TransactionRequest;
 import com.miniconomy.commercial_bank_service.entity.Transaction;
+import com.miniconomy.commercial_bank_service.entity.TransactionStatusType;
 import com.miniconomy.commercial_bank_service.repository.TransactionRepository;
 
 @Service
@@ -43,7 +44,7 @@ public class TransactionService
 
       // TODO: Replace with creditors id using passed in token
       transaction.setCreditAccountId((long) 1);
-      transaction.setTransactionStatus("pending");
+      transaction.setTransactionStatus(TransactionStatusType.PENDING);
       transaction.setTransactionDate(java.time.LocalDate.now().toString());
       
       transactions.add(transaction);
