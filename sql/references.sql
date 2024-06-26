@@ -13,12 +13,12 @@ ADD CONSTRAINT fk_db_order_debit_account_id FOREIGN KEY (debit_account_id) REFER
 -- changeset devwasabi2:add-fk-constraints-transaction_account_credit_account_id
 ALTER TABLE transaction 
 ADD CONSTRAINT fk_transaction_account_credit_account_id FOREIGN KEY (credit_account_id) REFERENCES account(account_id);
--- rollback ALTER TABLE transaction DROP CONSTRAINT fk_db_order_debit_account_id
+-- rollback ALTER TABLE transaction DROP CONSTRAINT fk_transaction_account_credit_account_id
 
 -- changeset devwasabi2:add-fk-constraints-transaction-debit-acc
 ALTER TABLE transaction
 ADD CONSTRAINT fk_transaction_account_debit_account_id FOREIGN KEY (debit_account_id) REFERENCES account(account_id);
--- rollback ALTER TABLE transaction DROP CONSTRAINT fk_db_order_debit_account_id
+-- rollback ALTER TABLE transaction DROP CONSTRAINT fk_transaction_account_debit_account_id
 
 -- changeset devwasabi2:add-fk-constraints-loan-account
 ALTER TABLE loan
