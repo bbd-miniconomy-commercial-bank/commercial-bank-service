@@ -6,7 +6,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.swing.text.html.Option;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.dto.TransactionRequest;
@@ -15,6 +17,7 @@ import com.miniconomy.commercial_bank_service.entity.Transaction;
 import com.miniconomy.commercial_bank_service.entity.TransactionStatusType;
 import com.miniconomy.commercial_bank_service.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.repository.TransactionRepository;
+import com.miniconomy.commercial_bank_service.response.TransactionResponse;
 
 @Service
 public class TransactionService
@@ -28,18 +31,33 @@ public class TransactionService
     this.accountRepository = accRepo;
   }
   
-  public List<Transaction> retrieveTransactions(UUID creditAccountId)
+  public List<Transaction> retrieveTransactions(UUID creditAccountId, Pageable page)
   {
     Optional<Account> acc = accountRepository.findById(creditAccountId);
     if (acc.isPresent()) {
-      return transactionRepository.findByCreditAccount(acc.get());
+      List<Transaction> transactions = transactionRepository.findByAccountId(creditAccountId, page);
+      return transactions;
+      //return transactions.stream().map(transaction -> {
+      //  Optional<Account> creditAccount = accountRepository.findById(transaction.getCreditAccount().getId());
+      //  Optional<Account> debitAccount = accountRepository.findById(transaction.getDebitAccount().getId());
+//
+      //  TransactionResponse transactionResponse = new TransactionResponse(debitAccount.get().getAccountName(), creditAccount.get().getAccountName(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
+      //  return transactionResponse;
+      //}).collect(Collectors.toList());
     }
     return List.of(); // returns empty list
   } 
 
   public Optional<Transaction> retrieveTransactionsById(UUID id)
   {
-    return transactionRepository.findById(id);
+    Optional<Transaction> transaction = transactionRepository.findById(id);
+    return transaction;
+    //if 
+    //Account creditAccount = accountRepository.findById(transaction.getCreditAccountId()).get();
+    //Account debitAccount = accountRepository.findById(transaction.getDebitAccountId()).get();
+//
+    //TransactionResponse transactionResponse = new TransactionResponse(debitAccount.getAccountName(), creditAccount.getAccountName(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
+    //return transactionResponse;
   } 
 
   public List<Transaction> saveTransactions(List<TransactionRequest> transactionRequests)
@@ -56,7 +74,7 @@ public class TransactionService
         transaction.setTransactionAmount(request.getTransactionAmount());
         transaction.setCreditRef(request.getCreditRef());
         transaction.setDebitRef(request.getDebitRef());
-        transaction.setTransactionStatus(TransactionStatusType.PENDING);
+        transaction.setTransactionStatus(TransactionStatusType.pending);
         transaction.setTransactionDate(java.time.LocalDate.now().toString());
         transactions.add(transaction);
       }

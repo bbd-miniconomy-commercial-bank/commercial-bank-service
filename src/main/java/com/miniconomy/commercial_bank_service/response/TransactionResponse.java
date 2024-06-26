@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import com.miniconomy.commercial_bank_service.entity.TransactionStatusType;
 
+import com.miniconomy.commercial_bank_service.entity.TransactionStatusType;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

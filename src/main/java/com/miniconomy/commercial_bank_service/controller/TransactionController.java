@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +36,8 @@ class TransactionController {
     description = "Allows services to view their transactions"
   )
   @GetMapping(value = "/transactions", produces = "application/json")
-  public ResponseEntity<?> getTransactions(@RequestParam UUID creditAccId) {
-    List<Transaction> transactions = this.transactionService.retrieveTransactions(creditAccId);
+  public ResponseEntity<?> getTransactions(@RequestParam UUID creditAccId, @PageableDefault(size = 10) Pageable pageable) {
+    List<Transaction> transactions = this.transactionService.retrieveTransactions(creditAccId, pageable);
     if(transactions.size() > 0) {
       List<TransactionResponse> responseArray = new ArrayList<>();
       for(Transaction transaction: transactions) {
@@ -52,6 +54,15 @@ class TransactionController {
       }
       return ResponseEntity.status(HttpStatus.OK).body(responseArray);
     }
+  /*@GetMapping(value = "", produces = "application/json")
+  public ResponseEntity<?> getTransactions(@PageableDefault(size = 10) Pageable pageable)
+  {
+    UUID accountId = UUID.fromString("3d807dc5-5a12-455c-9b66-6876906e70d6");
+    List<TransactionResponse> transactions = this.transactionService.retrieveTransactions(accountId, pageable);
+    if(transactions.size() > 0)
+    {
+      return new ResponseEntity<>(transactions, HttpStatus.OK);
+    }*/
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No transactions were found");
   }
 
@@ -59,25 +70,16 @@ class TransactionController {
     summary = "Get services transactions by id",
     description = "Allows services to view their transactions by id"
   )
-  @GetMapping(value = "transactions/{id}", produces = "application/json")
+  @GetMapping(value = "/{id}", produces = "application/json")
   public ResponseEntity<?> getTransactionsById(@PathVariable UUID id) {
-    Optional<Transaction> optionalTransaction = this.transactionService.retrieveTransactionsById(id);
-    if (optionalTransaction.isPresent()) {
-      Transaction transaction = optionalTransaction.get();
 
-      TransactionResponse response = new TransactionResponse(
-        transaction.getDebitAccount().getAccountName(), 
-        transaction.getCreditAccount().getAccountName(), 
-        transaction.getTransactionAmount(), 
-        transaction.getTransactionStatus(), 
-        transaction.getDebitRef(), 
-        transaction.getCreditRef(), 
-        transaction.getTransactionDate()
-      );
-
-      return ResponseEntity.status(HttpStatus.OK).body(response);
+    Optional<Transaction> t = this.transactionService.retrieveTransactionsById(id);
+    if (t.isPresent()) {
+      Transaction transaction = t.get();
+      TransactionResponse response = new TransactionResponse(transaction.getDebitAccount().getAccountName(), transaction.getCreditAccount().getAccountName(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
+      return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Transaction does not exist");
+    return new ResponseEntity<>("Transaction does not exist", HttpStatus.NOT_FOUND);
   }
 
   @Operation(
