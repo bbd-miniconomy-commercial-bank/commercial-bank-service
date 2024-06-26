@@ -9,8 +9,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class DebitOrderResponse
 {
-  private String creditAccountId;
-  private String debitAccountId;
+  private String creditAccount;
+  private String debitAccount;
   private String debitOrderCreatedDate;
   private BigDecimal debitOrderAmount;
   private String debitOrderReceiverRef;
