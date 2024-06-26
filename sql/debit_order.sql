@@ -11,3 +11,8 @@ CREATE TABLE debit_order (
     debit_order_created_date CHAR(8) NOT NULL
 );
 -- rollback DROP TABLE debit_order
+
+-- changeset ryanbasiltrickett:add-debit-order-disabled
+ALTER TABLE debit_order
+ADD debit_order_disabled BOOLEAN NOT NULL;
+-- rollback ALTER TABLE debit_order DROP COLUMN debit_order_disabled
