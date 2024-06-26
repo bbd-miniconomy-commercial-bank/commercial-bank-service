@@ -1,7 +1,6 @@
 package com.miniconomy.commercial_bank_service.response;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,8 +9,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class DebitOrderResponse
 {
-  private UUID creditAccountId;
-  private UUID debitAccountId;
+  private String creditAccountId;
+  private String debitAccountId;
   private String debitOrderCreatedDate;
   private BigDecimal debitOrderAmount;
   private String debitOrderReceiverRef;

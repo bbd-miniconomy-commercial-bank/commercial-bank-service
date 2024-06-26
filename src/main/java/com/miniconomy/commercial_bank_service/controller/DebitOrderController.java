@@ -3,11 +3,9 @@ package com.miniconomy.commercial_bank_service.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.miniconomy.commercial_bank_service.entity.DebitOrder;
 import com.miniconomy.commercial_bank_service.response.DebitOrderResponse;
 import com.miniconomy.commercial_bank_service.service.DebitOrderService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,16 +38,10 @@ class DebitOrderController {
   public ResponseEntity<?> getTransactions(@PageableDefault(size = 10) Pageable pageable)
   {
     UUID creditAccountId = UUID.fromString("3d807dc5-5a12-455c-9b66-6876906e70d6");
-    List<DebitOrder> debitOrders = this.debitOrderService.retrieveDebitOrders(creditAccountId, pageable);
+    List<DebitOrderResponse> debitOrders = this.debitOrderService.retrieveDebitOrders(creditAccountId, pageable);
     if(debitOrders.size() > 0)
     {
-      List<DebitOrderResponse> responseArray = new ArrayList<>();
-      for(DebitOrder debitOrder: debitOrders)
-      {
-        DebitOrderResponse response = new DebitOrderResponse(debitOrder.getCreditAccountId(), debitOrder.getDebitAccountId(), debitOrder.getDebitOrderCreatedDate(), debitOrder.getDebitOrderAmount(), debitOrder.getDebitOrderReceiverRef(), debitOrder.getDebitOrderSenderRef());
-        responseArray.add(response);
-      }
-      return new ResponseEntity<>(responseArray, HttpStatus.OK);
+      return new ResponseEntity<>(debitOrders, HttpStatus.OK);
     }
     else
     {
