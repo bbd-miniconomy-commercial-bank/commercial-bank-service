@@ -45,8 +45,8 @@ class TransactionController {
       List<TransactionResponse> responseArray = new ArrayList<>();
       for(Transaction transaction: transactions) {
         TransactionResponse response = new TransactionResponse(
-          transaction.getDebitAccId(), 
-          transaction.getCreditAccId(), 
+          transaction.getDebitAccountId(), 
+          transaction.getCreditAccountId(), 
           transaction.getTransactionAmount(), 
           transaction.getTransactionStatus(), 
           transaction.getDebitRef(), 
@@ -71,8 +71,8 @@ class TransactionController {
       Transaction transaction = optionalTransaction.get();
 
       TransactionResponse response = new TransactionResponse(
-        transaction.getDebitAccId(), 
-        transaction.getCreditAccId(), 
+        transaction.getDebitAccountId(),
+        transaction.getCreditAccountId(), 
         transaction.getTransactionAmount(), 
         transaction.getTransactionStatus(), 
         transaction.getDebitRef(), 
