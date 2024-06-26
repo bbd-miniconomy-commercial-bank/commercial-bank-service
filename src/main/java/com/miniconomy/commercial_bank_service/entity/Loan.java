@@ -2,6 +2,9 @@ package com.miniconomy.commercial_bank_service.entity;
 
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.UUID;
+
+import org.hibernate.annotations.UuidGenerator;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,16 +17,18 @@ import lombok.*;
 public class Loan {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long loanId;
+    @UuidGenerator(style = UuidGenerator.Style.RANDOM)
+    @Column(name="loan_id")
+    private UUID loanId;
 
-    @Column(precision = 13, scale = 3)
+    @Column(name="loan_amount", precision = 13, scale = 3)
     private BigDecimal loanAmount;
 
+    @Column(name="loan_type")
     @Enumerated(EnumType.STRING)
     private LoanType loanType;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL) 
     @JoinColumn(name = "account_id")
     private Account account;
 
@@ -35,11 +40,11 @@ public class Loan {
 
     // Getters and Setters
 
-    public Long getLoanId() {
+    public UUID getLoanId() {
         return loanId;
     }
 
-    public void setLoanId(Long loanId) {
+    public void setLoanId(UUID loanId) {
         this.loanId = loanId;
     }
 

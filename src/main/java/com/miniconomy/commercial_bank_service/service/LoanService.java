@@ -6,6 +6,7 @@ import com.miniconomy.commercial_bank_service.entity.Loan;
 import com.miniconomy.commercial_bank_service.repository.LoanRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class LoanService {
@@ -21,7 +22,7 @@ public class LoanService {
         return loanRepository.save(loan);
     }
 
-    public Loan getLoanById(Long loanId) {
+    public Loan getLoanById(UUID loanId) {
         return loanRepository.findById(loanId).orElse(null);
     }
 

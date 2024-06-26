@@ -1,6 +1,10 @@
 package com.miniconomy.commercial_bank_service.entity;
 
 import java.math.BigDecimal;
+import java.util.UUID;
+
+import org.hibernate.annotations.UuidGenerator;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,9 +15,9 @@ import lombok.*;
 public class Transaction
 {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @UuidGenerator(style = UuidGenerator.Style.RANDOM)
   @Column(name = "transaction_id")
-  private Long transactionId;
+  private UUID transactionId;
 
   @ManyToOne(cascade = CascadeType.ALL) 
   @JoinColumn(name = "credit_account_id")

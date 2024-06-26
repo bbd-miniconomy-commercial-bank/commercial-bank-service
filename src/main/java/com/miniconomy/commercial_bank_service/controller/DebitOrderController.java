@@ -12,11 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,7 +36,7 @@ class DebitOrderController {
     description = "Allows services to view their debit orders"
   )
   @GetMapping(value = "", produces = "application/json")
-  public ResponseEntity<?> getTransactions(@RequestParam Long creditAccId) {//TODO: Remove param and use token to get id
+  public ResponseEntity<?> getTransactions(@RequestParam UUID creditAccId) {//TODO: Remove param and use token to get id
     List<DebitOrder> debitOrders = this.debitOrderService.retrieveDebitOrders(creditAccId);
     if(debitOrders.size() > 0) {
       List<DebitOrderResponse> responseArray = new ArrayList<>();
@@ -53,7 +52,7 @@ class DebitOrderController {
       }
       return ResponseEntity.status(HttpStatus.OK).body(responseArray);
     }
-    return ResponseEntity.status(HttpStatus.OK).body("No debit orders found");
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No debit orders found");
   }
 
   @Operation(

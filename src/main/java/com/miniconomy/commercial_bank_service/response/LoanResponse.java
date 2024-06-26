@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.UUID;
 
 import com.miniconomy.commercial_bank_service.entity.LoanType;
 
@@ -14,7 +15,7 @@ import com.miniconomy.commercial_bank_service.entity.LoanType;
 @NoArgsConstructor
 public class LoanResponse {
 
-    private Long loanId;
+    private UUID loanId;
     private BigDecimal loanAmount;
     private LoanType loanType;
     private String accountName;

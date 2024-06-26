@@ -1,6 +1,9 @@
 package com.miniconomy.commercial_bank_service.entity;
 
 import java.math.BigDecimal;
+import java.util.UUID;
+
+import org.hibernate.annotations.UuidGenerator;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -14,9 +17,9 @@ import lombok.*;
 public class DebitOrder
 {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @UuidGenerator(style = UuidGenerator.Style.RANDOM)
   @Column(name = "debit_order_id")
-  private Long debitOrderId;
+  private UUID debitOrderId;
 
   @ManyToOne(cascade = CascadeType.ALL) 
   @JoinColumn(name = "credit_account_id")

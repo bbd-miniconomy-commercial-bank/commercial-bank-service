@@ -1,5 +1,9 @@
 package com.miniconomy.commercial_bank_service.entity;
 
+import java.util.UUID;
+
+import org.hibernate.annotations.UuidGenerator;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -12,9 +16,9 @@ import lombok.*;
 public class Account {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @UuidGenerator(style = UuidGenerator.Style.RANDOM)
   @Column(name = "account_id")
-  private Long id;
+  private UUID id;
 
   @Size(max = 50, message = "Account name must be less than or equal to 50 characters")
   @Column(name = "account_name")

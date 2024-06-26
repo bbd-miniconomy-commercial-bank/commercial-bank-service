@@ -3,6 +3,7 @@ package com.miniconomy.commercial_bank_service.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -25,16 +26,20 @@ public class DebitOrderService
     this.accountRepository = accRepo;
   }
   
-  public List<DebitOrder> retrieveDebitOrders(Long creditAccountId)
+  public List<DebitOrder> retrieveDebitOrders(UUID creditAccountId)
   {
-    return debitOrderRepository.findByCreditAccountId(creditAccountId);
+    Optional<Account> acc = accountRepository.findById(creditAccountId);
+    if (acc.isPresent()) {
+      return debitOrderRepository.findByCreditAccountId(creditAccountId);
+    }
+    return List.of(); // otherwise return an empty list
   }
 
   public List<DebitOrder> saveDebitOrders(List<DebitOrderRequest> dbOrders) 
   {
     List<DebitOrder> debitOrders = new ArrayList<>();
     List<DebitOrderResponse> response = new ArrayList<>();
-    
+
     for (DebitOrderRequest dbOrder : dbOrders) {
 
       DebitOrder dbo = new DebitOrder();

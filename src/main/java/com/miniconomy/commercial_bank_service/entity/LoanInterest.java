@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
+
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Data
@@ -13,8 +16,9 @@ import java.math.BigDecimal;
 public class LoanInterest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long loanInterestId;
+    @UuidGenerator(style = UuidGenerator.Style.RANDOM)
+    @Column(name = "loan_interest_id")
+    private UUID loanInterestId;
 
     @ManyToOne
     @JoinColumn(name = "loan_id")

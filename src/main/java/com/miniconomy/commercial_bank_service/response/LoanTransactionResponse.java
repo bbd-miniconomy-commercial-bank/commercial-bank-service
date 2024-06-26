@@ -1,5 +1,7 @@
 package com.miniconomy.commercial_bank_service.response;
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoanTransactionResponse {
 
-    private Long loanTransactionId;
-    private Long transactionId;
+    private UUID loanTransactionId;
+    private UUID transactionId;
 }

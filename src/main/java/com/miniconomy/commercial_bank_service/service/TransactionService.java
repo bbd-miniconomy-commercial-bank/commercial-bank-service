@@ -3,6 +3,9 @@ package com.miniconomy.commercial_bank_service.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
+import javax.swing.text.html.Option;
 
 import org.springframework.stereotype.Service;
 
@@ -25,12 +28,16 @@ public class TransactionService
     this.accountRepository = accRepo;
   }
   
-  public List<Transaction> retrieveTransactions(Long creditAccountId)
+  public List<Transaction> retrieveTransactions(UUID creditAccountId)
   {
-    return transactionRepository.findByAccountId(creditAccountId);
+    Optional<Account> acc = accountRepository.findById(creditAccountId);
+    if (acc.isPresent()) {
+      return transactionRepository.findByCreditAccount(acc.get());
+    }
+    return List.of(); // returns empty list
   } 
 
-  public Optional<Transaction> retrieveTransactionsById(Long id)
+  public Optional<Transaction> retrieveTransactionsById(UUID id)
   {
     return transactionRepository.findById(id);
   } 

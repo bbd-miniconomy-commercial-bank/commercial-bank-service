@@ -10,6 +10,7 @@ import com.miniconomy.commercial_bank_service.service.TransactionService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ class TransactionController {
     description = "Allows services to view their transactions"
   )
   @GetMapping(value = "/transactions", produces = "application/json")
-  public ResponseEntity<?> getTransactions(@RequestParam Long creditAccId) {
+  public ResponseEntity<?> getTransactions(@RequestParam UUID creditAccId) {
     List<Transaction> transactions = this.transactionService.retrieveTransactions(creditAccId);
     if(transactions.size() > 0) {
       List<TransactionResponse> responseArray = new ArrayList<>();
@@ -51,7 +52,7 @@ class TransactionController {
       }
       return ResponseEntity.status(HttpStatus.OK).body(responseArray);
     }
-    return ResponseEntity.status(HttpStatus.OK).body("No transactions were found");
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No transactions were found");
   }
 
   @Operation(
@@ -59,7 +60,7 @@ class TransactionController {
     description = "Allows services to view their transactions by id"
   )
   @GetMapping(value = "transactions/{id}", produces = "application/json")
-  public ResponseEntity<?> getTransactionsById(@PathVariable Long id) {
+  public ResponseEntity<?> getTransactionsById(@PathVariable UUID id) {
     Optional<Transaction> optionalTransaction = this.transactionService.retrieveTransactionsById(id);
     if (optionalTransaction.isPresent()) {
       Transaction transaction = optionalTransaction.get();

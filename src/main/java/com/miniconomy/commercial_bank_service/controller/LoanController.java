@@ -12,6 +12,7 @@ import com.miniconomy.commercial_bank_service.response.LoanInterestResponse;
 import com.miniconomy.commercial_bank_service.service.LoanService;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,7 +66,7 @@ public class LoanController {
         value = "/{loanId}", 
         produces = "application/json"
     )
-    public BasicResponse<LoanResponse> getLoanById(@RequestBody Long loanId) {
+    public BasicResponse<LoanResponse> getLoanById(@RequestBody UUID loanId) {
         Loan loan = loanService.getLoanById(loanId);
         LoanResponse response = new LoanResponse(
                 loan.getLoanId(),

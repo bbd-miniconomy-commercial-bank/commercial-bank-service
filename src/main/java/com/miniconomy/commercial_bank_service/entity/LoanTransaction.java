@@ -1,28 +1,39 @@
 package com.miniconomy.commercial_bank_service.entity;
 
+import java.util.UUID;
+
+import org.hibernate.annotations.UuidGenerator;
+
 import jakarta.persistence.*;
+import lombok.*;
 
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "loan_transaction")
 public class LoanTransaction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long loanTransactionId;
+    @UuidGenerator(style = UuidGenerator.Style.RANDOM)
+    @Column(name = "loan_transaction_id")
+    private UUID loanTransactionId;
 
     @ManyToOne
     @JoinColumn(name = "loan_id")
     private Loan loan;
 
-    private Long transactionId;
+    @Column(name = "transaction_id")
+    private UUID transactionId;
 
     // Getters and Setters
-
-    public Long getLoanTransactionId() {
+/*
+    public UUID getLoanTransactionId() {
         return loanTransactionId;
     }
 
-    public void setLoanTransactionId(Long loanTransactionId) {
+    public void setLoanTransactionId(UUID loanTransactionId) {
         this.loanTransactionId = loanTransactionId;
     }
 
@@ -40,5 +51,5 @@ public class LoanTransaction {
 
     public void setTransactionId(Long transactionId) {
         this.transactionId = transactionId;
-    }
+    }*/
 }
