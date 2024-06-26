@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.miniconomy.commercial_bank_service.dto.TransactionRequest;
 import com.miniconomy.commercial_bank_service.entity.Transaction;
 import com.miniconomy.commercial_bank_service.response.TransactionResponse;
 import com.miniconomy.commercial_bank_service.service.TransactionService;
@@ -17,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,7 +41,7 @@ class TransactionController {
     description = "Allows services to view their transactions"
   )
   @GetMapping(value = "", produces = "application/json")
-  public ResponseEntity<?> getTransactions(@RequestParam Long creditAccId)
+  public ResponseEntity<?> getTransactions(@RequestParam Long creditAccId) //TODO: Remove param and use token to get id
   {
     List<Transaction> transactions = this.transactionService.retrieveTransactions(creditAccId);
     if(transactions.size() > 0)
@@ -75,5 +78,16 @@ class TransactionController {
     {
       return new ResponseEntity<>("Transaction does not exist", HttpStatus.NOT_FOUND);
     }
+  }
+
+  @Operation(
+    summary = "Create transactions",
+    description = "Allows services to create transactions"
+  )
+  @PostMapping(value = "", consumes = "application/json", produces = "application/json")
+  public ResponseEntity<?> postTransactions(@RequestBody List<TransactionRequest> transactions)
+  {
+    List<Transaction> savedTransactions = transactionService.saveTransactions(transactions);
+    return new ResponseEntity<>(savedTransactions, HttpStatus.CREATED);
   }
 }
