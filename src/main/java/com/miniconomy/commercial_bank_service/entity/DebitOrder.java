@@ -22,4 +22,5 @@ public class DebitOrder
   private BigDecimal debitOrderAmount;
   private String debitOrderReceiverRef;
   private String debitOrderSenderRef;
+  private Boolean disabled;
 }

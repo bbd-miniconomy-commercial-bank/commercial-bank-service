@@ -15,4 +15,5 @@ public class DebitOrderResponse
   private BigDecimal debitOrderAmount;
   private String debitOrderReceiverRef;
   private String debitOrderSenderRef;
+  public Boolean disabled;
 }

@@ -3,17 +3,23 @@ package com.miniconomy.commercial_bank_service.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.miniconomy.commercial_bank_service.entity.DebitOrder;
 import com.miniconomy.commercial_bank_service.response.DebitOrderResponse;
 import com.miniconomy.commercial_bank_service.service.DebitOrderService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,4 +54,67 @@ class DebitOrderController {
       return new ResponseEntity<>("No debit orders found", HttpStatus.NOT_FOUND);
     }
   }
+
+ @Operation(
+    summary = "Disable a debit order",
+    description = "Disables a specific debit order by its ID"
+  )
+  @DeleteMapping(value = "/{id}", produces = "application/json")
+  public ResponseEntity<?> disableDebitOrder(@PathVariable Long id) {
+    boolean isDisabled = debitOrderService.disableDebitOrder(id);
+    if (isDisabled) {
+      return new ResponseEntity<>("Disabled debit order", HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>("Debit order not found", HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Operation(
+    summary = "Get a specific debit order",
+    description = "Retrieves the information for a specific debit order by its ID"
+  )
+  @GetMapping(value = "/{id}", produces = "application/json")
+  public ResponseEntity<?> getDebitOrderById(@PathVariable Long id) {
+    Optional<DebitOrder> debitOrderOptional = debitOrderService.getDebitOrderById(id);
+    if (debitOrderOptional.isPresent()) {
+      DebitOrder debitOrder = debitOrderOptional.get();
+      DebitOrderResponse response = new DebitOrderResponse(
+          debitOrder.getCreditAccountId().toString(),
+          debitOrder.getDebitAccountId().toString(),
+          debitOrder.getDebitOrderCreatedDate(),
+          debitOrder.getDebitOrderAmount(),
+          debitOrder.getDebitOrderReceiverRef(),
+          debitOrder.getDebitOrderSenderRef(),
+          debitOrder.getDisabled()
+          );
+      return new ResponseEntity<>(response, HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>("Debit order not found", HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Operation(
+    summary = "Update a specific debit order",
+    description = "Updates the information for a specific debit order by its ID"
+  )
+  @PostMapping(value = "/{id}", produces = "application/json")
+  public ResponseEntity<?> updateDebitOrder(@PathVariable Long id, @RequestBody DebitOrder updatedDebitOrder) {
+    Optional<DebitOrder> debitOrderOptional = debitOrderService.updateDebitOrder(id, updatedDebitOrder);
+    if (debitOrderOptional.isPresent()) {
+      DebitOrder debitOrder = debitOrderOptional.get();
+      DebitOrderResponse response = new DebitOrderResponse(
+          debitOrder.getCreditAccountId().toString(),
+          debitOrder.getDebitAccountId().toString(),
+          debitOrder.getDebitOrderCreatedDate(),
+          debitOrder.getDebitOrderAmount(),
+          debitOrder.getDebitOrderReceiverRef(),
+          debitOrder.getDebitOrderSenderRef(),
+          debitOrder.getDisabled());
+      return new ResponseEntity<>(response, HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>("Debit order not found", HttpStatus.NOT_FOUND);
+    }
+  }
+
+
 }

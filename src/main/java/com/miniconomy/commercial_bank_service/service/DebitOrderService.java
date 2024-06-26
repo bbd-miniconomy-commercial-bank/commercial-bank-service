@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,15 +28,61 @@ public class DebitOrderService
     this.accountRepository = accountRepository;
   }
   
-  public List<DebitOrderResponse> retrieveDebitOrders(UUID creditAccountId, Pageable pageable)
+  public List<DebitOrder> retrieveDebitOrders(Long creditAccountId)
   {
-    List<DebitOrder> debitOrders = debitOrderRepository.findByCreditAccountId(creditAccountId, pageable);
-    return debitOrders.stream().map(debitOrder -> {
-      Optional<Account> creditAccount = accountRepository.findById(debitOrder.getCreditAccountId());
-      Optional<Account> debitAccount = accountRepository.findById(debitOrder.getDebitAccountId());
+    return debitOrderRepository.findByCreditAccountId(creditAccountId);
+  }
 
-      DebitOrderResponse debitOrderResponse = new DebitOrderResponse(creditAccount.get().getAccountName(), debitAccount.get().getAccountName(), debitOrder.getDebitOrderCreatedDate(), debitOrder.getDebitOrderAmount() , debitOrder.getDebitOrderReceiverRef(), debitOrder.getDebitOrderSenderRef());
-      return debitOrderResponse;
-    }).collect(Collectors.toList());
+  public boolean disableDebitOrder(Long debitOrderId) {
+    Optional<DebitOrder> debitOrderOptional = debitOrderRepository.findById(debitOrderId);
+    if (debitOrderOptional.isPresent()) {
+      DebitOrder debitOrder = debitOrderOptional.get();
+      debitOrder.setDisabled(true);
+      debitOrderRepository.save(debitOrder);
+      return true;
+    }
+    return false;
+  }
+
+  public Optional<DebitOrder> getDebitOrderById(Long debitOrderId) {
+    return debitOrderRepository.findById(debitOrderId);
+  }
+
+  public Optional<DebitOrder> updateDebitOrder(Long debitOrderId, DebitOrder updatedDebitOrder) {
+    Optional<DebitOrder> debitOrderOptional = debitOrderRepository.findById(debitOrderId);
+    if (debitOrderOptional.isPresent()) {
+      DebitOrder existingDebitOrder = debitOrderOptional.get();
+
+      if (updatedDebitOrder.getCreditAccountId() != null && 
+          !updatedDebitOrder.getCreditAccountId().equals(existingDebitOrder.getCreditAccountId())) {
+        existingDebitOrder.setCreditAccountId(updatedDebitOrder.getCreditAccountId());
+      }
+
+      if (updatedDebitOrder.getDebitAccountId() != null && 
+          !updatedDebitOrder.getDebitAccountId().equals(existingDebitOrder.getDebitAccountId())) {
+        existingDebitOrder.setDebitAccountId(updatedDebitOrder.getDebitAccountId());
+      }
+
+      if (updatedDebitOrder.getDebitOrderAmount() != null && 
+          !updatedDebitOrder.getDebitOrderAmount().equals(existingDebitOrder.getDebitOrderAmount())) {
+        existingDebitOrder.setDebitOrderAmount(updatedDebitOrder.getDebitOrderAmount());
+      }
+
+      if (updatedDebitOrder.getDebitOrderReceiverRef() != null && 
+          !updatedDebitOrder.getDebitOrderReceiverRef().equals(existingDebitOrder.getDebitOrderReceiverRef())) {
+        existingDebitOrder.setDebitOrderReceiverRef(updatedDebitOrder.getDebitOrderReceiverRef());
+      }
+
+      if (updatedDebitOrder.getDebitOrderSenderRef() != null && 
+          !updatedDebitOrder.getDebitOrderSenderRef().equals(existingDebitOrder.getDebitOrderSenderRef())) {
+        existingDebitOrder.setDebitOrderSenderRef(updatedDebitOrder.getDebitOrderSenderRef());
+      }
+
+      existingDebitOrder.setDisabled(updatedDebitOrder.getDisabled());
+      
+      debitOrderRepository.save(existingDebitOrder);
+      return Optional.of(existingDebitOrder);
+    }
+    return Optional.empty();
   }
 }
