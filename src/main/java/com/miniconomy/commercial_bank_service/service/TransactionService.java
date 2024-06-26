@@ -1,6 +1,7 @@
 package com.miniconomy.commercial_bank_service.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,11 @@ public class TransactionService
   public List<Transaction> retrieveTransactions(Long creditAccId)
   {
     return transactionRepository.findByCreditAccId(creditAccId);
+  } 
+
+  public Optional<Transaction> retrieveTransactionsById(Long id)
+  {
+    return transactionRepository.findById(id);
   } 
 
 }
