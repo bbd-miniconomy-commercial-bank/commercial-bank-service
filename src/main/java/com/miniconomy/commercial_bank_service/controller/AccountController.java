@@ -9,6 +9,7 @@ import com.miniconomy.commercial_bank_service.response.BasicResponse;
 import com.miniconomy.commercial_bank_service.service.AccountService;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +36,14 @@ class AccountController {
   @GetMapping(value = "/account/balance", produces = "application/json")
   public ResponseEntity<?> getAccountBalance(@RequestParam String accountName)
   {
-    Account account = this.accountService.retrieveAccountBalance(accountName);
-    AccountResponse response = new AccountResponse(account.getAccountName(), 4000.0); // account balance is the sum of all transactions
-    String message = "This is all your debit orders transactions:";
-    return ResponseEntity.status(HttpStatus.OK).body(createEntity("message", createEntity(message, response)));
+    Optional<Account> account = this.accountService.retrieveAccountBalance(accountName);
+    if (account.isPresent()) {
+      AccountResponse response = new AccountResponse(account.get().getAccountName(), 4000.0); // account balance is the sum of all transactions
+      String message = "This is your account balance:";
+      return ResponseEntity.status(HttpStatus.OK).body(createEntity("message", createEntity(message, response)));
+    }
+    String message = "You gave an invalid account name:";
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(createEntity("message", message));
   }
 
   public HashMap<String, Object> createEntity(String x, Object y) {

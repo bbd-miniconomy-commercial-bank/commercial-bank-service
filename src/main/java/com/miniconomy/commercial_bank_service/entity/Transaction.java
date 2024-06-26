@@ -1,41 +1,42 @@
 package com.miniconomy.commercial_bank_service.entity;
 
 import java.math.BigDecimal;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Transaction
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "transaction_id")
   private Long transactionId;
-  private Long creditAccountId;
-  private Long debitAccountId;
+
+  @ManyToOne(cascade = CascadeType.ALL) 
+  @JoinColumn(name = "credit_account_id")
+  private Account creditAccount;
+
+  @ManyToOne(cascade = CascadeType.ALL) 
+  @JoinColumn(name = "debit_account_id")
+  private Account debitAccount;
+
+  @Column(name = "transaction_date")
   private String transactionDate;
+
+  @Column(name = "transaction_amount")
   private BigDecimal transactionAmount;
+
+  @Column(name = "credit_ref")
   private String creditRef;
+
+  @Column(name = "dedit_ref")
   private String debitRef;
 
+  @Column(name = "transaction_status")
   @Enumerated(EnumType.STRING)
   private TransactionStatusType transactionStatus;
 
-  public Transaction() { }
-
-  public Transaction(Long creditAccId, Long debitAccId, String transactionDate, BigDecimal amount, String cref, String dref, TransactionStatusType transactionStatus) {
-    this.creditAccountId = creditAccId;
-    this.debitAccountId = debitAccId;
-    this.transactionDate = transactionDate;
-    this.transactionAmount = amount;
-    this.creditRef = cref;
-    this.debitRef = dref;
-    this.transactionStatus = transactionStatus;
-  }
 }

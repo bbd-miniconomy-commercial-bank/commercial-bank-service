@@ -1,5 +1,7 @@
 package com.miniconomy.commercial_bank_service.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.entity.Account;
@@ -15,7 +17,7 @@ public class AccountService
     this.accountRepository = accountRepository;
   }
   
-  public Account retrieveAccountBalance(String accountName)
+  public Optional<Account> retrieveAccountBalance(String accountName)
   {
     return accountRepository.findByAccountName(accountName);
   } 

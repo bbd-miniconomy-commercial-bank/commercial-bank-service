@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class TransactionRequest {
-    private Long debitAccountId;
+    private String debitAccountName;
     private BigDecimal transactionAmount;
     private String creditRef;
     private String debitRef;

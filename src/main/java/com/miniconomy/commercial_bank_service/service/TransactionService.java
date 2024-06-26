@@ -7,18 +7,22 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.dto.TransactionRequest;
+import com.miniconomy.commercial_bank_service.entity.Account;
 import com.miniconomy.commercial_bank_service.entity.Transaction;
 import com.miniconomy.commercial_bank_service.entity.TransactionStatusType;
+import com.miniconomy.commercial_bank_service.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.repository.TransactionRepository;
 
 @Service
 public class TransactionService
 {
   private final TransactionRepository transactionRepository;
+  private final AccountRepository accountRepository;
 
-  public TransactionService(TransactionRepository transactionRepository)
+  public TransactionService(TransactionRepository transactionRepository, AccountRepository accRepo)
   {
     this.transactionRepository = transactionRepository;
+    this.accountRepository = accRepo;
   }
   
   public List<Transaction> retrieveTransactions(Long creditAccountId)
@@ -37,17 +41,18 @@ public class TransactionService
     for (TransactionRequest request : transactionRequests)
     {
       Transaction transaction = new Transaction();
-      transaction.setDebitAccountId(request.getDebitAccountId());
-      transaction.setTransactionAmount(request.getTransactionAmount());
-      transaction.setCreditRef(request.getCreditRef());
-      transaction.setDebitRef(request.getDebitRef());
-
-      // TODO: Replace with creditors id using passed in token
-      transaction.setCreditAccountId((long) 1);
-      transaction.setTransactionStatus(TransactionStatusType.PENDING);
-      transaction.setTransactionDate(java.time.LocalDate.now().toString());
-      
-      transactions.add(transaction);
+      Optional<Account> dbAcc = accountRepository.findByAccountName(request.getDebitAccountName());
+      Optional<Account> crAcc = accountRepository.findByAccountName("commercial-bank"); // for now it's commercial-bank, but their api token should have an account-name
+      if (dbAcc.isPresent() && crAcc.isPresent()) {
+        transaction.setDebitAccount(dbAcc.get());
+        transaction.setCreditAccount(crAcc.get());
+        transaction.setTransactionAmount(request.getTransactionAmount());
+        transaction.setCreditRef(request.getCreditRef());
+        transaction.setDebitRef(request.getDebitRef());
+        transaction.setTransactionStatus(TransactionStatusType.PENDING);
+        transaction.setTransactionDate(java.time.LocalDate.now().toString());
+        transactions.add(transaction);
+      }
     }
     return transactionRepository.saveAll(transactions);
   }

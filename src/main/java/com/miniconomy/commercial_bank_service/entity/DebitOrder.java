@@ -2,34 +2,40 @@ package com.miniconomy.commercial_bank_service.entity;
 
 import java.math.BigDecimal;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Data;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "debit_order")
 public class DebitOrder
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "debit_order_id")
   private Long debitOrderId;
-  private Long creditAccountId;
-  private Long debitAccountId;
+
+  @ManyToOne(cascade = CascadeType.ALL) 
+  @JoinColumn(name = "credit_account_id")
+  private Account creditAccount;
+
+  @ManyToOne(cascade = CascadeType.ALL) 
+  @JoinColumn(name = "debit_account_id")
+  private Account debitAccount;
+
+  @Column(name = "debit_order_created_date")
   private String debitOrderCreatedDate;
+
+  @Column(name = "debit_order_amount")
   private BigDecimal debitOrderAmount;
+
+  @Column(name = "debit_order_receiver_ref")
   private String debitOrderReceiverRef;
+
+  @Column(name = "debit_order_sender_ref")
   private String debitOrderSenderRef;
 
-  public DebitOrder() { }
-
-  public DebitOrder(Long creditAccId, Long debitAccId, String dbDate, BigDecimal amount, String dbOrderRecRef, String dbOrderSendRef) {
-    this.creditAccountId = creditAccId;
-    this.debitAccountId = debitAccId;
-    this.debitOrderCreatedDate = dbDate;
-    this.debitOrderAmount = amount;
-    this.debitOrderReceiverRef = dbOrderRecRef;
-    this.debitOrderSenderRef = dbOrderSendRef;
-  }
 }

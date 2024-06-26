@@ -1,8 +1,6 @@
 package com.miniconomy.commercial_bank_service.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.miniconomy.commercial_bank_service.dto.TransactionRequest;
 import com.miniconomy.commercial_bank_service.entity.Transaction;
@@ -15,10 +13,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,8 +39,8 @@ class TransactionController {
       List<TransactionResponse> responseArray = new ArrayList<>();
       for(Transaction transaction: transactions) {
         TransactionResponse response = new TransactionResponse(
-          transaction.getDebitAccountId(), 
-          transaction.getCreditAccountId(), 
+          transaction.getDebitAccount().getAccountName(), 
+          transaction.getCreditAccount().getAccountName(), 
           transaction.getTransactionAmount(), 
           transaction.getTransactionStatus(), 
           transaction.getDebitRef(), 
@@ -70,8 +65,8 @@ class TransactionController {
       Transaction transaction = optionalTransaction.get();
 
       TransactionResponse response = new TransactionResponse(
-        transaction.getDebitAccountId(),
-        transaction.getCreditAccountId(), 
+        transaction.getDebitAccount().getAccountName(), 
+        transaction.getCreditAccount().getAccountName(), 
         transaction.getTransactionAmount(), 
         transaction.getTransactionStatus(), 
         transaction.getDebitRef(), 

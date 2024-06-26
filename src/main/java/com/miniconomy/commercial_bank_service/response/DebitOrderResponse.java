@@ -4,13 +4,15 @@ import java.math.BigDecimal;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class DebitOrderResponse
 {
-  private Long creditAccountId;
-  private Long debitAccountId;
+  private String creditAccountName;
+  private String debitAccountName;
   private String debitOrderCreatedDate;
   private BigDecimal debitOrderAmount;
   private String debitOrderReceiverRef;
