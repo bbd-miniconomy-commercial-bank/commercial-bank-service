@@ -1,6 +1,5 @@
 package com.miniconomy.commercial_bank_service.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +19,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Account", description = "Queries related to service's account")
 @RestController
-@RequestMapping("/account")
 class AccountController {
     
   private final AccountService accountService;

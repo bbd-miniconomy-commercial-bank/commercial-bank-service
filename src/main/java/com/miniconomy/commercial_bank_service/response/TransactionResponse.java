@@ -14,4 +14,5 @@ public class TransactionResponse
   private String debitRef;
   private String creditRef;
   private String date;
+  
 }
