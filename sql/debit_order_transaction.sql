@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+
+-- changeset devwasabi2:create-debit-order-transactions-table
 CREATE TABLE debitordertransactions (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     db_order_id INTEGER NOT NULL,

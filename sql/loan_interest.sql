@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+
+-- changeset devwasabi2:create-loan-interest-table
 CREATE TABLE loaninterest (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     loan_id INTEGER NOT NULL,

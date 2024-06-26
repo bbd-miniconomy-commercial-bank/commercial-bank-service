@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+
+-- changeset devwasabi2:create-debit-order-table
 CREATE TABLE debitorder (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     credit_acc_id INTEGER NOT NULL,

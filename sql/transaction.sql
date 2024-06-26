@@ -1,5 +1,9 @@
+-- liquibase formatted sql
+
+-- changeset devwasabi2:create-transaction-status-enum
 CREATE TYPE transaction_status_enum AS ENUM ('pending', 'completed');
 
+-- changeset devwasabi2:create-transaction-table
 CREATE TABLE transaction (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     credit_acc_id INTEGER NOT NULL,
