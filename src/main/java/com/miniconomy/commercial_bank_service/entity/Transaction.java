@@ -1,6 +1,7 @@
 package com.miniconomy.commercial_bank_service.entity;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,9 +17,9 @@ public class Transaction
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long transactionId;
-  private Long creditAccountId;
-  private Long debitAccountId;
+  private UUID transactionId;
+  private UUID creditAccountId;
+  private UUID debitAccountId;
   private String transactionDate;
   private BigDecimal transactionAmount;
   private String creditRef;

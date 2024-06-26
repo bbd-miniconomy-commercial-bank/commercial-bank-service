@@ -1,7 +1,6 @@
 package com.miniconomy.commercial_bank_service.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.miniconomy.commercial_bank_service.dto.TransactionRequest;
@@ -13,7 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,9 +43,10 @@ class TransactionController {
     description = "Allows services to view their transactions"
   )
   @GetMapping(value = "", produces = "application/json")
-  public ResponseEntity<?> getTransactions(@RequestParam Long creditAccountId) //TODO: Remove param and use token to get id
+  public ResponseEntity<?> getTransactions(@PageableDefault(size = 10) Pageable pageable)
   {
-    List<Transaction> transactions = this.transactionService.retrieveTransactions(creditAccountId);
+    UUID creditAccountId = UUID.fromString("3d807dc5-5a12-455c-9b66-6876906e70d6");
+    List<Transaction> transactions = this.transactionService.retrieveTransactions(creditAccountId, pageable);
     if(transactions.size() > 0)
     {
       List<TransactionResponse> responseArray = new ArrayList<>();
@@ -65,7 +68,7 @@ class TransactionController {
     description = "Allows services to view their transactions by id"
   )
   @GetMapping(value = "/{id}", produces = "application/json")
-  public ResponseEntity<?> getTransactionsById(@PathVariable Long id)
+  public ResponseEntity<?> getTransactionsById(@PathVariable UUID id)
   {
     try
     {

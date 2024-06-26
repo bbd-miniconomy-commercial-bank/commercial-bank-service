@@ -40,7 +40,7 @@ class DebitOrderController {
     description = "Allows services to view their debit orders"
   )
   @GetMapping(value = "", produces = "application/json")
-  public ResponseEntity<?> getTransactions(@RequestParam Long creditAccId) //TODO: Remove param and use token to get id
+  public ResponseEntity<?> getTransactions(@RequestParam Long creditAccId, @RequestParam Integer page, @RequestParam Integer pageSize) //TODO: Remove param and use token to get id
   {
     List<DebitOrder> debitOrders = this.debitOrderService.retrieveDebitOrders(creditAccId);
     if(debitOrders.size() > 0)

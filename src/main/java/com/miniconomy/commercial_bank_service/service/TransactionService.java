@@ -3,7 +3,9 @@ package com.miniconomy.commercial_bank_service.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.dto.TransactionRequest;
@@ -21,12 +23,13 @@ public class TransactionService
     this.transactionRepository = transactionRepository;
   }
   
-  public List<Transaction> retrieveTransactions(Long creditAccountId)
+  public List<Transaction> retrieveTransactions(UUID creditAccountId, Pageable page)
   {
-    return transactionRepository.findByAccountId(creditAccountId);
+    System.out.println(creditAccountId);
+    return transactionRepository.findByAccountId(creditAccountId, page);
   } 
 
-  public Optional<Transaction> retrieveTransactionsById(Long id)
+  public Optional<Transaction> retrieveTransactionsById(UUID id)
   {
     return transactionRepository.findById(id);
   } 
@@ -43,8 +46,8 @@ public class TransactionService
       transaction.setDebitRef(request.getDebitRef());
 
       // TODO: Replace with creditors id using passed in token
-      transaction.setCreditAccountId((long) 1);
-      transaction.setTransactionStatus(TransactionStatusType.PENDING);
+      transaction.setCreditAccountId(UUID.fromString("3d807dc5-5a12-455c-9b66-6876906e70d6"));
+      transaction.setTransactionStatus(TransactionStatusType.pending);
       transaction.setTransactionDate(java.time.LocalDate.now().toString());
       
       transactions.add(transaction);
