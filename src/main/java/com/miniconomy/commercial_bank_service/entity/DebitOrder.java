@@ -8,8 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-@Data
 @Entity
+@Data
 public class DebitOrder
 {
   @Id
@@ -21,4 +21,15 @@ public class DebitOrder
   private BigDecimal debitOrderAmount;
   private String debitOrderReceiverRef;
   private String debitOrderSenderRef;
+
+  public DebitOrder() { }
+
+  public DebitOrder(Long creditAccId, Long debitAccId, String dbDate, BigDecimal amount, String dbOrderRecRef, String dbOrderSendRef) {
+    this.creditAccountId = creditAccId;
+    this.debitAccountId = debitAccId;
+    this.debitOrderCreatedDate = dbDate;
+    this.debitOrderAmount = amount;
+    this.debitOrderReceiverRef = dbOrderRecRef;
+    this.debitOrderSenderRef = dbOrderSendRef;
+  }
 }

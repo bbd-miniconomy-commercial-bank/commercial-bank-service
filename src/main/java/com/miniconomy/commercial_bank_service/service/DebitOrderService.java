@@ -22,4 +22,20 @@ public class DebitOrderService
   {
     return debitOrderRepository.findByCreditAccountId(creditAccountId);
   }
+
+  public List<DebitOrder> saveDebitOrders(List<DebitOrder> dbOrders) 
+  {
+    List<DebitOrder> debitOrders = new ArrayList<>();
+    for (DebitOrder dbOrder : dbOrders) {
+      DebitOrder dbo = new DebitOrder();
+      dbo.setCreditAccountId(dbOrder.getCreditAccountId());
+      dbo.setDebitAccountId(dbOrder.getDebitAccountId());
+      dbo.setDebitOrderAmount(dbOrder.getDebitOrderAmount());
+      dbo.setDebitOrderCreatedDate(dbOrder.getDebitOrderCreatedDate());
+      dbo.setDebitOrderReceiverRef(dbOrder.getDebitOrderReceiverRef());
+      dbo.setDebitOrderSenderRef(dbOrder.getDebitOrderSenderRef());
+      debitOrders.add(dbo);
+    }
+    return debitOrderRepository.saveAll(debitOrders);
+  }
 }

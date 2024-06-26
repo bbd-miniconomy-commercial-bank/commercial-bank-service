@@ -27,10 +27,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 class TransactionController {
     
-  final TransactionService transactionService;
+  private final TransactionService transactionService;
 
-  public TransactionController(TransactionService transactionService)
-  {
+  public TransactionController(TransactionService transactionService) {
     this.transactionService = transactionService;
   }
   
@@ -91,7 +90,7 @@ class TransactionController {
   )
   @PostMapping(value = "/transactions/create", consumes = "application/json", produces = "application/json")
   public ResponseEntity<?> postTransactions(@RequestBody List<TransactionRequest> transactions) {
-    List<Transaction> savedTransactions = transactionService.saveTransactions(transactions);
+    List<Transaction> savedTransactions = this.transactionService.saveTransactions(transactions);
     return ResponseEntity.status(HttpStatus.OK).body(savedTransactions);
   }
 }
