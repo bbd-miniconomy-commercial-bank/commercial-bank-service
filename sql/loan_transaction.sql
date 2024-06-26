@@ -8,3 +8,4 @@ CREATE TABLE loantransaction (
     FOREIGN KEY (loan_id) REFERENCES loan(id) ON DELETE CASCADE,
     FOREIGN KEY (transaction_id) REFERENCES transaction(id) ON DELETE CASCADE
 );
+-- rollback DROP TABLE loantransaction

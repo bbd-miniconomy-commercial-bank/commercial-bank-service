@@ -2,6 +2,7 @@
 
 -- changeset devwasabi2:create-loan-type-enum
 CREATE TYPE loan_type_enum AS ENUM ('short-term', 'long-term');
+-- rollback DROP TYPE loan_type_enum
 
 -- changeset devwasabi2:create-loan-table
 CREATE TABLE loan (
@@ -11,3 +12,4 @@ CREATE TABLE loan (
     loan_type loan_type_enum NOT NULL,
     FOREIGN KEY (account_id) REFERENCES account(id) ON DELETE CASCADE
 );
+-- rollback DROP TABLE loan

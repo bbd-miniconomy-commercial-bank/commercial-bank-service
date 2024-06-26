@@ -12,3 +12,4 @@ CREATE TABLE debitorder (
     FOREIGN KEY (credit_acc_id) REFERENCES account(id) ON DELETE CASCADE,
     FOREIGN KEY (debit_acc_id) REFERENCES account(id) ON DELETE CASCADE
 );
+-- rollback DROP TABLE debitorder

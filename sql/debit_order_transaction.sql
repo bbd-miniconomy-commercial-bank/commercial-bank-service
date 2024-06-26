@@ -8,3 +8,4 @@ CREATE TABLE debitordertransactions (
     FOREIGN KEY (db_order_id) REFERENCES debitorder(id) ON DELETE CASCADE,
     FOREIGN KEY (transaction_id) REFERENCES transaction(id) ON DELETE CASCADE
 );
+-- rollback DROP TABLE debitordertransactions

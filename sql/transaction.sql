@@ -2,6 +2,7 @@
 
 -- changeset devwasabi2:create-transaction-status-enum
 CREATE TYPE transaction_status_enum AS ENUM ('pending', 'completed');
+-- rollback DROP TYPE transaction_status_enum
 
 -- changeset devwasabi2:create-transaction-table
 CREATE TABLE transaction (
@@ -16,3 +17,4 @@ CREATE TABLE transaction (
     FOREIGN KEY (credit_acc_id) REFERENCES account(id) ON DELETE CASCADE,
     FOREIGN KEY (debit_acc_id) REFERENCES account(id) ON DELETE CASCADE
 );
+-- rollback DROP TABLE transaction

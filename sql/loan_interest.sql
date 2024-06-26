@@ -9,3 +9,4 @@ CREATE TABLE loaninterest (
     datecreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (loan_id) REFERENCES loan(id) ON DELETE CASCADE
 );
+-- rollback DROP TABLE loaninterest

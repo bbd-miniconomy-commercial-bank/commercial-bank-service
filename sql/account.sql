@@ -5,3 +5,4 @@ CREATE TABLE account (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     account_name VARCHAR(50) NOT NULL
 );
+-- rollback DROP TABLE account
