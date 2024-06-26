@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler
 {
   @ExceptionHandler(DataAccessException.class)
-  public ResponseEntity<String> handleDatabaseExceptions(DataAccessException ex)
+  public ResponseEntity<?> handleDatabaseExceptions(DataAccessException ex)
   {
-    return new ResponseEntity<>("Invalid input data", HttpStatus.BAD_REQUEST);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input data");
   }
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<String> handleGeneralExceptions(Exception ex)
+  public ResponseEntity<?> handleGeneralExceptions(Exception ex)
   {
     return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
   }

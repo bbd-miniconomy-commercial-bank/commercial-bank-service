@@ -65,19 +65,24 @@ class TransactionController {
     description = "Allows services to view their transactions by id"
   )
   @GetMapping(value = "/{id}", produces = "application/json")
-  public ResponseEntity<?> getTransactionsById(@PathVariable Long id)
-  {
-    try
-    {
-      Optional<Transaction> optionalTransaction = this.transactionService.retrieveTransactionsById(id);
+  public ResponseEntity<?> getTransactionsById(@PathVariable Long id) {
+    Optional<Transaction> optionalTransaction = this.transactionService.retrieveTransactionsById(id);
+    if (optionalTransaction.isPresent()) {
       Transaction transaction = optionalTransaction.get();
-      TransactionResponse response = new TransactionResponse(transaction.getdebitAccId(), transaction.getcreditAccId(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
-      return new ResponseEntity<>(response, HttpStatus.OK);
+      
+      TransactionResponse response = new TransactionResponse(
+        transaction.getdebitAccId(), 
+        transaction.getcreditAccId(), 
+        transaction.getTransactionAmount(), 
+        transaction.getTransactionStatus(), 
+        transaction.getDebitRef(), 
+        transaction.getCreditRef(), 
+        transaction.getTransactionDate()
+      );
+
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
-    catch(NoSuchElementException error)
-    {
-      return new ResponseEntity<>("Transaction does not exist", HttpStatus.NOT_FOUND);
-    }
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Transaction does not exist");
   }
 
   @Operation(
