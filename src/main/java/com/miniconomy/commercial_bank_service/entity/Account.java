@@ -6,16 +6,16 @@ import jakarta.persistence.Id;
 @Entity
 public class Account {
   @Id
-  private Long id;
+  private Long accountId;
   private String accountName;
 
   // Getters and Setters
-  public Long getId() {
-    return id;
+  public Long getAccountId() {
+    return accountId;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setAccountId(Long accountId) {
+    this.accountId = accountId;
   }
 
   public String getAccountName() {

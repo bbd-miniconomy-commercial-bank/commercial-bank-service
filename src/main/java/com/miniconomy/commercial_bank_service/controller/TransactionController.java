@@ -41,15 +41,15 @@ class TransactionController {
     description = "Allows services to view their transactions"
   )
   @GetMapping(value = "", produces = "application/json")
-  public ResponseEntity<?> getTransactions(@RequestParam Long creditAccId) //TODO: Remove param and use token to get id
+  public ResponseEntity<?> getTransactions(@RequestParam Long creditAccountId) //TODO: Remove param and use token to get id
   {
-    List<Transaction> transactions = this.transactionService.retrieveTransactions(creditAccId);
+    List<Transaction> transactions = this.transactionService.retrieveTransactions(creditAccountId);
     if(transactions.size() > 0)
     {
       List<TransactionResponse> responseArray = new ArrayList<>();
       for(Transaction transaction: transactions)
       {
-        TransactionResponse response = new TransactionResponse(transaction.getdebitAccId(), transaction.getcreditAccId(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
+        TransactionResponse response = new TransactionResponse(transaction.getDebitAccountId(), transaction.getCreditAccountId(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
         responseArray.add(response);
       }
       return new ResponseEntity<>(responseArray, HttpStatus.OK);
@@ -71,7 +71,7 @@ class TransactionController {
     {
       Optional<Transaction> optionalTransaction = this.transactionService.retrieveTransactionsById(id);
       Transaction transaction = optionalTransaction.get();
-      TransactionResponse response = new TransactionResponse(transaction.getdebitAccId(), transaction.getcreditAccId(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
+      TransactionResponse response = new TransactionResponse(transaction.getDebitAccountId(), transaction.getCreditAccountId(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
       return new ResponseEntity<>(response, HttpStatus.OK);
     }
     catch(NoSuchElementException error)

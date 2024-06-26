@@ -10,9 +10,9 @@ public class Transaction
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-  private Long creditAccId;
-  private Long debitAccId;
+  private Long transactionId;
+  private Long creditAccountId;
+  private Long debitAccountId;
   private String transactionDate;
   private Double transactionAmount;
   private String creditRef;
@@ -22,17 +22,17 @@ public class Transaction
   // Getters
   public Long getTransactionId()
   {
-    return id;
+    return transactionId;
   } 
 
-  public Long getcreditAccId()
+  public Long getCreditAccountId()
   {
-    return creditAccId;
+    return creditAccountId;
   }
 
-  public Long getdebitAccId()
+  public Long getDebitAccountId()
   {
-    return debitAccId;
+    return debitAccountId;
   }
 
   public String getTransactionDate() 
@@ -61,19 +61,19 @@ public class Transaction
   }
 
   // Setters
-  public void setTransactionId(Long id) 
+  public void setTransactionId(Long transactionId) 
   {
-    this.id = id;
+    this.transactionId = transactionId;
   }
 
-  public void setCreditAccId(Long creditAccId) 
+  public void setCreditAccountId(Long creditAccountId) 
   {
-    this.creditAccId = creditAccId;
+    this.creditAccountId = creditAccountId;
   }
 
-  public void setDebitAccId(Long debitAccId) 
+  public void setDebitAccountId(Long debitAccountId) 
   {
-    this.debitAccId = debitAccId;
+    this.debitAccountId = debitAccountId;
   }
 
   public void setTransactionDate(String transactionDate) 

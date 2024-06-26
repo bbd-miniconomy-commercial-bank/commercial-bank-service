@@ -20,9 +20,9 @@ public class TransactionService
     this.transactionRepository = transactionRepository;
   }
   
-  public List<Transaction> retrieveTransactions(Long creditAccId)
+  public List<Transaction> retrieveTransactions(Long creditAccountId)
   {
-    return transactionRepository.findByAccountId(creditAccId);
+    return transactionRepository.findByAccountId(creditAccountId);
   } 
 
   public Optional<Transaction> retrieveTransactionsById(Long id)
@@ -36,13 +36,13 @@ public class TransactionService
     for (TransactionRequest request : transactionRequests)
     {
       Transaction transaction = new Transaction();
-      transaction.setDebitAccId(request.getDebitAccId());
+      transaction.setDebitAccountId(request.getDebitAccountId());
       transaction.setTransactionAmount(request.getTransactionAmount());
       transaction.setCreditRef(request.getCreditRef());
       transaction.setDebitRef(request.getDebitRef());
 
       // TODO: Replace with creditors id using passed in token
-      transaction.setCreditAccId((long) 1);
+      transaction.setCreditAccountId((long) 1);
       transaction.setTransactionStatus("pending");
       transaction.setTransactionDate(java.time.LocalDate.now().toString());
       

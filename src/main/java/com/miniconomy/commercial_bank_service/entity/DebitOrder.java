@@ -10,7 +10,7 @@ public class DebitOrder
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private Long debitOrderId;
   private Long creditAccountId;
   private Long debitAccountId;
   private String debitOrderCreatedDate;
@@ -18,14 +18,14 @@ public class DebitOrder
   private String debitOrderReceiverRef;
   private String debitOrderSenderRef;
 
-  public Long getId()
+  public Long getDebitOrderId()
   {
-    return id;
+    return debitOrderId;
   }
 
-  public void setId(Long id)
+  public void setDebitOrderId(Long debitOrderId)
   {
-    this.id = id;
+    this.debitOrderId = debitOrderId;
   }
 
   public Long getCreditAccountId()
