@@ -4,7 +4,7 @@
 CREATE VIEW debit_account_total AS
 SELECT 
     debit_account_id,
-    SUM(transaction_amount)::NUMERIC(26, 3) AS total_amount
+    SUM(transaction_amount)::BIGINT AS total_amount
 FROM 
     transaction
 GROUP BY 
@@ -15,7 +15,7 @@ GROUP BY
 CREATE VIEW credit_account_total AS 
 SELECT 
     credit_account_id,
-    SUM(transaction_amount)::NUMERIC(26, 3) AS total_amount
+    SUM(transaction_amount)::BIGINT AS total_amount
 FROM 
     transaction
 GROUP BY 

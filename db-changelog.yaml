@@ -17,3 +17,5 @@ databaseChangeLog:
       file: sql/debit_order_transaction.sql
    - include:
       file: sql/references.sql
+   - include:
+      file: sql/views.sql
