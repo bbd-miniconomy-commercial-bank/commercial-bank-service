@@ -2,6 +2,8 @@ databaseChangeLog:
    - include:
       file: sql/account.sql
    - include:
+      file: sql/account_delegation.sql
+   - include:
       file: sql/debit_order.sql
    - include:
       file: sql/transaction.sql

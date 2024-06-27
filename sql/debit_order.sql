@@ -16,3 +16,9 @@ CREATE TABLE debit_order (
 ALTER TABLE debit_order
 ADD debit_order_disabled BOOLEAN NOT NULL;
 -- rollback ALTER TABLE debit_order DROP COLUMN debit_order_disabled
+
+-- changeset devwasabi2:alter-debit-order-amount
+ALTER TABLE debit_order
+ALTER COLUMN debit_order_amount TYPE BIGINT USING debit_order_amount::BIGINT,
+ALTER COLUMN debit_order_amount SET NOT NULL;
+-- rollback ALTER TABLE debit_order DROP COLUMN debit_order_amount

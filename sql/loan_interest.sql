@@ -10,3 +10,8 @@ CREATE TABLE loan_interest (
 );
 -- rollback DROP TABLE loan_interest
 
+-- changeset devwasabi2:alter-loan-interest-amount
+ALTER TABLE loan_interest
+ALTER COLUMN loan_interest_amount TYPE BIGINT USING loan_interest_amount::BIGINT,
+ALTER COLUMN loan_interest_amount SET NOT NULL;
+-- rollback ALTER TABLE loan_interest DROP COLUMN loan_interest_amount

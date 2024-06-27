@@ -12,3 +12,9 @@ CREATE TABLE loan (
     loan_type loan_type_enum NOT NULL
 );
 -- rollback DROP TABLE loan
+
+-- changeset devwasabi2:alter-loan-amount
+ALTER TABLE loan
+ALTER COLUMN loan_amount TYPE BIGINT USING loan_amount::BIGINT,
+ALTER COLUMN loan_amount SET NOT NULL;
+-- rollback ALTER TABLE loan DROP COLUMN loan_amount

@@ -16,3 +16,9 @@ CREATE TABLE transaction (
     transaction_status transaction_status_enum NOT NULL
 );
 -- rollback DROP TABLE transaction
+
+-- changeset devwasabi2:alter-transaction_amount
+ALTER TABLE transaction
+ALTER COLUMN transaction_amount TYPE BIGINT USING transaction_amount::BIGINT,
+ALTER COLUMN transaction_amount SET NOT NULL;
+-- rollback ALTER TABLE transaction DROP COLUMN transaction_amount
