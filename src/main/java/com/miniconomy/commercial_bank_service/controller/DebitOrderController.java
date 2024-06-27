@@ -8,9 +8,9 @@ import com.miniconomy.commercial_bank_service.entity.*;
 import com.miniconomy.commercial_bank_service.response.DebitOrderResponse;
 import com.miniconomy.commercial_bank_service.service.DebitOrderService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,6 +32,16 @@ class DebitOrderController {
   public DebitOrderController(DebitOrderService debitOrderService) {
     this.debitOrderService = debitOrderService;
   }
+
+  @Operation(
+    summary = "Create debitOrders",
+    description = "Allows services to create debit orders"
+  )
+  @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
+  public ResponseEntity<?> postDebitOrders(@RequestBody List<DebitOrderRequest> dbOrders) {
+    List<DebitOrderResponse> dbos = this.debitOrderService.saveDebitOrders(dbOrders);
+    return ResponseEntity.status(HttpStatus.OK).body(dbos);
+  }
   
   @Operation(
     summary = "Get services debit orders",
@@ -51,12 +61,63 @@ class DebitOrderController {
   }
 
   @Operation(
-    summary = "Create debitOrders",
-    description = "Allows services to create debit orders"
+    summary = "Disable a debit order",
+    description = "Disables a specific debit order by its ID"
   )
-  @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<?> postTransactions(@RequestBody List<DebitOrderRequest> dbOrders) {
-    List<DebitOrderResponse> dbos = this.debitOrderService.saveDebitOrders(dbOrders);
-    return ResponseEntity.status(HttpStatus.OK).body(dbos);
+  @DeleteMapping(value = "/{id}", produces = "application/json")
+  public ResponseEntity<?> disableDebitOrder(@PathVariable UUID id) {
+    boolean isDisabled = debitOrderService.disableDebitOrder(id);
+    if (isDisabled) {
+      return new ResponseEntity<>("Disabled debit order", HttpStatus.OK);
+    } 
+    return new ResponseEntity<>("Debit order not found", HttpStatus.NOT_FOUND);
+  }
+
+  @Operation(
+    summary = "Get a specific debit order",
+    description = "Retrieves the information for a specific debit order by its ID"
+  )
+  @GetMapping(value = "/{id}", produces = "application/json")
+  public ResponseEntity<?> getDebitOrderById(@PathVariable UUID id) {
+    Optional<DebitOrder> debitOrderOptional = debitOrderService.getDebitOrderById(id);
+    if (debitOrderOptional.isPresent()) {
+      DebitOrder debitOrder = debitOrderOptional.get();
+      DebitOrderResponse response = new DebitOrderResponse(
+        debitOrder.getDebitOrderId(),
+        debitOrder.getCreditAccount().getAccountName(),
+        debitOrder.getDebitAccount().getAccountName(),
+        debitOrder.getDebitOrderCreatedDate(),
+        debitOrder.getDebitOrderAmount(),
+        debitOrder.getDebitOrderReceiverRef(),
+        debitOrder.getDebitOrderSenderRef(),
+        debitOrder.isDebitOrderDisabled()
+      );
+      return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    return new ResponseEntity<>("Debit order not found", HttpStatus.NOT_FOUND);
+  }
+
+  @Operation(
+    summary = "Update a specific debit order",
+    description = "Updates the information for a specific debit order by its ID"
+  )
+  @PutMapping(value = "/{id}", produces = "application/json")
+  public ResponseEntity<?> updateDebitOrder(@RequestBody DebitOrderRequest body) {
+    Optional<DebitOrder> updateDbOrder = debitOrderService.updateDebitOrder(body);
+    if (updateDbOrder.isPresent()) {
+      DebitOrder debitOrder = updateDbOrder.get();
+      DebitOrderResponse response = new DebitOrderResponse(
+        debitOrder.getDebitOrderId(),
+        debitOrder.getCreditAccount().getAccountName(),
+        debitOrder.getDebitAccount().getAccountName(),
+        debitOrder.getDebitOrderCreatedDate(),
+        debitOrder.getDebitOrderAmount(),
+        debitOrder.getDebitOrderReceiverRef(),
+        debitOrder.getDebitOrderSenderRef(),
+        debitOrder.isDebitOrderDisabled()
+      );
+      return new ResponseEntity<>(response, HttpStatus.OK);
+    } 
+    return new ResponseEntity<>("Debit order not found", HttpStatus.NOT_FOUND);
   }
 }

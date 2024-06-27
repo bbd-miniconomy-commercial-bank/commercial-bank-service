@@ -40,5 +40,8 @@ public class DebitOrder
 
   @Column(name = "debit_order_sender_ref")
   private String debitOrderSenderRef;
+  
+  @Column(name = "debit_order_disabled")
+  private boolean debitOrderDisabled;
 
 }
