@@ -64,25 +64,54 @@ public class TransactionService
     //return transactionResponse;
   } 
 
-  public List<Transaction> saveTransactions(List<TransactionRequest> transactionRequests)
+  public List<TransactionResponse> saveTransactions(List<TransactionRequest> tRequests)
   {
+    //tRequests.forEach(t -> System.out.println(t.getDebitRef()));
     List<Transaction> transactions = new ArrayList<>();
-    for (TransactionRequest request : transactionRequests)
+    List<TransactionResponse> tResponses = new ArrayList<>();
+    List<TransactionResponse> invalidResponses = new ArrayList<>();
+
+    for (TransactionRequest request : tRequests)
     {
       Transaction transaction = new Transaction();
+      TransactionResponse res = new TransactionResponse();
+
       Optional<Account> dbAcc = accountRepository.findByAccountName(request.getDebitAccountName());
       Optional<Account> crAcc = accountRepository.findByAccountName("commercial-bank"); // for now it's commercial-bank, but their api token should have an account-name
+      
       if (dbAcc.isPresent() && crAcc.isPresent()) {
         transaction.setDebitAccount(dbAcc.get());
+        res.setDebitorAccName(dbAcc.get().getAccountName());
+
         transaction.setCreditAccount(crAcc.get());
+        res.setCreditorAccName(crAcc.get().getAccountName());
+
         transaction.setTransactionAmount(request.getTransactionAmount());
+        res.setAmount(request.getTransactionAmount());
+
         transaction.setCreditRef(request.getCreditRef());
+        res.setCreditRef(request.getCreditRef());
+
         transaction.setDebitRef(request.getDebitRef());
+        res.setDebitRef(request.getDebitRef());
+
         transaction.setTransactionStatus(TransactionStatusType.pending);
+        res.setStatus(TransactionStatusType.pending);
+
         transaction.setTransactionDate(java.time.LocalDate.now().toString());
+        res.setDate(java.time.LocalDate.now().toString());
+
         transactions.add(transaction);
+        tResponses.add(res);
+      }
+      else {
+        break;
       }
     }
-    return transactionRepository.saveAll(transactions);
+    if (transactions.size()>0) {
+      transactionRepository.saveAll(transactions);
+    }
+
+    return tResponses;
   }
 }

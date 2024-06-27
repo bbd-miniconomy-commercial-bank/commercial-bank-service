@@ -37,7 +37,7 @@ public class Transaction
   @Column(name = "credit_ref")
   private String creditRef;
 
-  @Column(name = "dedit_ref")
+  @Column(name = "debit_ref")
   private String debitRef;
 
   @Column(name = "transaction_status")

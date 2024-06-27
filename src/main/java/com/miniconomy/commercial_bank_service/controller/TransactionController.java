@@ -8,6 +8,7 @@ import com.miniconomy.commercial_bank_service.response.TransactionResponse;
 import com.miniconomy.commercial_bank_service.service.TransactionService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,7 +40,7 @@ class TransactionController {
   @GetMapping(value = "", produces = "application/json")
   public ResponseEntity<?> getTransactions(@PageableDefault(size = 10) Pageable pageable)
   {
-    UUID accountId = UUID.fromString("3d807dc5-5a12-455c-9b66-6876906e70d6"); //  we get the account name or account id from the access token
+    UUID accountId = UUID.fromString("988f6a7d-a6cb-432a-97f9-45061b143658"); //  we get the account name or account id from the access token
     List<TransactionResponse> transactions = this.transactionService.retrieveTransactions(accountId, pageable);
     if(transactions.size() > 0)
     {
@@ -54,7 +55,6 @@ class TransactionController {
   )
   @GetMapping(value = "/{id}", produces = "application/json")
   public ResponseEntity<?> getTransactionsById(@PathVariable UUID id) {
-
     Optional<Transaction> t = this.transactionService.retrieveTransactionsById(id);
     if (t.isPresent()) {
       Transaction transaction = t.get();
@@ -70,7 +70,17 @@ class TransactionController {
   )
   @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
   public ResponseEntity<?> postTransactions(@RequestBody List<TransactionRequest> transactions) {
-    List<Transaction> savedTransactions = this.transactionService.saveTransactions(transactions);
+    List<TransactionResponse> savedTransactions = this.transactionService.saveTransactions(transactions);
+    if (savedTransactions.isEmpty()) {
+      String message = "Your transactions have an invalid reference/account_name";
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createEntity("message", createEntity(message, savedTransactions)));
+    }
     return ResponseEntity.status(HttpStatus.OK).body(savedTransactions);
+  }
+
+  public HashMap<String, Object> createEntity(String x, Object y) {
+    HashMap<String, Object> map = new HashMap<String, Object>();
+    map.put(x, y);
+    return map;
   }
 }
