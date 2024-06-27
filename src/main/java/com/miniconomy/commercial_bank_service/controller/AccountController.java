@@ -14,12 +14,14 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Account", description = "Queries related to service's account")
 @RestController
+@RequestMapping("/account")
 class AccountController {
     
   private final AccountService accountService;
@@ -33,7 +35,7 @@ class AccountController {
     summary = "Get services account balance",
     description = "Allows services to view their bank balances"
   )
-  @GetMapping(value = "/account/balance", produces = "application/json")
+  @GetMapping(value = "/balance", produces = "application/json")
   public ResponseEntity<?> getAccountBalance(@RequestParam String accountName)
   {
     Optional<Account> account = this.accountService.retrieveAccountBalance(accountName);

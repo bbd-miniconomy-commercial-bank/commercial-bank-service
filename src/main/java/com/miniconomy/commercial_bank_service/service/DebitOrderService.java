@@ -28,23 +28,26 @@ public class DebitOrderService
     this.accountRepository = accRepo;
   }
   
-  public List<DebitOrder> retrieveDebitOrders(UUID creditAccountId, Pageable pageable)
+  public List<DebitOrderResponse> retrieveDebitOrders(UUID creditAccountId, Pageable pageable)
   {
     Optional<Account> acc = accountRepository.findById(creditAccountId);
     if (acc.isPresent()) {
-      List<DebitOrder> debitOrders = debitOrderRepository.findByCreditAccountId(creditAccountId, pageable);
-      return debitOrders;
-      //return debitOrders.stream().map(debitOrder -> {
-      //  Optional<Account> creditAccount = accountRepository.findById(debitOrder.getCreditAccount().getId());
-      //  Optional<Account> debitAccount = accountRepository.findById(debitOrder.getDebitAccount().getId());
-      //  DebitOrderResponse debitOrderResponse = new DebitOrderResponse(creditAccount.get().getAccountName(), debitAccount.get().getAccountName(), debitOrder.getDebitOrderCreatedDate(), debitOrder.getDebitOrderAmount() , debitOrder.getDebitOrderReceiverRef(), debitOrder.getDebitOrderSenderRef());
-      //  return debitOrderResponse;
-      //}).collect(Collectors.toList());
+      List<DebitOrder> cOrders = debitOrderRepository.findByCreditAccount(acc.get(), pageable);
+      //List<DebitOrder> dOrders = debitOrderRepository.findByCreditAccount(acc.get(), pageable);
+      //cOrders.addAll(dOrders);
+      List<DebitOrderResponse> dList = new ArrayList<>();
+      cOrders.stream().forEach(debitOrder -> {
+        Optional<Account> creditAccount = accountRepository.findById(debitOrder.getCreditAccount().getId());
+        Optional<Account> debitAccount = accountRepository.findById(debitOrder.getDebitAccount().getId());
+        DebitOrderResponse debitOrderResponse = new DebitOrderResponse(creditAccount.get().getAccountName(), debitAccount.get().getAccountName(), debitOrder.getDebitOrderCreatedDate(), debitOrder.getDebitOrderAmount() , debitOrder.getDebitOrderReceiverRef(), debitOrder.getDebitOrderSenderRef());
+        dList.add(debitOrderResponse);
+      });
+      return dList;
     }
     return List.of(); // otherwise return an empty list
   }
 
-  public List<DebitOrder> saveDebitOrders(List<DebitOrderRequest> dbOrders) {
+  public List<DebitOrderResponse> saveDebitOrders(List<DebitOrderRequest> dbOrders) {
     List<DebitOrder> debitOrders = new ArrayList<>();
     List<DebitOrderResponse> response = new ArrayList<>();
 
@@ -58,15 +61,29 @@ public class DebitOrderService
       
       if (dbAcc.isPresent() && crAcc.isPresent()) {
         //dbOrder.getCreditAccount().
-        dbo.setCreditAccount(crAcc.get());
-        dbo.setDebitAccount(dbAcc.get());
-        dbo.setDebitOrderAmount(dbOrder.getDebitOrderAmount());
-        dbo.setDebitOrderCreatedDate(dbOrder.getDebitOrderCreatedDate());
-        dbo.setDebitOrderReceiverRef(dbOrder.getDebitOrderReceiverRef());
-        dbo.setDebitOrderSenderRef(dbOrder.getDebitOrderSenderRef());
+        dbo.setCreditAccount(crAcc.get()); 
+        res.setCreditAccountName(crAcc.get().getAccountName());
+
+        dbo.setDebitAccount(dbAcc.get()); 
+        res.setDebitAccountName(dbAcc.get().getAccountName());
+
+        dbo.setDebitOrderAmount(dbOrder.getDebitOrderAmount()); 
+        res.setDebitOrderAmount(dbOrder.getDebitOrderAmount());
+
+        dbo.setDebitOrderCreatedDate(dbOrder.getDebitOrderCreatedDate()); 
+        res.setDebitOrderCreatedDate(dbOrder.getDebitOrderCreatedDate());
+
+        dbo.setDebitOrderReceiverRef(dbOrder.getDebitOrderReceiverRef()); 
+        res.setDebitOrderReceiverRef(dbOrder.getDebitOrderReceiverRef());
+
+        dbo.setDebitOrderSenderRef(dbOrder.getDebitOrderSenderRef()); 
+        res.setDebitOrderSenderRef(dbOrder.getDebitOrderSenderRef());
+
         debitOrders.add(dbo);
+        response.add(res);
       }
     }
-    return debitOrderRepository.saveAll(debitOrders);
+    debitOrderRepository.saveAll(debitOrders);
+    return response;
   }
 }

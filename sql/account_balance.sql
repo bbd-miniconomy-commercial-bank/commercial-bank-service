@@ -4,20 +4,20 @@
 CREATE VIEW debit_account_total AS
 SELECT 
     debit_account_id,
-    SUM(transaction_amount) AS total_amount
+    SUM(transaction_amount)::NUMERIC(26, 3) AS total_amount
 FROM 
     transaction
 GROUP BY 
     debit_account_id;
--- rollback DROP VIEW debit_account_total;
+-- rollback DROP VIEW IF EXISTS debit_account_total;
 
 -- changeset devwasabi2:create-credit-account-transactions-total-view
-CREATE VIEW credit_account_total AS
+CREATE VIEW credit_account_total AS 
 SELECT 
     credit_account_id,
-    SUM(transaction_amount) AS total_amount
+    SUM(transaction_amount)::NUMERIC(26, 3) AS total_amount
 FROM 
     transaction
 GROUP BY 
     credit_account_id;
--- rollback DROP VIEW credit_account_total;
+-- rollback DROP VIEW IF EXISTS credit_account_total;

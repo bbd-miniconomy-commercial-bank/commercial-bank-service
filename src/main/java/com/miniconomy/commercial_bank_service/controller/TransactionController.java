@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Transactions", description = "Queries related to service's transactions")
 @RestController
+@RequestMapping("/transactions")
 class TransactionController {
     
   private final TransactionService transactionService;
@@ -35,34 +36,15 @@ class TransactionController {
     summary = "Get services transactions",
     description = "Allows services to view their transactions"
   )
-  @GetMapping(value = "/transactions", produces = "application/json")
-  public ResponseEntity<?> getTransactions(@RequestParam UUID creditAccId, @PageableDefault(size = 10) Pageable pageable) {
-    List<Transaction> transactions = this.transactionService.retrieveTransactions(creditAccId, pageable);
-    if(transactions.size() > 0) {
-      List<TransactionResponse> responseArray = new ArrayList<>();
-      for(Transaction transaction: transactions) {
-        TransactionResponse response = new TransactionResponse(
-          transaction.getDebitAccount().getAccountName(), 
-          transaction.getCreditAccount().getAccountName(), 
-          transaction.getTransactionAmount(), 
-          transaction.getTransactionStatus(), 
-          transaction.getDebitRef(), 
-          transaction.getCreditRef(), 
-          transaction.getTransactionDate()
-        );
-        responseArray.add(response);
-      }
-      return ResponseEntity.status(HttpStatus.OK).body(responseArray);
-    }
-  /*@GetMapping(value = "", produces = "application/json")
+  @GetMapping(value = "", produces = "application/json")
   public ResponseEntity<?> getTransactions(@PageableDefault(size = 10) Pageable pageable)
   {
-    UUID accountId = UUID.fromString("3d807dc5-5a12-455c-9b66-6876906e70d6");
+    UUID accountId = UUID.fromString("3d807dc5-5a12-455c-9b66-6876906e70d6"); //  we get the account name or account id from the access token
     List<TransactionResponse> transactions = this.transactionService.retrieveTransactions(accountId, pageable);
     if(transactions.size() > 0)
     {
       return new ResponseEntity<>(transactions, HttpStatus.OK);
-    }*/
+    }
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No transactions were found");
   }
 
@@ -86,7 +68,7 @@ class TransactionController {
     summary = "Create transactions",
     description = "Allows services to create transactions"
   )
-  @PostMapping(value = "/transactions/create", consumes = "application/json", produces = "application/json")
+  @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
   public ResponseEntity<?> postTransactions(@RequestBody List<TransactionRequest> transactions) {
     List<Transaction> savedTransactions = this.transactionService.saveTransactions(transactions);
     return ResponseEntity.status(HttpStatus.OK).body(savedTransactions);
