@@ -11,8 +11,8 @@ CREATE TABLE transaction (
     debit_account_id UUID NOT NULL,
     transaction_date CHAR(8) NOT NULL,
     transaction_amount NUMERIC(13, 3) NOT NULL,
-    credit_ref VARCHAR(100) NOT NULL,
-    debit_ref VARCHAR(100) NOT NULL,
+    credit_ref VARCHAR(50) NOT NULL,
+    debit_ref VARCHAR(50) NOT NULL,
     transaction_status transaction_status_enum NOT NULL
 );
 -- rollback DROP TABLE transaction
