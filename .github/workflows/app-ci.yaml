@@ -15,6 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     environment: Testing
 
+    services:
+      postgres:
+        image: postgres:16.1
+        env:
+          POSTGRES_USER: ${{ vars.TEST_DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ vars.TEST_DB_PASSWORD }}
+          POSTGRES_DB: ${{ vars.TEST_DB_NAME }}
+          POSTGRES_PORT: 5432
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -35,7 +46,7 @@ jobs:
 
       - name: Retrieve Service config from AWS Parameter Store
         run: |
-          aws ssm get-parameters-by-path --path "/commercial-bank-service/config" --recursive --with-decryption > parameters.json
+          aws ssm get-parameters-by-path --path "/commercial-bank-service/ci/config" --recursive --with-decryption > parameters.json
   
       - name: Create .env file
         run: |

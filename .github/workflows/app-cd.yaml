@@ -35,7 +35,7 @@ jobs:
 
       - name: Build service
         run: |
-          ./gradlew build
+          ./gradlew build -x test 
 
       - name: Create deployment package
         working-directory: ./build/libs
