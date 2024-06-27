@@ -46,7 +46,7 @@ jobs:
 
       - name: Retrieve Service config from AWS Parameter Store
         run: |
-          aws ssm get-parameters-by-path --path "/commercial-bank-service/ci/config" --recursive --with-decryption > parameters.json
+          aws ssm get-parameters-by-path --path "/commercial-bank-service/ci/config" --recursive --with-decryption
   
       - name: Create .env file
         run: |
