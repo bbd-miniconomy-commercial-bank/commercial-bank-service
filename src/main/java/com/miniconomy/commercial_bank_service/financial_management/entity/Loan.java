@@ -35,8 +35,7 @@ public class Loan {
     private Long loanAmount;
 
     @Column(name="loan_type")
-    @Enumerated(EnumType.STRING)
-    private LoanType loanType;
+    private String loanType;
 
     @ManyToOne(cascade = CascadeType.ALL) 
     @JoinColumn(name = "account_id")
@@ -47,40 +46,6 @@ public class Loan {
 
     @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL)
     private Set<LoanTransaction> loanTransactions;
-
-    // Getters and Setters
-
-    public UUID getLoanId() {
-        return loanId;
-    }
-
-    public void setLoanId(UUID loanId) {
-        this.loanId = loanId;
-    }
-
-    public Long getLoanAmount() {
-        return loanAmount;
-    }
-
-    public void setLoanAmount(Long loanAmount) {
-        this.loanAmount = loanAmount;
-    }
-
-    public LoanType getLoanType() {
-        return loanType;
-    }
-
-    public void setLoanType(LoanType loanType) {
-        this.loanType = loanType;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
 
     public Set<LoanInterest> getLoanInterests() {
         return loanInterests;
