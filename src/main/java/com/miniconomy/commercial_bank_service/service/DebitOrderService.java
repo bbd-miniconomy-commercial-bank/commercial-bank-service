@@ -41,19 +41,18 @@ public class DebitOrderService
     return false;
   }
 
-  public Optional<DebitOrder> updateDebitOrder(DebitOrderRequest dbOrder) {
-    Optional<DebitOrder> dbo = debitOrderRepository.findById(dbOrder.getDebitOrderId());
+  public Optional<DebitOrder> updateDebitOrder(UUID id, DebitOrderRequest dbOrder) {
+    Optional<DebitOrder> dbo = debitOrderRepository.findById(id);
     Optional<Account> credAcc = accountRepository.findByAccountName(dbOrder.getCreditAccountName());
-    Optional<Account> debAcc = accountRepository.findByAccountName(dbOrder.getCreditAccountName());
+    Optional<Account> debAcc = accountRepository.findByAccountName(dbOrder.getDebitAccountName());
 
     if (dbo.isPresent() && credAcc.isPresent() && debAcc.isPresent()) {
       DebitOrder d = dbo.get();
 
       d.setCreditAccount(credAcc.get());
-      d.setDebitAccount(credAcc.get());
+      d.setDebitAccount(debAcc.get());
       d.setDebitOrderAmount(dbOrder.getDebitOrderAmount());
-      d.setDebitOrderCreatedDate(dbOrder.getDebitOrderCreatedDate());
-      d.setDebitOrderDisabled(dbOrder.isDebitOrderDisabled());
+      d.setDebitOrderCreatedDate(java.time.LocalDate.now().toString().replace("-", ""));
       d.setDebitOrderReceiverRef(dbOrder.getDebitOrderReceiverRef());
       d.setDebitOrderSenderRef(dbOrder.getDebitOrderSenderRef());
       debitOrderRepository.save(d);
@@ -95,7 +94,7 @@ public class DebitOrderService
   }
 
   public List<DebitOrderResponse> saveDebitOrders(List<DebitOrderRequest> dbOrders) {
-    List<DebitOrder> debitOrders = new ArrayList<>();
+    //List<DebitOrder> debitOrders = new ArrayList<>();
     List<DebitOrderResponse> response = new ArrayList<>();
 
     for (DebitOrderRequest dbOrder : dbOrders) {
@@ -104,7 +103,7 @@ public class DebitOrderService
       DebitOrderResponse res = new DebitOrderResponse();
       
       Optional<Account> dbAcc = accountRepository.findByAccountName(dbOrder.getDebitAccountName());
-      Optional<Account> crAcc = accountRepository.findByAccountName("commercial-bank"); // for now it's commercial-bank, but their api token should have an account-name
+      Optional<Account> crAcc = accountRepository.findByAccountName(dbOrder.getCreditAccountName()); 
       
       if (dbAcc.isPresent() && crAcc.isPresent()) {
         //dbOrder.getCreditAccount().
@@ -117,8 +116,8 @@ public class DebitOrderService
         dbo.setDebitOrderAmount(dbOrder.getDebitOrderAmount()); 
         res.setDebitOrderAmount(dbOrder.getDebitOrderAmount());
 
-        dbo.setDebitOrderCreatedDate(dbOrder.getDebitOrderCreatedDate()); 
-        res.setDebitOrderCreatedDate(dbOrder.getDebitOrderCreatedDate());
+        dbo.setDebitOrderCreatedDate(java.time.LocalDate.now().toString().replace("-", "")); 
+        res.setDebitOrderCreatedDate(java.time.LocalDate.now().toString().replace("-", ""));
 
         dbo.setDebitOrderReceiverRef(dbOrder.getDebitOrderReceiverRef()); 
         res.setDebitOrderReceiverRef(dbOrder.getDebitOrderReceiverRef());
@@ -129,11 +128,12 @@ public class DebitOrderService
         dbo.setDebitOrderDisabled(false);
         res.setDebitOrderDisabled(false);
 
-        debitOrders.add(dbo);
+        //debitOrders.add(dbo);
+        DebitOrder savedDbo = debitOrderRepository.save(dbo);
+        res.setDebitOrderId(savedDbo.getDebitOrderId());
         response.add(res);
       }
     }
-    debitOrderRepository.saveAll(debitOrders);
     return response;
   }
 }

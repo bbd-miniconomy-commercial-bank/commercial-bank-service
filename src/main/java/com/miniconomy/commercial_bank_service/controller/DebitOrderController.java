@@ -102,8 +102,8 @@ class DebitOrderController {
     description = "Updates the information for a specific debit order by its ID"
   )
   @PutMapping(value = "/{id}", produces = "application/json")
-  public ResponseEntity<?> updateDebitOrder(@RequestBody DebitOrderRequest body) {
-    Optional<DebitOrder> updateDbOrder = debitOrderService.updateDebitOrder(body);
+  public ResponseEntity<?> updateDebitOrder(@PathVariable UUID id, @RequestBody DebitOrderRequest body) {
+    Optional<DebitOrder> updateDbOrder = debitOrderService.updateDebitOrder(id, body);
     if (updateDbOrder.isPresent()) {
       DebitOrder debitOrder = updateDbOrder.get();
       DebitOrderResponse response = new DebitOrderResponse(
