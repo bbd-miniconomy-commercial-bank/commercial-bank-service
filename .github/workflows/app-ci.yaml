@@ -46,11 +46,11 @@ jobs:
 
       - name: Retrieve Service config from AWS Parameter Store
         run: |
-          aws ssm get-parameters-by-path --path "/commercial-bank-service/ci/config" --recursive --with-decryption
+          aws ssm get-parameters-by-path --path "/commercial-bank-service/ci/" --recursive --with-decryption > parameters.json
   
       - name: Create .env file
         run: |
-          jq -r '.Parameters[] | "\(.Name | split("/")[-1])=\(.Value)"' parameters.json > .env
+          jq -r '.Parameters[] | "\(.Value)"' parameters.json > .env
 
       - name: Test service
         run: |
