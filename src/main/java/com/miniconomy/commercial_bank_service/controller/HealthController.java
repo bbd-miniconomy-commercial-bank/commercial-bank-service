@@ -8,10 +8,9 @@ import com.miniconomy.commercial_bank_service.service.HealthService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
 
-@Tag(name = "Health Status", description = "Queries related to service's health status")
+@Hidden
 @RestController
 @RequestMapping("/")
 class HealthController {
@@ -22,12 +21,8 @@ class HealthController {
         this.healthService = healthService;
     }
     
-    @Operation(
-        summary = "Get service's health status",
-        description = "Allows other services to check the service's current health status"
-    )
     @GetMapping(value = "/", produces = "application/json")
-    public BasicResponse getHealthStatus () {
+    public BasicResponse<String> getHealthStatus () {
         return this.healthService.retrieveHealthStatus();
     }
 

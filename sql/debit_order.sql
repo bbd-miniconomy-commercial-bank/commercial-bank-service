@@ -7,7 +7,8 @@ CREATE TABLE debit_order (
     debit_account_id UUID NOT NULL,
     debit_order_sender_ref VARCHAR(50) NOT NULL,
     debit_order_receiver_ref VARCHAR(50) NOT NULL,
-    debit_order_amount NUMERIC(13, 3) NOT NULL,
-    debit_order_created_date CHAR(8) NOT NULL
+    debit_order_amount BIGINT NOT NULL,
+    debit_order_created_date CHAR(8) NOT NULL,
+    debit_order_disabled BOOLEAN NOT NULL
 );
 -- rollback DROP TABLE debit_order

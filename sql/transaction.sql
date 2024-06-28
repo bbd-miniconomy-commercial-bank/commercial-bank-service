@@ -10,7 +10,7 @@ CREATE TABLE transaction (
     credit_account_id UUID NOT NULL,
     debit_account_id UUID NOT NULL,
     transaction_date CHAR(8) NOT NULL,
-    transaction_amount NUMERIC(13, 3) NOT NULL,
+    transaction_amount BIGINT NOT NULL,
     credit_ref VARCHAR(50) NOT NULL,
     debit_ref VARCHAR(50) NOT NULL,
     transaction_status transaction_status_enum NOT NULL
