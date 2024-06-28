@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -13,7 +12,7 @@ import java.util.UUID;
 public class LoanInterestResponse {
     
     private UUID loanInterestId;
-    private BigDecimal loanInterestRate;
-    private BigDecimal loanInterestAmount;
-    private Character loanInterestDate;
+    private Long loanInterestRate;
+    private Long loanInterestAmount;
+    private String loanInterestDate;
 }

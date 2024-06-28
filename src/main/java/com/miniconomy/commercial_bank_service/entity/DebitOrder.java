@@ -29,11 +29,11 @@ public class DebitOrder
   @JoinColumn(name = "debit_account_id")
   private Account debitAccount;
 
-  @Column(name = "debit_order_created_date")
+  @Column(name = "debit_order_created_date", columnDefinition = "CHAR(8)")
   private String debitOrderCreatedDate;
 
-  @Column(name = "debit_order_amount")
-  private BigDecimal debitOrderAmount;
+  @Column(name = "debit_order_amount", columnDefinition = "BIGINT")
+  private Long debitOrderAmount;
 
   @Column(name = "debit_order_receiver_ref")
   private String debitOrderReceiverRef;

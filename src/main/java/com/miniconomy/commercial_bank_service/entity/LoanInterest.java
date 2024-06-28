@@ -25,12 +25,12 @@ public class LoanInterest {
     private Loan loan;
 
     @Column(name = "loan_interest_rate", precision = 5, scale = 2)
-    private BigDecimal loanInterestRate;
+    private Long loanInterestRate;
 
-    @Column(name = "loan_interest_amount", precision = 13, scale = 3)
-    private BigDecimal loanInterestAmount;
+    @Column(name = "loan_interest_amount", columnDefinition = "BIGINT")
+    private Long loanInterestAmount;
 
-    @Column(name = "loan_interest_date")
-    private Character loanInterestDate;
+    @Column(name = "loan_interest_date", columnDefinition = "CHAR(8)")
+    private String loanInterestDate;
 
 }

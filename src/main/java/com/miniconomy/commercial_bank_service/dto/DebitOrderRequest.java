@@ -13,7 +13,7 @@ public class DebitOrderRequest {
     private String creditAccountName;
     private String debitAccountName;
     private String debitOrderCreatedDate;
-    private BigDecimal debitOrderAmount;
+    private Long debitOrderAmount;
     private String debitOrderReceiverRef;
     private String debitOrderSenderRef;
     private boolean debitOrderDisabled;

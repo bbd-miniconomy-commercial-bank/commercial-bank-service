@@ -49,7 +49,7 @@ public class LoanTransaction {
         return transactionId;
     }
 
-    public void setTransactionId(Long transactionId) {
+    public void setTransactionId(Long  transactionId) {
         this.transactionId = transactionId;
     }*/
 }

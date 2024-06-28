@@ -28,11 +28,11 @@ public class Transaction
   @JoinColumn(name = "debit_account_id")
   private Account debitAccount;
 
-  @Column(name = "transaction_date")
+  @Column(name = "transaction_date", columnDefinition = "CHAR(8)")
   private String transactionDate;
 
-  @Column(name = "transaction_amount")
-  private BigDecimal transactionAmount;
+  @Column(name = "transaction_amount", columnDefinition = "BIGINT")
+  private Long transactionAmount;
 
   @Column(name = "credit_ref")
   private String creditRef;

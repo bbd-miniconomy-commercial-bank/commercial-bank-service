@@ -16,7 +16,7 @@ import com.miniconomy.commercial_bank_service.entity.LoanType;
 public class LoanResponse {
 
     private UUID loanId;
-    private BigDecimal loanAmount;
+    private Long loanAmount;
     private LoanType loanType;
     private String accountName;
     private Set<LoanInterestResponse> loanInterests;

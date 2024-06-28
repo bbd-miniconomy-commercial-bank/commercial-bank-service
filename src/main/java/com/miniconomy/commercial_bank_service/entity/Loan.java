@@ -21,8 +21,8 @@ public class Loan {
     @Column(name="loan_id")
     private UUID loanId;
 
-    @Column(name="loan_amount", precision = 13, scale = 3)
-    private BigDecimal loanAmount;
+    @Column(name="loan_amount", columnDefinition = "BIGINT")
+    private Long loanAmount;
 
     @Column(name="loan_type")
     @Enumerated(EnumType.STRING)
@@ -48,11 +48,11 @@ public class Loan {
         this.loanId = loanId;
     }
 
-    public BigDecimal getLoanAmount() {
+    public Long getLoanAmount() {
         return loanAmount;
     }
 
-    public void setLoanAmount(BigDecimal loanAmount) {
+    public void setLoanAmount(Long loanAmount) {
         this.loanAmount = loanAmount;
     }
 

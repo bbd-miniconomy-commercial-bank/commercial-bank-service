@@ -17,7 +17,7 @@ public class TransactionResponse
 {
   private String debitorAccName;
   private String creditorAccName;
-  private BigDecimal amount;
+  private Long amount;
   private TransactionStatusType status;
   private String debitRef;
   private String creditRef;
