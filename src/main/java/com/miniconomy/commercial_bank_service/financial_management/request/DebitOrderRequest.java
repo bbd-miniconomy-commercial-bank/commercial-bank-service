@@ -9,6 +9,6 @@ public class DebitOrderRequest {
     private String debitAccountName;
     private String creditAccountName;
     private Long amount;
-    private String senderRef;
-    private String receiverRef;
+    private String debitRef;
+    private String creditRef;
 }

@@ -7,7 +7,6 @@ import com.miniconomy.commercial_bank_service.financial_management.request.Debit
 import com.miniconomy.commercial_bank_service.financial_management.request.DebitOrdersCreateRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.DebitOrderResponse;
 import com.miniconomy.commercial_bank_service.financial_management.response.ListResponseTemplate;
-import com.miniconomy.commercial_bank_service.financial_management.response.LoanResponse;
 import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.service.DebitOrderService;
 
@@ -17,7 +16,6 @@ import java.util.UUID;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

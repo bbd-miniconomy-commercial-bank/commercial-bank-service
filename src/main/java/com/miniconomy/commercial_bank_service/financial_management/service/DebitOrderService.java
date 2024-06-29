@@ -50,8 +50,8 @@ public class DebitOrderService
       d.setDebitAccount(debAcc.get());
       d.setDebitOrderAmount(dbOrder.getAmount());
       d.setDebitOrderCreatedDate(java.time.LocalDate.now().toString().replace("-", ""));
-      d.setDebitOrderReceiverRef(dbOrder.getReceiverRef());
-      d.setDebitOrderSenderRef(dbOrder.getSenderRef());
+      d.setDebitOrderReceiverRef(dbOrder.getCreditRef());
+      d.setDebitOrderSenderRef(dbOrder.getDebitRef());
       debitOrderRepository.save(d);
       return Optional.of(d);
     }
@@ -116,11 +116,11 @@ public class DebitOrderService
         dbo.setDebitOrderCreatedDate(java.time.LocalDate.now().toString().replace("-", "")); 
         res.setCreationDate(java.time.LocalDate.now().toString().replace("-", ""));
 
-        dbo.setDebitOrderReceiverRef(dbOrder.getReceiverRef()); 
-        res.setReceiverRef(dbOrder.getReceiverRef());
+        dbo.setDebitOrderReceiverRef(dbOrder.getCreditRef()); 
+        res.setReceiverRef(dbOrder.getCreditRef());
 
-        dbo.setDebitOrderSenderRef(dbOrder.getSenderRef()); 
-        res.setSenderRef(dbOrder.getSenderRef());
+        dbo.setDebitOrderSenderRef(dbOrder.getDebitRef()); 
+        res.setSenderRef(dbOrder.getDebitRef());
 
         dbo.setDebitOrderDisabled(false);
         res.setDisabled(false);

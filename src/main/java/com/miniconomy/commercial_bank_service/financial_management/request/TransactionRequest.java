@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class TransactionRequest {
-    private String debitAccountName;
-    private Long transactionAmount;
-    private String creditRef;
+    private String creditAccountName;
+    private Long amount;
     private String debitRef;
+    private String creditRef;
 }

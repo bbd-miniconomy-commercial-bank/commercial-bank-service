@@ -73,18 +73,18 @@ public class TransactionService
       Transaction transaction = new Transaction();
       TransactionResponse res = new TransactionResponse();
 
-      Optional<Account> dbAcc = accountRepository.findByAccountName(request.getDebitAccountName());
+      Optional<Account> dbAcc = accountRepository.findByAccountName(request.getCreditAccountName());
       Optional<Account> crAcc = accountRepository.findByAccountName("commercial-bank"); // for now it's commercial-bank, but their api token should have an account-name
       
       if (dbAcc.isPresent() && crAcc.isPresent()) {
         transaction.setDebitAccount(dbAcc.get());
-        res.setDebitorAccName(dbAcc.get().getAccountName());
+        res.setDebitAccountName(dbAcc.get().getAccountName());
 
         transaction.setCreditAccount(crAcc.get());
-        res.setCreditorAccName(crAcc.get().getAccountName());
+        res.setCreditAccountName(crAcc.get().getAccountName());
 
-        transaction.setTransactionAmount(request.getTransactionAmount());
-        res.setAmount(request.getTransactionAmount());
+        transaction.setTransactionAmount(request.getAmount());
+        res.setAmount(request.getAmount());
 
         transaction.setCreditRef(request.getCreditRef());
         res.setCreditRef(request.getCreditRef());
