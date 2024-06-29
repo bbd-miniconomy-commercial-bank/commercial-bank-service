@@ -27,15 +27,15 @@ public class LoanService {
     public Optional<Loan> createLoan(LoanRequest loan) {
         System.out.println(loan.toString());
         Loan newLoan = new Loan();
-        if (loan.getLoanType().equals("LONG_TERM")) {
+        if (loan.getType().equals(LoanType.LONG_TERM)) {
             newLoan.setLoanType(LoanType.LONG_TERM);
         }
-        else if (loan.getLoanType().equals("SHORT_TERM")) {
+        else if (loan.getType().equals(LoanType.SHORT_TERM)) {
             newLoan.setLoanType(LoanType.SHORT_TERM);
         }
         Optional<Account> acc = accRepo.findByAccountName(loan.getAccountName());
         if (acc.isPresent()) {
-            newLoan.setLoanAmount(loan.getLoanAmount());
+            newLoan.setLoanAmount(loan.getAmount());
             newLoan.setAccount(acc.get());
         }
 

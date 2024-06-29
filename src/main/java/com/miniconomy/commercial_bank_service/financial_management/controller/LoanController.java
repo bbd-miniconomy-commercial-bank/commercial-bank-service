@@ -6,7 +6,7 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
 import com.miniconomy.commercial_bank_service.financial_management.request.LoanRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.response.LoanResponse;
-import com.miniconomy.commercial_bank_service.financial_management.response.PagenatedLoansResponse;
+import com.miniconomy.commercial_bank_service.financial_management.response.ListResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.service.LoanService;
 
 import java.util.List;
@@ -44,7 +44,6 @@ public class LoanController {
 
         ResponseTemplate<LoanResponse> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
-        response.setStatus(status);
 
         Optional<Loan> createdLoan = loanService.createLoan(loan);
 
@@ -59,10 +58,10 @@ public class LoanController {
             response.setData(loanResponse);
         } else {
             status = HttpStatus.BAD_REQUEST.value();
-            response.setStatus(status);
-            response.setMessage("Required fields not set in request body");
+            response.setMessage("Required fields not set correctly in request body");
         }
 
+        response.setStatus(status);
         return ResponseEntity.status(status).body(response);
     }
 
@@ -75,7 +74,6 @@ public class LoanController {
         
         ResponseTemplate<LoanResponse> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
-        response.setStatus(status);
 
         Optional<Loan> loan = loanService.getLoanById(id);
         
@@ -90,10 +88,10 @@ public class LoanController {
             response.setData(loanResponse);
         } else {
             status = HttpStatus.NOT_FOUND.value();
-            response.setStatus(status);
-            response.setMessage("Loan id not found");
+            response.setMessage("Loan not found with id: " + id);
         }
 
+        response.setStatus(status);
         return ResponseEntity.status(status).body(response);
     }
 
@@ -105,11 +103,10 @@ public class LoanController {
         value = "", 
         produces = "application/json"
     )
-    public ResponseEntity<ResponseTemplate<PagenatedLoansResponse>> getAllLoans(@RequestParam int page, @RequestParam int pageSize) {
+    public ResponseEntity<ResponseTemplate<ListResponseTemplate<LoanResponse>>> getAllLoans(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize) {
 
-        ResponseTemplate<PagenatedLoansResponse> response = new ResponseTemplate<>();
+        ResponseTemplate<ListResponseTemplate<LoanResponse>> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
-        response.setStatus(status);
 
         if (pageSize > 25) {
             pageSize = 25;
@@ -125,10 +122,11 @@ public class LoanController {
                 loan.getAccount().getAccountName()
             )).collect(Collectors.toList());
 
-        PagenatedLoansResponse pagenatedLoansResponse = new PagenatedLoansResponse(page, pageSize, loanResponsesList);
+        ListResponseTemplate<LoanResponse> listResponseTemplate = new ListResponseTemplate<>(page, pageSize, loanResponsesList);
 
-        response.setData(pagenatedLoansResponse);
+        response.setData(listResponseTemplate);
 
+        response.setStatus(status);
         return ResponseEntity.status(status).body(response);
     }    
 }

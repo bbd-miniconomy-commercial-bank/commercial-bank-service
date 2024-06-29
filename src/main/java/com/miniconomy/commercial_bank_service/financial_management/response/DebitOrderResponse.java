@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DebitOrderResponse
 {
-  private UUID debitOrderId;
-  private String creditAccountName;
+  private UUID id;
   private String debitAccountName;
-  private String debitOrderCreatedDate;
-  private Long debitOrderAmount;
-  private String debitOrderReceiverRef;
-  private String debitOrderSenderRef;
-  private boolean debitOrderDisabled;
+  private String creditAccountName;
+  private String creationDate;
+  private Long amount;
+  private String senderRef;
+  private String receiverRef;
+  private boolean disabled;
 }

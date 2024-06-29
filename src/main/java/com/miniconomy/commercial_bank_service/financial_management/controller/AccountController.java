@@ -41,7 +41,6 @@ class AccountController {
 
     ResponseTemplate<AccountResponse> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
-    response.setStatus(status);
 
     Optional<Account> account = this.accountService.retrieveAccountBalance(accountName);
 
@@ -50,10 +49,10 @@ class AccountController {
       response.setData(accountResponse);
     } else {
       status = HttpStatus.NOT_FOUND.value();
-      response.setStatus(status);
-      response.setMessage("Account name not found");
+      response.setMessage("Account not found");
     }
 
+    response.setStatus(status);
     return ResponseEntity.status(status).body(response);
   }
 

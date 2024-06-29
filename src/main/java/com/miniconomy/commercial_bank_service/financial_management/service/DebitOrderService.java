@@ -48,10 +48,10 @@ public class DebitOrderService
 
       d.setCreditAccount(credAcc.get());
       d.setDebitAccount(debAcc.get());
-      d.setDebitOrderAmount(dbOrder.getDebitOrderAmount());
+      d.setDebitOrderAmount(dbOrder.getAmount());
       d.setDebitOrderCreatedDate(java.time.LocalDate.now().toString().replace("-", ""));
-      d.setDebitOrderReceiverRef(dbOrder.getDebitOrderReceiverRef());
-      d.setDebitOrderSenderRef(dbOrder.getDebitOrderSenderRef());
+      d.setDebitOrderReceiverRef(dbOrder.getReceiverRef());
+      d.setDebitOrderSenderRef(dbOrder.getSenderRef());
       debitOrderRepository.save(d);
       return Optional.of(d);
     }
@@ -110,24 +110,24 @@ public class DebitOrderService
         dbo.setDebitAccount(dbAcc.get()); 
         res.setDebitAccountName(dbAcc.get().getAccountName());
 
-        dbo.setDebitOrderAmount(dbOrder.getDebitOrderAmount()); 
-        res.setDebitOrderAmount(dbOrder.getDebitOrderAmount());
+        dbo.setDebitOrderAmount(dbOrder.getAmount()); 
+        res.setAmount(dbOrder.getAmount());
 
         dbo.setDebitOrderCreatedDate(java.time.LocalDate.now().toString().replace("-", "")); 
-        res.setDebitOrderCreatedDate(java.time.LocalDate.now().toString().replace("-", ""));
+        res.setCreationDate(java.time.LocalDate.now().toString().replace("-", ""));
 
-        dbo.setDebitOrderReceiverRef(dbOrder.getDebitOrderReceiverRef()); 
-        res.setDebitOrderReceiverRef(dbOrder.getDebitOrderReceiverRef());
+        dbo.setDebitOrderReceiverRef(dbOrder.getReceiverRef()); 
+        res.setReceiverRef(dbOrder.getReceiverRef());
 
-        dbo.setDebitOrderSenderRef(dbOrder.getDebitOrderSenderRef()); 
-        res.setDebitOrderSenderRef(dbOrder.getDebitOrderSenderRef());
+        dbo.setDebitOrderSenderRef(dbOrder.getSenderRef()); 
+        res.setSenderRef(dbOrder.getSenderRef());
 
         dbo.setDebitOrderDisabled(false);
-        res.setDebitOrderDisabled(false);
+        res.setDisabled(false);
 
         //debitOrders.add(dbo);
         DebitOrder savedDbo = debitOrderRepository.save(dbo);
-        res.setDebitOrderId(savedDbo.getDebitOrderId());
+        res.setId(savedDbo.getDebitOrderId());
         response.add(res);
       }
     }

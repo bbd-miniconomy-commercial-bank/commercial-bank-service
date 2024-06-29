@@ -1,14 +1,14 @@
 package com.miniconomy.commercial_bank_service.financial_management.request;
 
-import java.util.UUID;
-
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class DebitOrderRequest {
-    private String creditAccountName;
     private String debitAccountName;
-    private Long debitOrderAmount;
-    private String debitOrderReceiverRef;
-    private String debitOrderSenderRef;
+    private String creditAccountName;
+    private Long amount;
+    private String senderRef;
+    private String receiverRef;
 }

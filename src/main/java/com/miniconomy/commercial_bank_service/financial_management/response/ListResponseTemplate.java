@@ -5,21 +5,21 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class PagenatedLoansResponse {
+public class ListResponseTemplate<T> {
     
     int pageIndex;
     int itemsPerPage;
     int currentItemCount;
-    List<LoanResponse> items;
+    List<T> items;
 
-    public PagenatedLoansResponse(int pageIndex, int itemsPerPage, List<LoanResponse> items) {
+    public ListResponseTemplate(int pageIndex, int itemsPerPage, List<T> items) {
         this.pageIndex = pageIndex;
         this.itemsPerPage = itemsPerPage;
         this.currentItemCount = items.size();
         this.items = items;
     }
 
-    public void setItems(List<LoanResponse> items) {
+    public void setItems(List<T> items) {
         this.currentItemCount = items.size();
         this.items = items;
     }
