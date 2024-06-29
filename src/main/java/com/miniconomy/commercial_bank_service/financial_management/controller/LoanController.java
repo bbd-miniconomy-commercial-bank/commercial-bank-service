@@ -6,6 +6,7 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
 import com.miniconomy.commercial_bank_service.financial_management.request.LoanRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.response.LoanResponse;
+import com.miniconomy.commercial_bank_service.financial_management.response.PagenatedLoansResponse;
 import com.miniconomy.commercial_bank_service.financial_management.service.LoanService;
 
 import java.util.List;
@@ -20,11 +21,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(
-    name = "Loan", 
+    name = "Loans", 
     description = "Queries related to service's loans"
 )
 @RestController
-@RequestMapping("/loan")
+@RequestMapping("/loans")
 public class LoanController {
 
     final LoanService loanService;
@@ -39,20 +40,30 @@ public class LoanController {
         description = "Create a new loan for an account"
     )
     @PostMapping(value = "/apply", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> createLoan(@RequestBody LoanRequest loan) {
+    public ResponseEntity<ResponseTemplate<LoanResponse>> createLoan(@RequestBody LoanRequest loan) {
+
+        ResponseTemplate<LoanResponse> response = new ResponseTemplate<>();
+        int status = HttpStatus.OK.value();
+        response.setStatus(status);
+
         Optional<Loan> createdLoan = loanService.createLoan(loan);
+
         if (createdLoan.isPresent()) {
-            LoanResponse response = new LoanResponse(
+            LoanResponse loanResponse = new LoanResponse(
                     createdLoan.get().getLoanId(),
                     createdLoan.get().getLoanAmount(),
                     createdLoan.get().getLoanType(),
                     createdLoan.get().getAccount().getAccountName()
-                    //createdLoan.get().getLoanInterests().stream().map(interest -> new LoanInterestResponse(interest.getLoanInterestId(), interest.getLoanInterestRate(), interest.getLoanInterestAmount(), interest.getLoanInterestDate())).collect(Collectors.toSet()),
-                    //createdLoan.get().getLoanTransactions().stream().map(transaction -> new LoanTransactionResponse(transaction.getLoanTransactionId(), transaction.getTransactionId())).collect(Collectors.toSet())
             );
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            
+            response.setData(loanResponse);
+        } else {
+            status = HttpStatus.BAD_REQUEST.value();
+            response.setStatus(status);
+            response.setMessage("Required fields not set in request body");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Your request contains incorrect details");
+
+        return ResponseEntity.status(status).body(response);
     }
 
     @Operation(
@@ -60,22 +71,30 @@ public class LoanController {
         description = "Retrieve loan details by loan ID"
     )
     @GetMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity<?> getLoanById(@PathVariable UUID id) {
-        System.out.println(id);
+    public ResponseEntity<ResponseTemplate<LoanResponse>> getLoanById(@PathVariable UUID id) {
+        
+        ResponseTemplate<LoanResponse> response = new ResponseTemplate<>();
+        int status = HttpStatus.OK.value();
+        response.setStatus(status);
+
         Optional<Loan> loan = loanService.getLoanById(id);
-        System.out.println(loan.get());
+        
         if (loan.isPresent()) {
-            LoanResponse response = new LoanResponse(
+            LoanResponse loanResponse = new LoanResponse(
                 loan.get().getLoanId(),
                 loan.get().getLoanAmount(),
                 loan.get().getLoanType(),
                 loan.get().getAccount().getAccountName()
-                //loan.get().getLoanInterests().stream().map(interest -> new LoanInterestResponse(interest.getLoanInterestId(), interest.getLoanInterestRate(), interest.getLoanInterestAmount(), interest.getLoanInterestDate())).collect(Collectors.toSet()),
-                //loan.get().getLoanTransactions().stream().map(transaction -> new LoanTransactionResponse(transaction.getLoanTransactionId(), transaction.getTransactionId())).collect(Collectors.toSet())
             );
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            
+            response.setData(loanResponse);
+        } else {
+            status = HttpStatus.NOT_FOUND.value();
+            response.setStatus(status);
+            response.setMessage("Loan id not found");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Your request contains incorrect details");
+
+        return ResponseEntity.status(status).body(response);
     }
 
     @Operation(
@@ -83,20 +102,33 @@ public class LoanController {
         description = "Retrieve all loans"
     )
     @GetMapping(
-        value = "/all", 
+        value = "", 
         produces = "application/json"
     )
-    public ResponseTemplate<List<LoanResponse>> getAllLoans() {
+    public ResponseEntity<ResponseTemplate<PagenatedLoansResponse>> getAllLoans(@RequestParam int page, @RequestParam int pageSize) {
+
+        ResponseTemplate<PagenatedLoansResponse> response = new ResponseTemplate<>();
+        int status = HttpStatus.OK.value();
+        response.setStatus(status);
+
+        if (pageSize > 25) {
+            pageSize = 25;
+        }
+
         List<Loan> loans = loanService.getAllLoans();
-        List<LoanResponse> responses = loans.stream().map(
+
+        List<LoanResponse> loanResponsesList = loans.stream().map(
             loan -> new LoanResponse(
                 loan.getLoanId(),
                 loan.getLoanAmount(),
                 loan.getLoanType(),
                 loan.getAccount().getAccountName()
-                //loan.getLoanInterests().stream().map(interest -> new LoanInterestResponse(interest.getLoanInterestId(), interest.getLoanInterestRate(), interest.getLoanInterestAmount(), interest.getLoanInterestDate())).collect(Collectors.toSet()),
-                //loan.getLoanTransactions().stream().map(transaction -> new LoanTransactionResponse(transaction.getLoanTransactionId(), transaction.getTransactionId())).collect(Collectors.toSet())
             )).collect(Collectors.toList());
-        return new ResponseTemplate<List<LoanResponse>>(HttpStatus.OK.value(), responses, "");
+
+        PagenatedLoansResponse pagenatedLoansResponse = new PagenatedLoansResponse(page, pageSize, loanResponsesList);
+
+        response.setData(pagenatedLoansResponse);
+
+        return ResponseEntity.status(status).body(response);
     }    
 }

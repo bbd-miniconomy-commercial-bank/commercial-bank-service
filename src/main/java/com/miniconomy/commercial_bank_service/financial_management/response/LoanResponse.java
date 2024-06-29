@@ -18,6 +18,5 @@ public class LoanResponse {
     private Long loanAmount;
     private LoanType loanType;
     private String accountName;
-    //private Set<LoanInterestResponse> loanInterests;
-    //private Set<LoanTransactionResponse> loanTransactions;
+    
 }
