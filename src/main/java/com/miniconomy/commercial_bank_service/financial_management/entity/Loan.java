@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,7 +37,8 @@ public class Loan {
     private Long loanAmount;
 
     @Column(name="loan_type")
-    private String loanType;
+    @Enumerated(EnumType.STRING)
+    private LoanType loanType;
 
     @ManyToOne(cascade = CascadeType.ALL) 
     @JoinColumn(name = "account_id")

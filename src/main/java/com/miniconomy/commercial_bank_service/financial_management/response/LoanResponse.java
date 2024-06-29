@@ -16,8 +16,8 @@ public class LoanResponse {
 
     private UUID loanId;
     private Long loanAmount;
-    private String loanType;
+    private LoanType loanType;
     private String accountName;
-    private Set<LoanInterestResponse> loanInterests;
-    private Set<LoanTransactionResponse> loanTransactions;
+    //private Set<LoanInterestResponse> loanInterests;
+    //private Set<LoanTransactionResponse> loanTransactions;
 }
