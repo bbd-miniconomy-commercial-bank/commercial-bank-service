@@ -8,11 +8,11 @@ import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.miniconomy.commercial_bank_service.financial_management.dto.DebitOrderRequest;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.entity.DebitOrder;
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.DebitOrderRepository;
+import com.miniconomy.commercial_bank_service.financial_management.request.DebitOrderRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.DebitOrderResponse;
 
 @Service

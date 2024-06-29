@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.response.AccountResponse;
+import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
 
 import java.util.HashMap;
@@ -35,16 +36,25 @@ class AccountController {
     description = "Allows services to view their bank balances"
   )
   @GetMapping(value = "/balance", produces = "application/json")
-  public ResponseEntity<?> getAccountBalance(@RequestParam String accountName)
+  public ResponseEntity<ResponseTemplate<AccountResponse>> getAccountBalance(@RequestParam String accountName)
   {
+
+    ResponseTemplate<AccountResponse> response = new ResponseTemplate<>();
+    int status = HttpStatus.OK.value();
+    response.setStatus(status);
+
     Optional<Account> account = this.accountService.retrieveAccountBalance(accountName);
+
     if (account.isPresent()) {
-      AccountResponse response = new AccountResponse(account.get().getAccountName(), 4000.0); // account balance is the sum of all transactions
-      String message = "This is your account balance:";
-      return ResponseEntity.status(HttpStatus.OK).body(createEntity("message", createEntity(message, response)));
+      AccountResponse accountResponse = new AccountResponse(account.get().getAccountName(), 4000.0); // account balance is the sum of all transactions
+      response.setData(accountResponse);
+    } else {
+      status = HttpStatus.NOT_FOUND.value();
+      response.setStatus(status);
+      response.setMessage("Account name not found");
     }
-    String message = "You gave an invalid account name:";
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(createEntity("message", message));
+
+    return ResponseEntity.status(status).body(response);
   }
 
   public HashMap<String, Object> createEntity(String x, Object y) {

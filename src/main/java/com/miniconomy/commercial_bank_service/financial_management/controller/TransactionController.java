@@ -2,8 +2,8 @@ package com.miniconomy.commercial_bank_service.financial_management.controller;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.miniconomy.commercial_bank_service.financial_management.dto.TransactionRequest;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
+import com.miniconomy.commercial_bank_service.financial_management.request.TransactionRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.TransactionResponse;
 import com.miniconomy.commercial_bank_service.financial_management.service.TransactionService;
 

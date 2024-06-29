@@ -2,8 +2,8 @@ package com.miniconomy.commercial_bank_service.financial_management.controller;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.miniconomy.commercial_bank_service.financial_management.dto.DebitOrderRequest;
 import com.miniconomy.commercial_bank_service.financial_management.entity.DebitOrder;
+import com.miniconomy.commercial_bank_service.financial_management.request.DebitOrderRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.DebitOrderResponse;
 import com.miniconomy.commercial_bank_service.financial_management.service.DebitOrderService;
 

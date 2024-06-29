@@ -2,9 +2,9 @@ package com.miniconomy.commercial_bank_service.financial_management.controller;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.miniconomy.commercial_bank_service.financial_management.dto.LoanRequest;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
-import com.miniconomy.commercial_bank_service.financial_management.response.BasicResponse;
+import com.miniconomy.commercial_bank_service.financial_management.request.LoanRequest;
+import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.response.LoanResponse;
 import com.miniconomy.commercial_bank_service.financial_management.service.LoanService;
 
@@ -86,7 +86,7 @@ public class LoanController {
         value = "/all", 
         produces = "application/json"
     )
-    public BasicResponse<List<LoanResponse>> getAllLoans() {
+    public ResponseTemplate<List<LoanResponse>> getAllLoans() {
         List<Loan> loans = loanService.getAllLoans();
         List<LoanResponse> responses = loans.stream().map(
             loan -> new LoanResponse(
@@ -97,6 +97,6 @@ public class LoanController {
                 //loan.getLoanInterests().stream().map(interest -> new LoanInterestResponse(interest.getLoanInterestId(), interest.getLoanInterestRate(), interest.getLoanInterestAmount(), interest.getLoanInterestDate())).collect(Collectors.toSet()),
                 //loan.getLoanTransactions().stream().map(transaction -> new LoanTransactionResponse(transaction.getLoanTransactionId(), transaction.getTransactionId())).collect(Collectors.toSet())
             )).collect(Collectors.toList());
-        return new BasicResponse<List<LoanResponse>>(responses);
+        return new ResponseTemplate<List<LoanResponse>>(HttpStatus.OK.value(), responses, "");
     }    
 }

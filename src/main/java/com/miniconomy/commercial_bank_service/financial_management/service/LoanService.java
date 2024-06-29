@@ -2,12 +2,12 @@ package com.miniconomy.commercial_bank_service.financial_management.service;
 
 import org.springframework.stereotype.Service;
 
-import com.miniconomy.commercial_bank_service.financial_management.dto.LoanRequest;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
 import com.miniconomy.commercial_bank_service.financial_management.entity.LoanType;
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.LoanRepository;
+import com.miniconomy.commercial_bank_service.financial_management.request.LoanRequest;
 
 import java.util.List;
 import java.util.Optional;

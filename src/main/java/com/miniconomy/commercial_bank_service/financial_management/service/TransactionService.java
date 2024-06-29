@@ -8,12 +8,12 @@ import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.miniconomy.commercial_bank_service.financial_management.dto.TransactionRequest;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
 import com.miniconomy.commercial_bank_service.financial_management.entity.TransactionStatusType;
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.TransactionRepository;
+import com.miniconomy.commercial_bank_service.financial_management.request.TransactionRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.TransactionResponse;
 
 @Service
