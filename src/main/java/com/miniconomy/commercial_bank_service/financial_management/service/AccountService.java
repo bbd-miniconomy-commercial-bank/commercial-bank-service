@@ -32,7 +32,7 @@ public class AccountService
 
   public String findAccountNameByCn(String cn)
   {
-    String sql = "SELECT account_name FROM account WHERE cn = :cn";
+    String sql = "SELECT account_name FROM account WHERE common_name = :cn";
     SqlParameterSource parameters = new MapSqlParameterSource().addValue("cn", cn);
     return jdbcTemplate.queryForObject(sql, parameters, String.class);
   }

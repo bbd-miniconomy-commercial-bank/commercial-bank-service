@@ -1,4 +1,4 @@
-package com.miniconomy.commercial_bank_service.auth_validation_filter;
+package com.miniconomy.commercial_bank_service.security;
 
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
