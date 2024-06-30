@@ -63,4 +63,4 @@ ADD CONSTRAINT fk_account_delegation_delegated_account_id FOREIGN KEY (delegated
 -- changeset ryanbasiltrickett:add-fk-constraints-interbank-transaction-transaction
 ALTER TABLE interbank_transaction
 ADD CONSTRAINT fk_interbank_transaction_transaction_id FOREIGN KEY (transaction_id) REFERENCES transaction(transaction_id);
--- rollback ALTER TABLE account_delegation DROP CONSTRAINT fk_interbank_transaction_transaction_id
+-- rollback ALTER TABLE interbank_transaction DROP CONSTRAINT fk_interbank_transaction_transaction_id
