@@ -12,7 +12,7 @@ public class CertificateFilterConfig
     @Autowired
     private CertificateFilter certificateFilter;
 
-    @Value("${certificate.filter.enabled:false}")
+    @Value("${certificate.filter.enabled}")
     private boolean filterEnabled;
 
     @Bean
