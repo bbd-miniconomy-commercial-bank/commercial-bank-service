@@ -4,15 +4,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
-import org.springframework.stereotype.Component;
-
 /**
  * 
  */
 @Component
 public class JwtUtil {
 
-    public String matchToken() {
+    public String extractUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Jwt jwt = (Jwt) authentication.getPrincipal();
         return jwt.getClaimAsString("username");

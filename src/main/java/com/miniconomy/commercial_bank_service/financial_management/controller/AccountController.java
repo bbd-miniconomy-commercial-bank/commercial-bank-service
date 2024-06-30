@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.response.AccountResponse;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
+import com.miniconomy.commercial_bank_service.security.JwtUtil;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -24,10 +25,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 class AccountController {
     
   private final AccountService accountService;
+  private final JwtUtil jwtUtil;
 
-  public AccountController(AccountService accountService)
+  public AccountController(AccountService accountService, JwtUtil util)
   {
     this.accountService = accountService;
+    this.jwtUtil = util;
   }
   
   @Operation(
@@ -37,8 +40,10 @@ class AccountController {
   @GetMapping(value = "/balance", produces = "application/json")
   public ResponseEntity<?> getAccountBalance(@RequestParam String accountName)
   {
+    String username = jwtUtil.extractUsername();
     Optional<Account> account = this.accountService.retrieveAccountBalance(accountName);
-    if (account.isPresent()) {
+    
+    if (account.isPresent() && accountName.equals(username)) {
       AccountResponse response = new AccountResponse(account.get().getAccountName(), 4000.0); // account balance is the sum of all transactions
       String message = "This is your account balance:";
       return ResponseEntity.status(HttpStatus.OK).body(createEntity("message", createEntity(message, response)));
