@@ -3,14 +3,14 @@
 -- changeset devwasabi2:create-account-table
 CREATE TABLE account (
     account_id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    account_name VARCHAR(50) NOT NULL,
-    account_cn VARCHAR(50) NOT NULL,
+    account_name VARCHAR(50) UNIQUE NOT NULL,
+    account_cn VARCHAR(50) UNIQUE NOT NULL,
     account_notification_endpoint VARCHAR(125) NOT NULL
 );
 -- rollback DROP TABLE account
 
 -- changeset devwasabi2:insert-accounts
-INSERT INTO account (account_name) VALUES 
+INSERT INTO account (account_name, account_cn, account_notification_endpoint) VALUES 
 ('retail-bank', 'retail_bank', ''),
 ('commercial-bank', 'commercial_bank', ''),
 ('health-insurance', 'health_insurance', ''),
