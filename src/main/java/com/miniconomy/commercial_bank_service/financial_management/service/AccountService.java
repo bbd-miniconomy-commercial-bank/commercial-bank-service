@@ -15,7 +15,6 @@ import com.miniconomy.commercial_bank_service.financial_management.repository.Ac
 public class AccountService
 {
   @Autowired
-  //private JdbcTemplate jdbcTemplate;
   private NamedParameterJdbcTemplate jdbcTemplate;
 
   private final AccountRepository accountRepository;
