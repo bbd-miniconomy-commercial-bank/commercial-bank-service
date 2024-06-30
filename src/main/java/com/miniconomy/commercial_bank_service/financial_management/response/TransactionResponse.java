@@ -7,16 +7,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionResponse
 {
+  private UUID id;
   private String debitAccountName;
   private String creditAccountName;
   private Long amount;
   private TransactionStatusType status;
-  private String debitRef;
-  private String creditRef;
+  private String transactionRef;
   private String date;
 }

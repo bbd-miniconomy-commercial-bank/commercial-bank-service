@@ -23,5 +23,13 @@ public class Account {
   @Size(max = 50, message = "Account name must be less than or equal to 50 characters")
   @Column(name = "account_name")
   private String accountName;
+
+  @Size(max = 50, message = "Account CN must be less than or equal to 50 characters")
+  @Column(name = "account_cn")
+  private String accountCN;
+  
+  @Size(max = 125, message = "Account Notifiaction Endpoint must be less than or equal to 125 characters")
+  @Column(name = "account_notification_endpoint")
+  private String accountNotificationEndpoint;
   
 }
