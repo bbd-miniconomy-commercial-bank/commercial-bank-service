@@ -8,12 +8,12 @@ import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.miniconomy.commercial_bank_service.financial_management.dto.TransactionRequest;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
 import com.miniconomy.commercial_bank_service.financial_management.entity.TransactionStatusType;
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.TransactionRepository;
+import com.miniconomy.commercial_bank_service.financial_management.request.TransactionRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.TransactionResponse;
 
 @Service
@@ -34,14 +34,15 @@ public class TransactionService
     if (acc.isPresent()) {
       List<Transaction> credT = transactionRepository.findByCreditAccount(acc.get(), pages);
       List<Transaction> debT = transactionRepository.findByDebitAccount(acc.get(), pages);
+
       credT.addAll(debT);
       List<TransactionResponse> trList = new ArrayList<>();
+
       credT.stream().forEach(transaction -> {
         Optional<Account> creditAccount = accountRepository.findById(transaction.getCreditAccount().getId());
         Optional<Account> debitAccount = accountRepository.findById(transaction.getDebitAccount().getId());
 
         TransactionResponse transactionResponse = new TransactionResponse(debitAccount.get().getAccountName(), creditAccount.get().getAccountName(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
-        //return transactionResponse;
         trList.add(transactionResponse);
       });
       return trList;
@@ -72,18 +73,18 @@ public class TransactionService
       Transaction transaction = new Transaction();
       TransactionResponse res = new TransactionResponse();
 
-      Optional<Account> dbAcc = accountRepository.findByAccountName(request.getDebitAccountName());
+      Optional<Account> dbAcc = accountRepository.findByAccountName(request.getCreditAccountName());
       Optional<Account> crAcc = accountRepository.findByAccountName("commercial-bank"); // for now it's commercial-bank, but their api token should have an account-name
       
       if (dbAcc.isPresent() && crAcc.isPresent()) {
         transaction.setDebitAccount(dbAcc.get());
-        res.setDebitorAccName(dbAcc.get().getAccountName());
+        res.setDebitAccountName(dbAcc.get().getAccountName());
 
         transaction.setCreditAccount(crAcc.get());
-        res.setCreditorAccName(crAcc.get().getAccountName());
+        res.setCreditAccountName(crAcc.get().getAccountName());
 
-        transaction.setTransactionAmount(request.getTransactionAmount());
-        res.setAmount(request.getTransactionAmount());
+        transaction.setTransactionAmount(request.getAmount());
+        res.setAmount(request.getAmount());
 
         transaction.setCreditRef(request.getCreditRef());
         res.setCreditRef(request.getCreditRef());
@@ -94,8 +95,8 @@ public class TransactionService
         transaction.setTransactionStatus(TransactionStatusType.pending);
         res.setStatus(TransactionStatusType.pending);
 
-        transaction.setTransactionDate(java.time.LocalDate.now().toString());
-        res.setDate(java.time.LocalDate.now().toString());
+        transaction.setTransactionDate(java.time.LocalDate.now().toString().replace("-", ""));
+        res.setDate(java.time.LocalDate.now().toString().replace("-", ""));
 
         transactions.add(transaction);
         tResponses.add(res);

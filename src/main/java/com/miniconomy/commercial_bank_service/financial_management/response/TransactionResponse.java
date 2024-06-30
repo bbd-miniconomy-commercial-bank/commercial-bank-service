@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TransactionResponse
 {
-  private String debitorAccName;
-  private String creditorAccName;
+  private String debitAccountName;
+  private String creditAccountName;
   private Long amount;
   private TransactionStatusType status;
   private String debitRef;

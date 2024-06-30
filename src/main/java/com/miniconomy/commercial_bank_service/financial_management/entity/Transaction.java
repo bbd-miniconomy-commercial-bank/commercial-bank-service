@@ -37,7 +37,7 @@ public class Transaction
   @JoinColumn(name = "debit_account_id")
   private Account debitAccount;
 
-  @Column(name = "transaction_date", columnDefinition = "CHAR(8)")
+  @Column(name = "transaction_date", columnDefinition = "bpchar(8)")
   private String transactionDate;
 
   @Column(name = "transaction_amount", columnDefinition = "BIGINT")

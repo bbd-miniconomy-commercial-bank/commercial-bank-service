@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
 import java.util.UUID;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.LoanType;
@@ -14,10 +13,9 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.LoanTy
 @NoArgsConstructor
 public class LoanResponse {
 
-    private UUID loanId;
-    private Long loanAmount;
-    private LoanType loanType;
+    private UUID id;
+    private Long amount;
+    private LoanType type;
     private String accountName;
-    private Set<LoanInterestResponse> loanInterests;
-    private Set<LoanTransactionResponse> loanTransactions;
+    
 }

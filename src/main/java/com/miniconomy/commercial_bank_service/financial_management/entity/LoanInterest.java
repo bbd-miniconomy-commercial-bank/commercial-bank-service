@@ -36,7 +36,7 @@ public class LoanInterest {
     @Column(name = "loan_interest_amount", columnDefinition = "BIGINT")
     private Long loanInterestAmount;
 
-    @Column(name = "loan_interest_date", columnDefinition = "CHAR(8)")
+    @Column(name = "loan_interest_date", columnDefinition = "bpchar(8)")
     private String loanInterestDate;
 
 }

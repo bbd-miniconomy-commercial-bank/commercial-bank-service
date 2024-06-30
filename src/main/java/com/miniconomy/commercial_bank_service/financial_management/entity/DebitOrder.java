@@ -33,7 +33,7 @@ public class DebitOrder
   @JoinColumn(name = "debit_account_id")
   private Account debitAccount;
 
-  @Column(name = "debit_order_created_date", columnDefinition = "CHAR(8)")
+  @Column(name = "debit_order_created_date", columnDefinition = "bpchar(8)")
   private String debitOrderCreatedDate;
 
   @Column(name = "debit_order_amount", columnDefinition = "BIGINT")
