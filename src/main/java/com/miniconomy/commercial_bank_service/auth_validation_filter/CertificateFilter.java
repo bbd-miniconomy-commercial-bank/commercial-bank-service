@@ -15,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -38,6 +39,9 @@ public class CertificateFilter extends OncePerRequestFilter
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
+
+    @Autowired
+    AccountService accountService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
@@ -63,7 +67,8 @@ public class CertificateFilter extends OncePerRequestFilter
             }
 
             String cn = extractCommonName(clientCert);
-            request.setAttribute("clientCN", cn);
+            String accountName = accountService.findAccountNameByCn(cn);
+            request.setAttribute("accountName", accountName);
 
             filterChain.doFilter(request, response);
         }
