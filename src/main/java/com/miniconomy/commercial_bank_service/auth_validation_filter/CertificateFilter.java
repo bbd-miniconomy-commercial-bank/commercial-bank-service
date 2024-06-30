@@ -68,6 +68,12 @@ public class CertificateFilter extends OncePerRequestFilter
 
             String cn = extractCommonName(clientCert);
             String accountName = accountService.findAccountNameByCn(cn);
+            if(accountName == null)
+            {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + cn);
+                return;
+            }
+            
             request.setAttribute("accountName", accountName);
 
             filterChain.doFilter(request, response);
