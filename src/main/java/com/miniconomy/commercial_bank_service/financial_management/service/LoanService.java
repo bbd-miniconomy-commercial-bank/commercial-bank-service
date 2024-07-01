@@ -61,6 +61,8 @@ public class LoanService {
     }
 
     public List<Loan> getAllLoans(String accountName) {
-        return loanRepository.findByAccountName(accountName);
+        Optional<Account> accountOptional = accRepo.findByAccountName(accountName);
+
+        return loanRepository.findByAccountId(accountOptional.get().getId());
     }
 }

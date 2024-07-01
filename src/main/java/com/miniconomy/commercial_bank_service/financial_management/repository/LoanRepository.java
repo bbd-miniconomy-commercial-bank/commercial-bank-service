@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
 
 public interface LoanRepository extends JpaRepository<Loan, UUID> {
-    List<Loan> findByAccountName(String accountName);
+    List<Loan> findByAccountId(UUID accountId);
 }
