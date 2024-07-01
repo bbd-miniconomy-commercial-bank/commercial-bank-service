@@ -93,8 +93,8 @@ class DebitOrderController {
       DebitOrder debitOrder = debitOrderOptional.get();
       DebitOrderResponse debitOrderResponse = new DebitOrderResponse(
         debitOrder.getDebitOrderId(),
-        debitOrder.getCreditAccount().getAccountName(),
-        debitOrder.getDebitAccount().getAccountName(),
+        debitOrder.getCreditAccountId().toString(),
+        debitOrder.getDebitAccountId().toString(),
         debitOrder.getDebitOrderCreatedDate(),
         debitOrder.getDebitOrderAmount(),
         debitOrder.getDebitOrderReceiverRef(),
@@ -127,8 +127,8 @@ class DebitOrderController {
       DebitOrder debitOrder = updateDbOrder.get();
       DebitOrderResponse debitOrderResponse = new DebitOrderResponse(
         debitOrder.getDebitOrderId(),
-        debitOrder.getCreditAccount().getAccountName(),
-        debitOrder.getDebitAccount().getAccountName(),
+        debitOrder.getCreditAccountId().toString(),
+        debitOrder.getDebitAccountId().toString(),
         debitOrder.getDebitOrderCreatedDate(),
         debitOrder.getDebitOrderAmount(),
         debitOrder.getDebitOrderReceiverRef(),

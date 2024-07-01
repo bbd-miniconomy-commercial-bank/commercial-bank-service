@@ -17,98 +17,106 @@ import com.miniconomy.commercial_bank_service.financial_management.request.Trans
 import com.miniconomy.commercial_bank_service.financial_management.response.TransactionResponse;
 
 @Service
-public class TransactionService
-{
-  private final TransactionRepository transactionRepository;
-  private final AccountRepository accountRepository;
+public class TransactionService {
 
-  public TransactionService(TransactionRepository transactionRepository, AccountRepository accRepo)
-  {
-    this.transactionRepository = transactionRepository;
-    this.accountRepository = accRepo;
-  }
-  
-  public List<TransactionResponse> retrieveTransactions(UUID creditAccountId, Pageable pages)
-  {
-    Optional<Account> acc = accountRepository.findById(creditAccountId);
-    if (acc.isPresent()) {
-      List<Transaction> credT = transactionRepository.findByCreditAccount(acc.get(), pages);
-      List<Transaction> debT = transactionRepository.findByDebitAccount(acc.get(), pages);
+    private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
 
-      credT.addAll(debT);
-      List<TransactionResponse> trList = new ArrayList<>();
-
-      credT.stream().forEach(transaction -> {
-        Optional<Account> creditAccount = accountRepository.findById(transaction.getCreditAccount().getId());
-        Optional<Account> debitAccount = accountRepository.findById(transaction.getDebitAccount().getId());
-
-        TransactionResponse transactionResponse = new TransactionResponse(debitAccount.get().getAccountName(), creditAccount.get().getAccountName(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
-        trList.add(transactionResponse);
-      });
-      return trList;
-    }
-    return List.of(); // returns empty list
-  } 
-
-  public Optional<Transaction> retrieveTransactionsById(UUID id)
-  {
-    Optional<Transaction> transaction = transactionRepository.findById(id);
-    return transaction;
-    //if 
-    //Account creditAccount = accountRepository.findById(transaction.getCreditAccountId()).get();
-    //Account debitAccount = accountRepository.findById(transaction.getDebitAccountId()).get();
-//
-    //TransactionResponse transactionResponse = new TransactionResponse(debitAccount.getAccountName(), creditAccount.getAccountName(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
-    //return transactionResponse;
-  } 
-
-  public List<TransactionResponse> saveTransactions(List<TransactionRequest> tRequests)
-  {
-    //tRequests.forEach(t -> System.out.println(t.getDebitRef()));
-    List<Transaction> transactions = new ArrayList<>();
-    List<TransactionResponse> tResponses = new ArrayList<>();
-
-    for (TransactionRequest request : tRequests)
-    {
-      Transaction transaction = new Transaction();
-      TransactionResponse res = new TransactionResponse();
-
-      Optional<Account> dbAcc = accountRepository.findByAccountName(request.getCreditAccountName());
-      Optional<Account> crAcc = accountRepository.findByAccountName("commercial-bank"); // for now it's commercial-bank, but their api token should have an account-name
-      
-      if (dbAcc.isPresent() && crAcc.isPresent()) {
-        transaction.setDebitAccount(dbAcc.get());
-        res.setDebitAccountName(dbAcc.get().getAccountName());
-
-        transaction.setCreditAccount(crAcc.get());
-        res.setCreditAccountName(crAcc.get().getAccountName());
-
-        transaction.setTransactionAmount(request.getAmount());
-        res.setAmount(request.getAmount());
-
-        transaction.setCreditRef(request.getCreditRef());
-        res.setCreditRef(request.getCreditRef());
-
-        transaction.setDebitRef(request.getDebitRef());
-        res.setDebitRef(request.getDebitRef());
-
-        transaction.setTransactionStatus(TransactionStatusType.pending);
-        res.setStatus(TransactionStatusType.pending);
-
-        transaction.setTransactionDate(java.time.LocalDate.now().toString().replace("-", ""));
-        res.setDate(java.time.LocalDate.now().toString().replace("-", ""));
-
-        transactions.add(transaction);
-        tResponses.add(res);
-      }
-      else {
-        break;
-      }
-    }
-    if (transactions.size()>0) {
-      transactionRepository.saveAll(transactions);
+    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository) {
+        this.transactionRepository = transactionRepository;
+        this.accountRepository = accountRepository;
     }
 
-    return tResponses;
-  }
+    public List<TransactionResponse> retrieveTransactions(UUID creditAccountId, Pageable pageable) {
+        Optional<Account> acc = accountRepository.findById(creditAccountId);
+        if (acc.isPresent()) {
+            List<Transaction> credTransactions = transactionRepository.findByCreditAccount(acc.get().getAccountId(), pageable);
+            List<Transaction> debTransactions = transactionRepository.findByDebitAccount(acc.get().getAccountId(), pageable);
+
+            List<TransactionResponse> transactionResponses = new ArrayList<>();
+
+            credTransactions.forEach(transaction -> {
+                Optional<Account> creditAccount = accountRepository.findById(transaction.getCreditAccountId());
+                Optional<Account> debitAccount = accountRepository.findById(transaction.getDebitAccountId());
+
+                if (creditAccount.isPresent() && debitAccount.isPresent()) {
+                    TransactionResponse transactionResponse = new TransactionResponse(
+                            debitAccount.get().getAccountId().toString(),
+                            creditAccount.get().getAccountName(),
+                            transaction.getTransactionAmount(),
+                            transaction.getTransactionStatus(),
+                            transaction.getDebitRef(),
+                            transaction.getCreditRef(),
+                            transaction.getTransactionDate()
+                    );
+                    transactionResponses.add(transactionResponse);
+                }
+            });
+
+            debTransactions.forEach(transaction -> {
+                Optional<Account> creditAccount = accountRepository.findById(transaction.getCreditAccountId());
+                Optional<Account> debitAccount = accountRepository.findById(transaction.getDebitAccountId());
+
+                if (creditAccount.isPresent() && debitAccount.isPresent()) {
+                    TransactionResponse transactionResponse = new TransactionResponse(
+                            debitAccount.get().getAccountName(),
+                            creditAccount.get().getAccountName(),
+                            transaction.getTransactionAmount(),
+                            transaction.getTransactionStatus(),
+                            transaction.getDebitRef(),
+                            transaction.getCreditRef(),
+                            transaction.getTransactionDate()
+                    );
+                    transactionResponses.add(transactionResponse);
+                }
+            });
+
+            return transactionResponses;
+        }
+        return List.of(); // returns empty list if account not found
+    }
+
+    public Optional<Transaction> retrieveTransactionById(UUID id) {
+        return transactionRepository.findById(id);
+    }
+
+    public List<TransactionResponse> saveTransactions(List<TransactionRequest> transactionRequests) {
+        List<Transaction> transactions = new ArrayList<>();
+        List<TransactionResponse> transactionResponses = new ArrayList<>();
+
+        for (TransactionRequest request : transactionRequests) {
+            Optional<Account> dbAcc = accountRepository.findByAccountName(request.getDebitAccountName());
+            Optional<Account> crAcc = accountRepository.findByAccountName(request.getCreditAccountName());
+
+            if (dbAcc.isPresent() && crAcc.isPresent()) {
+                Transaction transaction = new Transaction();
+                transaction.setDebitAccountId(dbAcc.get().getAccountId());
+                transaction.setCreditAccountId(crAcc.get().getAccountId());
+                transaction.setTransactionAmount(request.getAmount());
+                transaction.setCreditRef(request.getCreditRef());
+                transaction.setDebitRef(request.getDebitRef());
+                transaction.setTransactionStatus(TransactionStatusType.pending.toString());
+                transaction.setTransactionDate("Date from Hand of Zeus");
+
+                transactions.add(transaction);
+
+                TransactionResponse transactionResponse = new TransactionResponse(
+                        dbAcc.get().getAccountId().toString(),
+                        crAcc.get().getAccountId().toString(),
+                        request.getAmount(),
+                        TransactionStatusType.pending.toString(),
+                        request.getDebitRef(),
+                        request.getCreditRef(),
+                        "Date from hand of zeus"
+                );
+                transactionResponses.add(transactionResponse);
+            }
+        }
+
+        if (!transactions.isEmpty()) {
+            transactionRepository.saveAll(transactions);
+        }
+
+        return transactionResponses;
+    }
 }

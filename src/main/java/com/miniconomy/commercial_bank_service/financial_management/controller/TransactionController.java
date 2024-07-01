@@ -3,7 +3,6 @@ package com.miniconomy.commercial_bank_service.financial_management.controller;
 import org.springframework.web.bind.annotation.*;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
-import com.miniconomy.commercial_bank_service.financial_management.request.TransactionRequest;
 import com.miniconomy.commercial_bank_service.financial_management.request.TransactionsCreateRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.ListResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
@@ -65,12 +64,12 @@ class TransactionController {
     ResponseTemplate<TransactionResponse> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
     
-    Optional<Transaction> t = this.transactionService.retrieveTransactionsById(id);
+    Optional<Transaction> t = this.transactionService.retrieveTransactionById(id);
     if (t.isPresent()) {
       Transaction transaction = t.get();
       TransactionResponse transactionResponse = new TransactionResponse(
-        transaction.getDebitAccount().getAccountName(), 
-        transaction.getCreditAccount().getAccountName(), 
+        transaction.getDebitAccountId().toString(), 
+        transaction.getCreditAccountId().toString(), 
         transaction.getTransactionAmount(), 
         transaction.getTransactionStatus(), 
         transaction.getDebitRef(), 

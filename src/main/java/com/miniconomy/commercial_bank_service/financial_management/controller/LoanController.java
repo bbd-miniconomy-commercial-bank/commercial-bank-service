@@ -52,7 +52,7 @@ public class LoanController {
                     createdLoan.get().getLoanId(),
                     createdLoan.get().getLoanAmount(),
                     createdLoan.get().getLoanType(),
-                    createdLoan.get().getAccount().getAccountName()
+                    createdLoan.get().getAccountId().toString()
             );
             
             response.setData(loanResponse);
@@ -82,7 +82,7 @@ public class LoanController {
                 loan.get().getLoanId(),
                 loan.get().getLoanAmount(),
                 loan.get().getLoanType(),
-                loan.get().getAccount().getAccountName()
+                loan.get().getAccountId().toString()
             );
             
             response.setData(loanResponse);
@@ -119,7 +119,7 @@ public class LoanController {
                 loan.getLoanId(),
                 loan.getLoanAmount(),
                 loan.getLoanType(),
-                loan.getAccount().getAccountName()
+                loan.getAccountId().toString()
             )).collect(Collectors.toList());
 
         ListResponseTemplate<LoanResponse> listResponseTemplate = new ListResponseTemplate<>(page, pageSize, loanResponsesList);
