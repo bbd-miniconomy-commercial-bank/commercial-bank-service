@@ -1,6 +1,7 @@
 package com.miniconomy.commercial_bank_service.financial_management.repository;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
+import com.miniconomy.commercial_bank_service.financial_management.entity.TransactionStatusType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,7 +33,7 @@ public class TransactionRepository {
         transaction.setTransactionAmount(rs.getLong("transaction_amount"));
         transaction.setCreditRef(rs.getString("credit_ref"));
         transaction.setDebitRef(rs.getString("debit_ref"));
-        transaction.setTransactionStatus(rs.getString("transaction_status"));
+        transaction.setTransactionStatus(TransactionStatusType.valueOf(rs.getString("transaction_status")));
         return transaction;
     };
 
@@ -51,6 +53,23 @@ public class TransactionRepository {
         return results.stream().findFirst();
     }
 
+    public void save(Transaction transaction) {
+        String sql = "INSERT INTO transaction (transaction_id, credit_account_id, debit_account_id, transaction_date, transaction_amount, credit_ref, debit_ref, transaction_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setObject(1, transaction.getTransactionId());
+            ps.setObject(2, transaction.getCreditAccountId());
+            ps.setObject(3, transaction.getDebitAccountId());
+            ps.setString(4, transaction.getTransactionDate());
+            ps.setLong(5, transaction.getTransactionAmount());
+            ps.setString(6, transaction.getCreditRef());
+            ps.setString(7, transaction.getDebitRef());
+            ps.setObject(8, transaction.getTransactionStatus(), Types.OTHER);
+            return ps;
+        });
+    }
+
     public void saveAll(List<Transaction> transactions) {
       String sql = "INSERT INTO transaction (transaction_id, credit_account_id, debit_account_id, transaction_date, transaction_amount, credit_ref, debit_ref, transaction_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -65,7 +84,7 @@ public class TransactionRepository {
               ps.setLong(5, transaction.getTransactionAmount());
               ps.setString(6, transaction.getCreditRef());
               ps.setString(7, transaction.getDebitRef());
-              ps.setString(8, transaction.getTransactionStatus());
+              ps.setObject(8, transaction.getTransactionStatus());
           }
 
           @Override

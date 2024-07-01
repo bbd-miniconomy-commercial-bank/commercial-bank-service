@@ -95,7 +95,7 @@ public class TransactionService {
                 transaction.setTransactionAmount(request.getAmount());
                 transaction.setCreditRef(request.getCreditRef());
                 transaction.setDebitRef(request.getDebitRef());
-                transaction.setTransactionStatus(TransactionStatusType.pending.toString());
+                transaction.setTransactionStatus(TransactionStatusType.pending);
                 transaction.setTransactionDate("Date from Hand of Zeus");
 
                 transactions.add(transaction);
@@ -104,10 +104,10 @@ public class TransactionService {
                         dbAcc.get().getAccountId().toString(),
                         crAcc.get().getAccountId().toString(),
                         request.getAmount(),
-                        TransactionStatusType.pending.toString(),
+                        TransactionStatusType.pending,
                         request.getDebitRef(),
                         request.getCreditRef(),
-                        "Date from hand of zeus"
+                        "zeus"
                 );
                 transactionResponses.add(transactionResponse);
             }

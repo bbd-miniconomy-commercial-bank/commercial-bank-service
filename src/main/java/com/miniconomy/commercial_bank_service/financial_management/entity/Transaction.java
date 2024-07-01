@@ -11,7 +11,7 @@ public class Transaction {
     private long transactionAmount;
     private String creditRef;
     private String debitRef;
-    private String transactionStatus;
+    private TransactionStatusType transactionStatus;
 
     // Getters and Setters
     public UUID getTransactionId() {
@@ -70,11 +70,11 @@ public class Transaction {
         this.debitRef = debitRef;
     }
 
-    public String getTransactionStatus() {
+    public TransactionStatusType getTransactionStatus() {
         return transactionStatus;
     }
 
-    public void setTransactionStatus(String string) {
-        this.transactionStatus = string.toString();
+    public void setTransactionStatus(TransactionStatusType statusType) {
+        this.transactionStatus = statusType;
     }
 }

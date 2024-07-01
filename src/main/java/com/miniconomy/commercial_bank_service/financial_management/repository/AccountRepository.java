@@ -39,16 +39,16 @@ public class AccountRepository {
                 .findFirst();
     }
 
-    public void save(Account account) {
+    public Account save(Account account) {
         String sql = "INSERT INTO account (account_id, account_name, account_cn, account_notification_endpoint) " +
                      "VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(sql, account.getAccountId(), account.getAccountName(), account.getAccountCn(), account.getAccountNotificationEndpoint());
+        return account;
     }
 
     public void update(Account account) {
-        String sql = "UPDATE account SET account_name = ?, account_cn = ?, account_notification_endpoint = ? " +
-                     "WHERE account_id = ?";
-        jdbcTemplate.update(sql, account.getAccountName(), account.getAccountCn(), account.getAccountNotificationEndpoint(), account.getAccountId());
+        String sql = "UPDATE account SET account_notification_endpoint = ? WHERE account_id = ?";
+        jdbcTemplate.update(sql, account.getAccountNotificationEndpoint(), account.getAccountId());
     }
 
     public void deleteById(UUID accountId) {

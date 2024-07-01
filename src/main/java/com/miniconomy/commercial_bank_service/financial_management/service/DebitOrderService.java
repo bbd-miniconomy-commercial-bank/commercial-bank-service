@@ -48,7 +48,7 @@ public class DebitOrderService {
             d.setCreditAccountId(credAcc.get().getAccountId());
             d.setDebitAccountId(debAcc.get().getAccountId());
             d.setDebitOrderAmount(dbOrder.getAmount());
-            d.setDebitOrderCreatedDate("Date from Hand of Zeus");
+            d.setDebitOrderCreatedDate("Zeus");
             d.setDebitOrderReceiverRef(dbOrder.getCreditRef());
             d.setDebitOrderSenderRef(dbOrder.getDebitRef());
             debitOrderRepository.update(d);
@@ -108,8 +108,8 @@ public class DebitOrderService {
                 dbo.setDebitOrderAmount(dbOrder.getAmount());
                 res.setAmount(dbOrder.getAmount());
 
-                dbo.setDebitOrderCreatedDate("Date from hand of zeus");
-                res.setCreationDate("Date from hand ");
+                dbo.setDebitOrderCreatedDate("zeus");
+                res.setCreationDate("zeus");
 
                 dbo.setDebitOrderReceiverRef(dbOrder.getCreditRef());
                 res.setReceiverRef(dbOrder.getCreditRef());
