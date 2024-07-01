@@ -1,6 +1,5 @@
 package com.miniconomy.commercial_bank_service.financial_management.controller;
 
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;

@@ -9,16 +9,18 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.openssl.PEMParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
 
+import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -31,8 +33,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-@Component
-public class CertificateFilter extends OncePerRequestFilter
+public class CertificateFilter implements Filter
 {
     @Autowired
     private AmazonS3 amazonS3;
@@ -44,13 +45,23 @@ public class CertificateFilter extends OncePerRequestFilter
     AccountService accountService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
+	public void init(final FilterConfig filterConfig) throws ServletException {
+	}
+
+    @Override
+	public void destroy() {
+	}
+
+    @Override
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain filterChain) throws ServletException, IOException
     {
-        String clientCertHeader = request.getHeader("X-Amzn-Mtls-Clientcert");
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse res = (HttpServletResponse) response;
+        String clientCertHeader = req.getHeader("X-Amzn-Mtls-Clientcert");
 
         if (clientCertHeader == null)
         {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate required");
+            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate required");
             return;
         }
 
@@ -62,7 +73,7 @@ public class CertificateFilter extends OncePerRequestFilter
             boolean isVerified = verifyCertificate(clientCert, trustedCerts);
             if (!isVerified)
             {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate verification failed");
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate verification failed");
                 return;
             }
 
@@ -70,7 +81,7 @@ public class CertificateFilter extends OncePerRequestFilter
             String accountName = accountService.findAccountNameByCn(cn);
             if(accountName == null)
             {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + cn);
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + cn);
                 return;
             }
             
@@ -80,7 +91,7 @@ public class CertificateFilter extends OncePerRequestFilter
         }
         catch (Exception e)
         {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing client certificate");
+            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing client certificate");
         }
     }
 
