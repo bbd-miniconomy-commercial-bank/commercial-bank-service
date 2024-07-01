@@ -8,6 +8,7 @@ import com.miniconomy.commercial_bank_service.financial_management.response.Resp
 import com.miniconomy.commercial_bank_service.financial_management.response.LoanResponse;
 import com.miniconomy.commercial_bank_service.financial_management.response.ListResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.service.LoanService;
+import com.miniconomy.commercial_bank_service.financial_management.utils.LoanUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,15 +46,11 @@ public class LoanController {
         ResponseTemplate<LoanResponse> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
 
-        Optional<Loan> createdLoan = loanService.createLoan(loan);
+        Optional<Loan> createdLoanOptional = loanService.createLoan(loan);
 
-        if (createdLoan.isPresent()) {
-            LoanResponse loanResponse = new LoanResponse(
-                    createdLoan.get().getLoanId(),
-                    createdLoan.get().getLoanAmount(),
-                    createdLoan.get().getLoanType(),
-                    createdLoan.get().getAccount().getAccountName()
-            );
+        if (createdLoanOptional.isPresent()) {
+            Loan createdLoan = createdLoanOptional.get();
+            LoanResponse loanResponse = LoanUtils.loanResponseMappper(createdLoan);
             
             response.setData(loanResponse);
         } else {
@@ -75,15 +72,11 @@ public class LoanController {
         ResponseTemplate<LoanResponse> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
 
-        Optional<Loan> loan = loanService.getLoanById(id);
+        Optional<Loan> loanOptional = loanService.getLoanById(id);
         
-        if (loan.isPresent()) {
-            LoanResponse loanResponse = new LoanResponse(
-                loan.get().getLoanId(),
-                loan.get().getLoanAmount(),
-                loan.get().getLoanType(),
-                loan.get().getAccount().getAccountName()
-            );
+        if (loanOptional.isPresent()) {
+            Loan loan = loanOptional.get();
+            LoanResponse loanResponse = LoanUtils.loanResponseMappper(loan);
             
             response.setData(loanResponse);
         } else {
@@ -115,12 +108,8 @@ public class LoanController {
         List<Loan> loans = loanService.getAllLoans();
 
         List<LoanResponse> loanResponsesList = loans.stream().map(
-            loan -> new LoanResponse(
-                loan.getLoanId(),
-                loan.getLoanAmount(),
-                loan.getLoanType(),
-                loan.getAccount().getAccountName()
-            )).collect(Collectors.toList());
+            loan -> LoanUtils.loanResponseMappper(loan)
+        ).collect(Collectors.toList());
 
         ListResponseTemplate<LoanResponse> listResponseTemplate = new ListResponseTemplate<>(page, pageSize, loanResponsesList);
 

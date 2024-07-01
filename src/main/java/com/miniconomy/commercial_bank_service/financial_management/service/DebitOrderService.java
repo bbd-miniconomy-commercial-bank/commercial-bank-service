@@ -90,47 +90,30 @@ public class DebitOrderService
     return List.of(); // otherwise return an empty list
   }
 
-  public List<DebitOrderResponse> saveDebitOrders(List<DebitOrderRequest> dbOrders) {
-    //List<DebitOrder> debitOrders = new ArrayList<>();
-    List<DebitOrderResponse> response = new ArrayList<>();
+  public List<DebitOrder> saveDebitOrders(List<DebitOrderRequest> dbOrders) {
+    List<DebitOrder> debitOrders = new ArrayList<>();
 
     for (DebitOrderRequest dbOrder : dbOrders) {
 
       DebitOrder dbo = new DebitOrder();
-      DebitOrderResponse res = new DebitOrderResponse();
       
       Optional<Account> dbAcc = accountRepository.findByAccountName(dbOrder.getDebitAccountName());
       Optional<Account> crAcc = accountRepository.findByAccountName(dbOrder.getCreditAccountName()); 
       
       if (dbAcc.isPresent() && crAcc.isPresent()) {
-        //dbOrder.getCreditAccount().
+        
         dbo.setCreditAccount(crAcc.get()); 
-        res.setCreditAccountName(crAcc.get().getAccountName());
-
         dbo.setDebitAccount(dbAcc.get()); 
-        res.setDebitAccountName(dbAcc.get().getAccountName());
-
         dbo.setDebitOrderAmount(dbOrder.getAmount()); 
-        res.setAmount(dbOrder.getAmount());
-
         dbo.setDebitOrderCreatedDate(java.time.LocalDate.now().toString().replace("-", "")); 
-        res.setCreationDate(java.time.LocalDate.now().toString().replace("-", ""));
-
         dbo.setDebitOrderReceiverRef(dbOrder.getCreditRef()); 
-        res.setReceiverRef(dbOrder.getCreditRef());
-
         dbo.setDebitOrderSenderRef(dbOrder.getDebitRef()); 
-        res.setSenderRef(dbOrder.getDebitRef());
-
         dbo.setDebitOrderDisabled(false);
-        res.setDisabled(false);
 
-        //debitOrders.add(dbo);
         DebitOrder savedDbo = debitOrderRepository.save(dbo);
-        res.setId(savedDbo.getDebitOrderId());
-        response.add(res);
+        debitOrders.add(savedDbo);
       }
     }
-    return response;
+    return debitOrders;
   }
 }

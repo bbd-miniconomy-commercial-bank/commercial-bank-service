@@ -14,7 +14,6 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Transa
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.TransactionRepository;
 import com.miniconomy.commercial_bank_service.financial_management.request.TransactionRequest;
-import com.miniconomy.commercial_bank_service.financial_management.response.TransactionResponse;
 
 @Service
 public class TransactionService
@@ -28,24 +27,15 @@ public class TransactionService
     this.accountRepository = accRepo;
   }
   
-  public List<TransactionResponse> retrieveTransactions(UUID creditAccountId, Pageable pages)
+  public List<Transaction> retrieveTransactions(UUID creditAccountId, Pageable pages)
   {
     Optional<Account> acc = accountRepository.findById(creditAccountId);
     if (acc.isPresent()) {
       List<Transaction> credT = transactionRepository.findByCreditAccount(acc.get(), pages);
-      List<Transaction> debT = transactionRepository.findByDebitAccount(acc.get(), pages);
+      List<Transaction> debT = transactionRepository.findByDebitAccount(acc.get(), pages); 
 
       credT.addAll(debT);
-      List<TransactionResponse> trList = new ArrayList<>();
-
-      credT.stream().forEach(transaction -> {
-        Optional<Account> creditAccount = accountRepository.findById(transaction.getCreditAccount().getId());
-        Optional<Account> debitAccount = accountRepository.findById(transaction.getDebitAccount().getId());
-
-        TransactionResponse transactionResponse = new TransactionResponse(debitAccount.get().getAccountName(), creditAccount.get().getAccountName(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
-        trList.add(transactionResponse);
-      });
-      return trList;
+      return credT;
     }
     return List.of(); // returns empty list
   } 
@@ -62,53 +52,39 @@ public class TransactionService
     //return transactionResponse;
   } 
 
-  public List<TransactionResponse> saveTransactions(List<TransactionRequest> tRequests)
+  public List<Transaction> saveTransactions(List<TransactionRequest> tRequests)
   {
     //tRequests.forEach(t -> System.out.println(t.getDebitRef()));
     List<Transaction> transactions = new ArrayList<>();
-    List<TransactionResponse> tResponses = new ArrayList<>();
 
     for (TransactionRequest request : tRequests)
     {
       Transaction transaction = new Transaction();
-      TransactionResponse res = new TransactionResponse();
 
-      Optional<Account> dbAcc = accountRepository.findByAccountName(request.getCreditAccountName());
-      Optional<Account> crAcc = accountRepository.findByAccountName("commercial-bank"); // for now it's commercial-bank, but their api token should have an account-name
+      Optional<Account> dbAcc = accountRepository.findByAccountName(request.getDebitAccountName());
+      Optional<Account> crAcc = accountRepository.findByAccountName(request.getCreditAccountName()); // for now it's commercial-bank, but their api token should have an account-name
       
       if (dbAcc.isPresent() && crAcc.isPresent()) {
         transaction.setDebitAccount(dbAcc.get());
-        res.setDebitAccountName(dbAcc.get().getAccountName());
-
         transaction.setCreditAccount(crAcc.get());
-        res.setCreditAccountName(crAcc.get().getAccountName());
-
         transaction.setTransactionAmount(request.getAmount());
-        res.setAmount(request.getAmount());
-
         transaction.setCreditRef(request.getCreditRef());
-        res.setCreditRef(request.getCreditRef());
-
         transaction.setDebitRef(request.getDebitRef());
-        res.setDebitRef(request.getDebitRef());
 
         transaction.setTransactionStatus(TransactionStatusType.pending);
-        res.setStatus(TransactionStatusType.pending);
 
         transaction.setTransactionDate(java.time.LocalDate.now().toString().replace("-", ""));
-        res.setDate(java.time.LocalDate.now().toString().replace("-", ""));
 
         transactions.add(transaction);
-        tResponses.add(res);
       }
       else {
-        break;
+        continue;
       }
     }
     if (transactions.size()>0) {
       transactionRepository.saveAll(transactions);
     }
 
-    return tResponses;
+    return transactions;
   }
 }
