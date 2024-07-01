@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CertificateFilterConfig
 {
-    @Value("${certificate.filter.enabled}")
+    @Value("${certificate.filter.enabled:true}")
     private boolean filterEnabled;
 
     private final CertificateFilter certificateFilter;
