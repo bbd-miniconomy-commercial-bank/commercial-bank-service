@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
@@ -18,6 +22,9 @@ import com.miniconomy.commercial_bank_service.financial_management.request.Trans
 @Service
 public class TransactionService
 {
+  @Autowired
+  private NamedParameterJdbcTemplate jdbcTemplate;
+
   private final TransactionRepository transactionRepository;
   private final AccountRepository accountRepository;
 
@@ -27,9 +34,9 @@ public class TransactionService
     this.accountRepository = accRepo;
   }
   
-  public List<Transaction> retrieveTransactions(UUID creditAccountId, Pageable pages)
+  public List<Transaction> retrieveTransactions(String accountName, Pageable pages)
   {
-    Optional<Account> acc = accountRepository.findById(creditAccountId);
+    Optional<Account> acc = accountRepository.findByAccountName(accountName);
     if (acc.isPresent()) {
       List<Transaction> credT = transactionRepository.findByCreditAccount(acc.get(), pages);
       List<Transaction> debT = transactionRepository.findByDebitAccount(acc.get(), pages); 
@@ -40,10 +47,17 @@ public class TransactionService
     return List.of(); // returns empty list
   } 
 
-  public Optional<Transaction> retrieveTransactionsById(UUID id)
+  public Optional<Transaction> retrieveTransactionsById(UUID id, String accountName)
   {
-    Optional<Transaction> transaction = transactionRepository.findById(id);
-    return transaction;
+    Optional<Account> accountOptional = accountRepository.findByAccountName(accountName);
+
+    String sql = "SELECT * FROM transaction WHERE transaction_id = :id AND credit_account_id = :accountId OR debit_account_id = :accountId";
+    SqlParameterSource parameters = new MapSqlParameterSource()
+        .addValue("id", id)
+        .addValue("accountId", accountOptional.get().getId());
+    Transaction transaction = jdbcTemplate.queryForObject(sql, parameters, Transaction.class);
+
+    return Optional.of(transaction);
     //if 
     //Account creditAccount = accountRepository.findById(transaction.getCreditAccountId()).get();
     //Account debitAccount = accountRepository.findById(transaction.getDebitAccountId()).get();
@@ -52,7 +66,7 @@ public class TransactionService
     //return transactionResponse;
   } 
 
-  public List<Transaction> saveTransactions(List<TransactionRequest> tRequests)
+  public List<Transaction> saveTransactions(List<TransactionRequest> tRequests, String creditAccountName)
   {
     //tRequests.forEach(t -> System.out.println(t.getDebitRef()));
     List<Transaction> transactions = new ArrayList<>();
@@ -62,7 +76,7 @@ public class TransactionService
       Transaction transaction = new Transaction();
 
       Optional<Account> dbAcc = accountRepository.findByAccountName(request.getDebitAccountName());
-      Optional<Account> crAcc = accountRepository.findByAccountName(request.getCreditAccountName()); // for now it's commercial-bank, but their api token should have an account-name
+      Optional<Account> crAcc = accountRepository.findByAccountName(creditAccountName);
       
       if (dbAcc.isPresent() && crAcc.isPresent()) {
         transaction.setDebitAccount(dbAcc.get());

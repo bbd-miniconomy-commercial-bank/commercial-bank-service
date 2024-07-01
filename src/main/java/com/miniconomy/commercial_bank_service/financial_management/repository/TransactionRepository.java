@@ -4,7 +4,6 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Accoun
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
@@ -17,6 +16,4 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 
   //@Query("SELECT t FROM Transaction t WHERE t.creditAccountId = :accountId OR t.debitAccountId = :accountId")
   //List<Transaction> findByAccountId(@Param("accountId") UUID accountId, Pageable pageable);
-  
-  Optional<Transaction> findById(UUID id);
 }
