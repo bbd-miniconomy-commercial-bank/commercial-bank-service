@@ -8,15 +8,21 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CertificateFilterConfig
 {
-    @Value("${certificate.filter.enabled}")
+    @Value("${certificate.filter.enabled:true}")
     private boolean filterEnabled;
+
+    private final CertificateFilter certificateFilter;
+    
+    public CertificateFilterConfig(CertificateFilter certificateFilter) {
+        this.certificateFilter = certificateFilter;
+    }
 
     @Bean
     public FilterRegistrationBean<CertificateFilter> certificateFilterRegistration()
     {
         FilterRegistrationBean<CertificateFilter> registrationBean = new FilterRegistrationBean<>();
 
-        registrationBean.setFilter(new CertificateFilter());
+        registrationBean.setFilter(certificateFilter);
         registrationBean.addUrlPatterns("/loans");
         registrationBean.addUrlPatterns("/loans/*");
 

@@ -45,8 +45,11 @@ public class CertificateFilter implements Filter
     @Value("${aws.s3.trust-file-name}")
     private String trustFileName;
 
-    @Autowired
-    AccountService accountService;
+    private final AccountService accountService;
+
+    public CertificateFilter(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @Override
 	public void init(final FilterConfig filterConfig) throws ServletException {
