@@ -15,6 +15,7 @@ public interface DebitOrderRepository extends JpaRepository<DebitOrder, UUID>
   //List<DebitOrder> findByCreditAccountId(UUID creditAccountId, Pageable pageable);
   //List<DebitOrder> findByDebitAccount(Account acc, Pageable page);
   List<DebitOrder> findByCreditAccount(Account acc, Pageable page);
+  Optional<DebitOrder> findByIdAndCreditAccount(UUID id, Account creditAccount);
 
   Optional<DebitOrder> findById(UUID id);
 }

@@ -18,5 +18,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
   //@Query("SELECT t FROM Transaction t WHERE t.creditAccountId = :accountId OR t.debitAccountId = :accountId")
   //List<Transaction> findByAccountId(@Param("accountId") UUID accountId, Pageable pageable);
   
-  Optional<Transaction> findById(UUID id);
+  Optional<Transaction> findByIdAndCreditAccountOrDebitAccount(UUID id, Account acc);
 }

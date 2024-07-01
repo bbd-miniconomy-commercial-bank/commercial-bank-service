@@ -24,7 +24,7 @@ public class LoanService {
         this.accRepo = acc;
     }
 
-    public Optional<Loan> createLoan(LoanRequest loan) {
+    public Optional<Loan> createLoan(LoanRequest loan, String accountName) {
         System.out.println(loan.toString());
         Loan newLoan = new Loan();
         if (loan.getType().equals(LoanType.LONG_TERM)) {
@@ -33,7 +33,7 @@ public class LoanService {
         else if (loan.getType().equals(LoanType.SHORT_TERM)) {
             newLoan.setLoanType(LoanType.SHORT_TERM);
         }
-        Optional<Account> acc = accRepo.findByAccountName(loan.getAccountName());
+        Optional<Account> acc = accRepo.findByAccountName(accountName);
         if (acc.isPresent()) {
             newLoan.setLoanAmount(loan.getAmount());
             newLoan.setAccount(acc.get());
@@ -42,11 +42,11 @@ public class LoanService {
         return Optional.of(loanRepository.save(newLoan));
     }
 
-    public Optional<Loan> getLoanById(UUID loanId) {
-        return Optional.of(loanRepository.findById(loanId).orElse(null));
+    public Optional<Loan> getLoanById(UUID loanId, String accountName) {
+        return Optional.of(loanRepository.findByLoanIdAndAccountName(loanId, accountName).orElse(null));
     }
 
-    public List<Loan> getAllLoans() {
-        return loanRepository.findAll();
+    public List<Loan> getAllLoans(String accountName) {
+        return loanRepository.findByAccountName(accountName);
     }
 }

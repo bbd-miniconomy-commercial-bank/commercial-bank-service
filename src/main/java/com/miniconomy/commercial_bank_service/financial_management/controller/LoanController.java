@@ -41,12 +41,12 @@ public class LoanController {
         description = "Create a new loan for an account"
     )
     @PostMapping(value = "/apply", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ResponseTemplate<LoanResponse>> createLoan(@RequestBody LoanRequest loan) {
+    public ResponseEntity<ResponseTemplate<LoanResponse>> createLoan(@RequestBody LoanRequest loan, @RequestAttribute String accountName) {
 
         ResponseTemplate<LoanResponse> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
 
-        Optional<Loan> createdLoanOptional = loanService.createLoan(loan);
+        Optional<Loan> createdLoanOptional = loanService.createLoan(loan, accountName);
 
         if (createdLoanOptional.isPresent()) {
             Loan createdLoan = createdLoanOptional.get();
@@ -67,12 +67,12 @@ public class LoanController {
         description = "Retrieve loan details by loan ID"
     )
     @GetMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity<ResponseTemplate<LoanResponse>> getLoanById(@PathVariable UUID id) {
+    public ResponseEntity<ResponseTemplate<LoanResponse>> getLoanById(@PathVariable UUID id, @RequestAttribute String accountName) {
         
         ResponseTemplate<LoanResponse> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
 
-        Optional<Loan> loanOptional = loanService.getLoanById(id);
+        Optional<Loan> loanOptional = loanService.getLoanById(id, accountName);
         
         if (loanOptional.isPresent()) {
             Loan loan = loanOptional.get();
@@ -96,7 +96,7 @@ public class LoanController {
         value = "", 
         produces = "application/json"
     )
-    public ResponseEntity<ResponseTemplate<ListResponseTemplate<LoanResponse>>> getAllLoans(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize) {
+    public ResponseEntity<ResponseTemplate<ListResponseTemplate<LoanResponse>>> getAllLoans(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize, @RequestAttribute String accountName) {
 
         ResponseTemplate<ListResponseTemplate<LoanResponse>> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
@@ -105,7 +105,7 @@ public class LoanController {
             pageSize = 25;
         }
 
-        List<Loan> loans = loanService.getAllLoans();
+        List<Loan> loans = loanService.getAllLoans(accountName);
 
         List<LoanResponse> loanResponsesList = loans.stream().map(
             loan -> LoanUtils.loanResponseMappper(loan)

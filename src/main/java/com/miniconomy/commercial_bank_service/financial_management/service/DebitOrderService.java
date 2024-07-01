@@ -38,15 +38,15 @@ public class DebitOrderService
     return false;
   }
 
-  public Optional<DebitOrder> updateDebitOrder(UUID id, DebitOrderRequest dbOrder) {
-    Optional<DebitOrder> dbo = debitOrderRepository.findById(id);
-    Optional<Account> credAcc = accountRepository.findByAccountName(dbOrder.getCreditAccountName());
+  public Optional<DebitOrder> updateDebitOrder(UUID id, DebitOrderRequest dbOrder, String creditAccountName) {
+    Optional<Account> creditAccountOptional = accountRepository.findByAccountName(creditAccountName);
+    Optional<DebitOrder> dbo = debitOrderRepository.findByIdAndCreditAccount(id, creditAccountOptional.get());
     Optional<Account> debAcc = accountRepository.findByAccountName(dbOrder.getDebitAccountName());
 
-    if (dbo.isPresent() && credAcc.isPresent() && debAcc.isPresent()) {
+    if (dbo.isPresent() && creditAccountOptional.isPresent() && debAcc.isPresent()) {
       DebitOrder d = dbo.get();
 
-      d.setCreditAccount(credAcc.get());
+      d.setCreditAccount(creditAccountOptional.get());
       d.setDebitAccount(debAcc.get());
       d.setDebitOrderAmount(dbOrder.getAmount());
       d.setDebitOrderCreatedDate(java.time.LocalDate.now().toString().replace("-", ""));
@@ -58,13 +58,14 @@ public class DebitOrderService
     return Optional.empty();
   }
 
-  public Optional<DebitOrder> getDebitOrderById(UUID debitOrderId) {
-    return debitOrderRepository.findById(debitOrderId);
+  public Optional<DebitOrder> getDebitOrderById(UUID debitOrderId, String creditAccountName) {
+    Optional<Account> creditAccountOptional = accountRepository.findByAccountName(creditAccountName);
+    return debitOrderRepository.findByIdAndCreditAccount(debitOrderId, creditAccountOptional.get());
   }
   
-  public List<DebitOrderResponse> retrieveDebitOrders(UUID creditAccountId, Pageable pageable)
+  public List<DebitOrderResponse> retrieveDebitOrders(String creditAccountName, Pageable pageable)
   {
-    Optional<Account> acc = accountRepository.findById(creditAccountId);
+    Optional<Account> acc = accountRepository.findByAccountName(creditAccountName);
     if (acc.isPresent()) {
       List<DebitOrder> cOrders = debitOrderRepository.findByCreditAccount(acc.get(), pageable);
       //List<DebitOrder> dOrders = debitOrderRepository.findByCreditAccount(acc.get(), pageable);
@@ -90,7 +91,7 @@ public class DebitOrderService
     return List.of(); // otherwise return an empty list
   }
 
-  public List<DebitOrder> saveDebitOrders(List<DebitOrderRequest> dbOrders) {
+  public List<DebitOrder> saveDebitOrders(List<DebitOrderRequest> dbOrders, String accountName) {
     List<DebitOrder> debitOrders = new ArrayList<>();
 
     for (DebitOrderRequest dbOrder : dbOrders) {
@@ -98,7 +99,7 @@ public class DebitOrderService
       DebitOrder dbo = new DebitOrder();
       
       Optional<Account> dbAcc = accountRepository.findByAccountName(dbOrder.getDebitAccountName());
-      Optional<Account> crAcc = accountRepository.findByAccountName(dbOrder.getCreditAccountName()); 
+      Optional<Account> crAcc = accountRepository.findByAccountName(accountName); 
       
       if (dbAcc.isPresent() && crAcc.isPresent()) {
         

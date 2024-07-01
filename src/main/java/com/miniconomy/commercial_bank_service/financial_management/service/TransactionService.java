@@ -27,9 +27,9 @@ public class TransactionService
     this.accountRepository = accRepo;
   }
   
-  public List<Transaction> retrieveTransactions(UUID creditAccountId, Pageable pages)
+  public List<Transaction> retrieveTransactions(String accountName, Pageable pages)
   {
-    Optional<Account> acc = accountRepository.findById(creditAccountId);
+    Optional<Account> acc = accountRepository.findByAccountName(accountName);
     if (acc.isPresent()) {
       List<Transaction> credT = transactionRepository.findByCreditAccount(acc.get(), pages);
       List<Transaction> debT = transactionRepository.findByDebitAccount(acc.get(), pages); 
@@ -40,9 +40,10 @@ public class TransactionService
     return List.of(); // returns empty list
   } 
 
-  public Optional<Transaction> retrieveTransactionsById(UUID id)
+  public Optional<Transaction> retrieveTransactionsById(UUID id, String accountName)
   {
-    Optional<Transaction> transaction = transactionRepository.findById(id);
+    Optional<Account> accountOptional = accountRepository.findByAccountName(accountName);
+    Optional<Transaction> transaction = transactionRepository.findByIdAndCreditAccountOrDebitAccount(id, accountOptional.get());
     return transaction;
     //if 
     //Account creditAccount = accountRepository.findById(transaction.getCreditAccountId()).get();
@@ -52,7 +53,7 @@ public class TransactionService
     //return transactionResponse;
   } 
 
-  public List<Transaction> saveTransactions(List<TransactionRequest> tRequests)
+  public List<Transaction> saveTransactions(List<TransactionRequest> tRequests, String creditAccountName)
   {
     //tRequests.forEach(t -> System.out.println(t.getDebitRef()));
     List<Transaction> transactions = new ArrayList<>();
@@ -62,7 +63,7 @@ public class TransactionService
       Transaction transaction = new Transaction();
 
       Optional<Account> dbAcc = accountRepository.findByAccountName(request.getDebitAccountName());
-      Optional<Account> crAcc = accountRepository.findByAccountName(request.getCreditAccountName()); // for now it's commercial-bank, but their api token should have an account-name
+      Optional<Account> crAcc = accountRepository.findByAccountName(creditAccountName);
       
       if (dbAcc.isPresent() && crAcc.isPresent()) {
         transaction.setDebitAccount(dbAcc.get());
