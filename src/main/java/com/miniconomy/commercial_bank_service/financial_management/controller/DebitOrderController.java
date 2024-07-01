@@ -27,7 +27,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Debit Orders", description = "Queries related to service's debit orders")
 @RestController
 @RequestMapping("/debitOrders")
-class DebitOrderController {
+public class DebitOrderController {
     
   private final DebitOrderService debitOrderService;
 

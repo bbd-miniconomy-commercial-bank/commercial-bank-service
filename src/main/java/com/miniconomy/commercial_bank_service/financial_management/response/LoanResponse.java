@@ -2,7 +2,6 @@ package com.miniconomy.commercial_bank_service.financial_management.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
@@ -10,7 +9,6 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.LoanTy
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class LoanResponse {
 
     private UUID id;

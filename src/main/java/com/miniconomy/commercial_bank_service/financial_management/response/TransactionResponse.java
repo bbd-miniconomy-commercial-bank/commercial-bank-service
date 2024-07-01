@@ -5,13 +5,11 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Transa
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class TransactionResponse
 {
   private UUID id;
