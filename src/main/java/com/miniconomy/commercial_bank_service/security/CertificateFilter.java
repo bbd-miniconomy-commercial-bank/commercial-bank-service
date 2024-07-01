@@ -9,6 +9,7 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.openssl.PEMParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
@@ -33,12 +34,13 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+@Component
 public class CertificateFilter implements Filter
 {
     @Autowired
     private AmazonS3 amazonS3;
 
-    @Value("${aws.s3.bucket-name}")
+    @Value("${aws.s3.certstore.bucket.name}")
     private String bucketName;
 
     private final AccountService accountService;
