@@ -1,5 +1,9 @@
 package com.miniconomy.commercial_bank_service.financial_management.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
@@ -15,6 +19,8 @@ import java.util.UUID;
 
 @Service
 public class LoanService {
+    @Autowired
+    private NamedParameterJdbcTemplate jdbcTemplate;
 
     private final LoanRepository loanRepository;
     private final AccountRepository accRepo;
@@ -43,7 +49,15 @@ public class LoanService {
     }
 
     public Optional<Loan> getLoanById(UUID loanId, String accountName) {
-        return Optional.of(loanRepository.findByLoanIdAndAccountName(loanId, accountName).orElse(null));
+        Optional<Account> accountOptional = accRepo.findByAccountName(accountName);
+
+        String sql = "SELECT * FROM loan WHERE loan_id = :id AND account_id = :accountId";
+        SqlParameterSource parameters = new MapSqlParameterSource()
+            .addValue("id", loanId)
+            .addValue("accountId", accountOptional.get().getId());
+        Loan loan = jdbcTemplate.queryForObject(sql, parameters, Loan.class);
+
+        return Optional.of(loan);
     }
 
     public List<Loan> getAllLoans(String accountName) {

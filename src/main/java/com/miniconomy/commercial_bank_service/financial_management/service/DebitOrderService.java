@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
@@ -18,6 +22,9 @@ import com.miniconomy.commercial_bank_service.financial_management.response.Debi
 @Service
 public class DebitOrderService
 {
+  @Autowired
+  private NamedParameterJdbcTemplate jdbcTemplate;
+
   private final DebitOrderRepository debitOrderRepository;
   private final AccountRepository accountRepository;
 
@@ -40,12 +47,16 @@ public class DebitOrderService
 
   public Optional<DebitOrder> updateDebitOrder(UUID id, DebitOrderRequest dbOrder, String creditAccountName) {
     Optional<Account> creditAccountOptional = accountRepository.findByAccountName(creditAccountName);
-    Optional<DebitOrder> dbo = debitOrderRepository.findByIdAndCreditAccount(id, creditAccountOptional.get());
+    
+    String sql = "SELECT * FROM debit_order WHERE debit_order_id = :id AND credit_account_id = :creditAccountId";
+    SqlParameterSource parameters = new MapSqlParameterSource()
+      .addValue("id", id)
+      .addValue("creditAccountId", creditAccountOptional.get().getId());
+    DebitOrder d = jdbcTemplate.queryForObject(sql, parameters, DebitOrder.class);
+
     Optional<Account> debAcc = accountRepository.findByAccountName(dbOrder.getDebitAccountName());
 
-    if (dbo.isPresent() && creditAccountOptional.isPresent() && debAcc.isPresent()) {
-      DebitOrder d = dbo.get();
-
+    if (d != null && creditAccountOptional.isPresent() && debAcc.isPresent()) {
       d.setCreditAccount(creditAccountOptional.get());
       d.setDebitAccount(debAcc.get());
       d.setDebitOrderAmount(dbOrder.getAmount());
@@ -60,7 +71,14 @@ public class DebitOrderService
 
   public Optional<DebitOrder> getDebitOrderById(UUID debitOrderId, String creditAccountName) {
     Optional<Account> creditAccountOptional = accountRepository.findByAccountName(creditAccountName);
-    return debitOrderRepository.findByIdAndCreditAccount(debitOrderId, creditAccountOptional.get());
+    
+    String sql = "SELECT * FROM debit_order WHERE debit_order_id = :id AND credit_account_id = :creditAccountId";
+    SqlParameterSource parameters = new MapSqlParameterSource()
+      .addValue("id", debitOrderId)
+      .addValue("creditAccountId", creditAccountOptional.get().getId());
+    DebitOrder d = jdbcTemplate.queryForObject(sql, parameters, DebitOrder.class);
+
+    return Optional.of(d);
   }
   
   public List<DebitOrderResponse> retrieveDebitOrders(String creditAccountName, Pageable pageable)

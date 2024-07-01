@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
@@ -18,6 +22,9 @@ import com.miniconomy.commercial_bank_service.financial_management.request.Trans
 @Service
 public class TransactionService
 {
+  @Autowired
+  private NamedParameterJdbcTemplate jdbcTemplate;
+
   private final TransactionRepository transactionRepository;
   private final AccountRepository accountRepository;
 
@@ -43,8 +50,14 @@ public class TransactionService
   public Optional<Transaction> retrieveTransactionsById(UUID id, String accountName)
   {
     Optional<Account> accountOptional = accountRepository.findByAccountName(accountName);
-    Optional<Transaction> transaction = transactionRepository.findByIdAndCreditAccountOrDebitAccount(id, accountOptional.get());
-    return transaction;
+
+    String sql = "SELECT * FROM transaction WHERE transaction_id = :id AND credit_account_id = :accountId OR debit_account_id = :accountId";
+    SqlParameterSource parameters = new MapSqlParameterSource()
+        .addValue("id", id)
+        .addValue("accountId", accountOptional.get().getId());
+    Transaction transaction = jdbcTemplate.queryForObject(sql, parameters, Transaction.class);
+
+    return Optional.of(transaction);
     //if 
     //Account creditAccount = accountRepository.findById(transaction.getCreditAccountId()).get();
     //Account debitAccount = accountRepository.findById(transaction.getDebitAccountId()).get();
