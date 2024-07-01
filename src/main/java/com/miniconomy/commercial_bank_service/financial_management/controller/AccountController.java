@@ -7,6 +7,7 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Accoun
 import com.miniconomy.commercial_bank_service.financial_management.response.AccountResponse;
 import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
+import com.miniconomy.commercial_bank_service.financial_management.utils.AccountUtils;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -42,10 +43,11 @@ class AccountController {
     ResponseTemplate<AccountResponse> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
 
-    Optional<Account> account = this.accountService.retrieveAccountBalance(accountName);
+    Optional<Account> accountOptional = this.accountService.retrieveAccountBalance(accountName);
 
-    if (account.isPresent()) {
-      AccountResponse accountResponse = new AccountResponse(account.get().getAccountName(), 4000.0); // account balance is the sum of all transactions
+    if (accountOptional.isPresent()) {
+      Account account = accountOptional.get();
+      AccountResponse accountResponse = AccountUtils.accountResponseMapper(account); // account balance is the sum of all transactions
       response.setData(accountResponse);
     } else {
       status = HttpStatus.NOT_FOUND.value();

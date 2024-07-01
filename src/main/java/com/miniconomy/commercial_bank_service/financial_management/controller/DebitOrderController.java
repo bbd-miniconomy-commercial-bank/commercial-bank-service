@@ -9,10 +9,12 @@ import com.miniconomy.commercial_bank_service.financial_management.response.Debi
 import com.miniconomy.commercial_bank_service.financial_management.response.ListResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.service.DebitOrderService;
+import com.miniconomy.commercial_bank_service.financial_management.utils.DebitOrderUtils;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,15 +45,13 @@ class DebitOrderController {
     ResponseTemplate<ListResponseTemplate<DebitOrderResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
 
-    if (dbOrders.getDebitOrders().size() > 5) {
-      status = HttpStatus.BAD_REQUEST.value();
-      response.setMessage("Cannot create more than 5 debit orders at once");
-    } else {
-      List<DebitOrderResponse> dbos = this.debitOrderService.saveDebitOrders(dbOrders.getDebitOrders());
+    List<DebitOrder> debitOrders = this.debitOrderService.saveDebitOrders(dbOrders.getDebitOrders());
+    List<DebitOrderResponse> debitOrderResponses = debitOrders.stream().map(
+      (debitOrder) -> DebitOrderUtils.debitOrderResponseMapper(debitOrder)
+    ).collect(Collectors.toList());
 
-      ListResponseTemplate<DebitOrderResponse> listResponseTemplate = new ListResponseTemplate<>(1, dbos.size(), dbos);
-      response.setData(listResponseTemplate);
-    }
+    ListResponseTemplate<DebitOrderResponse> listResponseTemplate = new ListResponseTemplate<>(1, debitOrderResponses.size(), debitOrderResponses);
+    response.setData(listResponseTemplate);
     
     response.setStatus(status);
     return ResponseEntity.status(status).body(response);
@@ -91,16 +91,7 @@ class DebitOrderController {
     Optional<DebitOrder> debitOrderOptional = debitOrderService.getDebitOrderById(id);
     if (debitOrderOptional.isPresent()) {
       DebitOrder debitOrder = debitOrderOptional.get();
-      DebitOrderResponse debitOrderResponse = new DebitOrderResponse(
-        debitOrder.getDebitOrderId(),
-        debitOrder.getCreditAccount().getAccountName(),
-        debitOrder.getDebitAccount().getAccountName(),
-        debitOrder.getDebitOrderCreatedDate(),
-        debitOrder.getDebitOrderAmount(),
-        debitOrder.getDebitOrderReceiverRef(),
-        debitOrder.getDebitOrderSenderRef(),
-        debitOrder.isDebitOrderDisabled()
-      );
+      DebitOrderResponse debitOrderResponse = DebitOrderUtils.debitOrderResponseMapper(debitOrder);
 
       response.setData(debitOrderResponse);
     } else {
@@ -125,16 +116,7 @@ class DebitOrderController {
     Optional<DebitOrder> updateDbOrder = debitOrderService.updateDebitOrder(id, body);
     if (updateDbOrder.isPresent()) {
       DebitOrder debitOrder = updateDbOrder.get();
-      DebitOrderResponse debitOrderResponse = new DebitOrderResponse(
-        debitOrder.getDebitOrderId(),
-        debitOrder.getCreditAccount().getAccountName(),
-        debitOrder.getDebitAccount().getAccountName(),
-        debitOrder.getDebitOrderCreatedDate(),
-        debitOrder.getDebitOrderAmount(),
-        debitOrder.getDebitOrderReceiverRef(),
-        debitOrder.getDebitOrderSenderRef(),
-        debitOrder.isDebitOrderDisabled()
-      );
+      DebitOrderResponse debitOrderResponse = DebitOrderUtils.debitOrderResponseMapper(debitOrder);
 
       response.setData(debitOrderResponse);
     } else {
