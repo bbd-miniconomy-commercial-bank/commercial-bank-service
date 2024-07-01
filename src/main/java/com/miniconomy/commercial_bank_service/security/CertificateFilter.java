@@ -33,6 +33,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CertificateFilter implements Filter
@@ -42,6 +43,9 @@ public class CertificateFilter implements Filter
 
     @Value("${aws.s3.certstore.bucket.name}")
     private String bucketName;
+
+    @Value("${aws.s3.trust-file-name}")
+    private String trustFileName;
 
     private final AccountService accountService;
 
@@ -109,13 +113,16 @@ public class CertificateFilter implements Filter
 
     private List<X509Certificate> loadTrustedCertificatesFromS3() throws Exception
     {
-        List<S3ObjectSummary> objectSummaries = amazonS3.listObjects(bucketName).getObjectSummaries();
         List<X509Certificate> trustedCerts = new ArrayList<>();
 
-        for (S3ObjectSummary summary : objectSummaries)
+        S3Object s3Object = amazonS3.getObject(bucketName, trustFileName);
+        String certContent = new String(s3Object.getObjectContent().readAllBytes());
+
+        List<String> certStrings = splitCertificates(certContent);
+
+        for(String certString : certStrings)
         {
-            S3Object s3Object = amazonS3.getObject(bucketName, summary.getKey());
-            try (PEMParser pemParser = new PEMParser(new InputStreamReader(s3Object.getObjectContent())))
+            try (PEMParser pemParser = new PEMParser(new InputStreamReader(new ByteArrayInputStream(certString.getBytes()))))
             {
                 X509CertificateHolder certificateHolder = (X509CertificateHolder) pemParser.readObject();
                 trustedCerts.add(new JcaX509CertificateConverter().getCertificate(certificateHolder));
@@ -123,6 +130,15 @@ public class CertificateFilter implements Filter
         }
 
         return trustedCerts;
+    }
+
+    private List<String> splitCertificates(String certContent)
+    {
+        String[] certs = certContent.split("(?<=-----END CERTIFICATE-----)");
+        return List.of(certs).stream()
+            .map(String::trim)
+            .filter(cert -> !cert.isEmpty())
+            .collect(Collectors.toList());
     }
 
     private boolean verifyCertificate(X509Certificate clientCert, List<X509Certificate> trustedCerts) throws Exception
