@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
 
 import jakarta.servlet.Filter;
@@ -44,7 +43,7 @@ public class CertificateFilter implements Filter
     @Value("${aws.s3.certstore.bucket.name}")
     private String bucketName;
 
-    @Value("${aws.s3.trust-file-name}")
+    @Value("${aws.s3.certstore.bucket.filename}")
     private String trustFileName;
 
     private final AccountService accountService;
