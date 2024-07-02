@@ -73,7 +73,7 @@ public class TransactionService {
         return createdTransactions;
     }
 
-    private TransactionCommand transactionCommandBuilder(Transaction transaction, boolean notifyDepitAccount, boolean notifyCreditAccount) {
+    private TransactionCommand transactionCommandBuilder(Transaction transaction, boolean notifyDebitAccount, boolean notifyCreditAccount) {
         TransactionCommand transactionCommand;
 
         Optional<Account> dbAccountOptional = accountService.retrieveAccountByName(transaction.getCreditAccountName());
@@ -85,11 +85,12 @@ public class TransactionService {
             transactionCommand = new InterbankDepositTransactionCommand(transactionCommand);
         }
 
-        if (notifyDepitAccount) {
+        if (notifyDebitAccount) {
             transactionCommand = new NotifyTransactionCommand(transactionCommand, notificationService, transaction.getDebitAccountName());
         }
-
-        transactionCommand = new NotifyTransactionCommand(transactionCommand, notificationService, transaction.getDebitAccountName());
+        if (notifyCreditAccount) {
+            transactionCommand = new NotifyTransactionCommand(transactionCommand, notificationService, transaction.getDebitAccountName());
+        }
 
         return transactionCommand;
     }
