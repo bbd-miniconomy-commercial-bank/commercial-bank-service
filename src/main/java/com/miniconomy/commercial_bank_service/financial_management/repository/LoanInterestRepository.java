@@ -35,7 +35,9 @@ public class LoanInterestRepository {
     }
 
     public void insert(LoanInterest loanInterest) {
-        String sql = "INSERT INTO loan_interest (loan_interest_id, loan_type, interest_rate) VALUES (:loanInterestId, :loanType, :interestRate)";
+        String sql = "INSERT INTO loan_interest " +
+                     "(loan_interest_id, loan_type, interest_rate) " + 
+                     "VALUES (:loanInterestId, :loanType, :interestRate)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("loanInterestId", loanInterest.getLoanInterestId())
             .addValue("loanType", loanInterest.getLoanType())
