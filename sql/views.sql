@@ -17,7 +17,7 @@ ON
     a.account_id = t.debit_account_id OR a.account_id = t.credit_account_id
 GROUP BY 
     a.account_id;
--- rollback DROP VIEW credit_account_total;
+-- rollback DROP VIEW account_balances_view;
 
 
 -- changeset ryanbasiltrickett:create-account-debit-order-view
