@@ -28,14 +28,12 @@ SELECT
     dot.debit_order_transaction_id,
     dot.debit_order_id,
     dot.transaction_id,
-    "do".credit_account_id,
-    credit_account.account_name AS credit_account_name,
-    "do".debit_account_id,
     debit_account.account_name AS debit_account_name,
-    t.transaction_date,
+    credit_account.account_name AS credit_account_name,
+    t.transaction_debit_ref,
+    t.transaction_credit_ref,
     t.transaction_amount,
-    t.credit_ref,
-    t.debit_ref,
+    t.transaction_date,
     t.transaction_status
 FROM 
     debit_order_transaction dot
