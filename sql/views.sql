@@ -17,7 +17,7 @@ ON
     a.account_id = t.debit_account_id OR a.account_id = t.credit_account_id
 GROUP BY 
     a.account_id;
--- rollback DROP VIEW IF EXISTS credit_account_total;
+-- rollback DROP VIEW credit_account_total;
 
 
 -- changeset ryanbasiltrickett:create-account-debit-order-view
@@ -37,7 +37,7 @@ JOIN
     account a_debit ON "do".debit_account_id = a_debit.account_id
 JOIN
     account a_credit ON "do".credit_account_id = a_credit.account_id;
--- rollback DROP VIEW IF EXISTS account_debit_order_view;
+-- rollback DROP VIEW account_debit_order_view;
 
 -- changeset ryanbasiltrickett:create-account-loan-view
 CREATE VIEW account_loan_view AS 
@@ -51,7 +51,7 @@ FROM
     loan l
 JOIN
     account a ON l.account_id = a.account_id;
--- rollback DROP VIEW IF EXISTS account_loan_view;
+-- rollback DROP VIEW account_loan_view;
 
 -- changeset ryanbasiltrickett:create-account-transaction-view
 CREATE VIEW account_transaction_view AS 
@@ -70,7 +70,7 @@ JOIN
     account a_debit ON t.debit_account_id = a_debit.account_id
 JOIN
     account a_credit ON t.credit_account_id = a_credit.account_id;
--- rollback DROP VIEW IF EXISTS account_transaction_view;
+-- rollback DROP VIEW account_transaction_view;
 
 -- changeset tawanda-bbd:create-loan-interest-view
 CREATE VIEW loan_interest_view AS
@@ -87,7 +87,7 @@ FROM
     account_loan_view alv
 JOIN 
     loan_interest li ON alv.loan_id = li.loan_id;
--- rollback DROP VIEW IF EXISTS loan_interest_view;
+-- rollback DROP VIEW loan_interest_view;
 
 -- changeset tawanda-bbd:create-loan-transactions-view
 CREATE VIEW loan_transactions_view AS
@@ -111,7 +111,7 @@ JOIN
     loan_transaction lt ON alv.loan_id = lt.loan_id
 JOIN 
     account_transaction_view atv ON lt.transaction_id = atv.transaction_id;
--- rollback DROP VIEW IF EXISTS loan_transactions_view;
+-- rollback DROP VIEW loan_transactions_view;
 
 -- changeset thashilbbd:create-debit-order-transactions-view
 CREATE VIEW debit_order_transactions_view AS
@@ -136,4 +136,4 @@ JOIN
     account credit_account ON "do".credit_account_id = credit_account.account_id
 JOIN 
     account debit_account ON "do".debit_account_id = debit_account.account_id;
--- rollback DROP VIEW IF EXISTS debit_order_transactions
+-- rollback DROP VIEW debit_order_transactions_view
