@@ -68,10 +68,10 @@ public class TransactionController {
     ResponseTemplate<TransactionResponse> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
     
-    Optional<Transaction> transactionOptional = this.transactionService.retrieveTransactionsById(id, accountName);
+    Optional<Transaction> transactionOptional = this.transactionService.retrieveTransactionById(id, accountName);
     if (transactionOptional.isPresent()) {
       Transaction transaction = transactionOptional.get();
-      TransactionResponse transactionResponse = TransactionUtils.transactionResponseMapper(transaction, "ACCOUNT_NAME"); // To be fixed
+      TransactionResponse transactionResponse = TransactionUtils.transactionResponseMapper(transaction, accountName); // To be fixed
       
       response.setData(transactionResponse);
     } else {
@@ -88,12 +88,16 @@ public class TransactionController {
     description = "Allows services to create transactions"
   )
   @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<ListResponseTemplate<TransactionResponse>>> postTransactions(@RequestBody TransactionsCreateRequest transactions, @RequestAttribute String accountName) {
+  public ResponseEntity<ResponseTemplate<ListResponseTemplate<TransactionResponse>>> postTransactions(@RequestBody TransactionsCreateRequest transactionsCreateRequest, @RequestAttribute String accountName) {
     
     ResponseTemplate<ListResponseTemplate<TransactionResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
     
-    List<Transaction> savedTransactions = this.transactionService.saveTransactions(transactions.getTransactions(), accountName);
+    List<Transaction> transactions = transactionsCreateRequest.getTransactions().stream().map(
+      (transactionsRequest) -> TransactionUtils.transactionMapper(transactionsRequest)
+    ).collect(Collectors.toList());
+
+    List<Transaction> savedTransactions = this.transactionService.saveTransactions(transactions, accountName);
     List<TransactionResponse> transactionResponses = savedTransactions.stream().map(
             (transaction) -> TransactionUtils.transactionResponseMapper(transaction, accountName)
           ).collect(Collectors.toList());

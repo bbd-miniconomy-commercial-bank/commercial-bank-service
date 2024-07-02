@@ -2,39 +2,20 @@ package com.miniconomy.commercial_bank_service.financial_management.entity;
 
 import java.util.UUID;
 
-import org.hibernate.annotations.UuidGenerator;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Table(name = "loan_transaction")
 public class LoanTransaction {
 
-    @Id
-    @UuidGenerator(style = UuidGenerator.Style.RANDOM)
-    @Column(name = "loan_transaction_id")
     private UUID loanTransactionId;
-
-    @ManyToOne
-    @JoinColumn(name = "loan_id")
-    private Loan loan;
-
-    @Column(name = "transaction_id")
+    private UUID loanId;
     private UUID transactionId;
 
+    // Constructors
+    public LoanTransaction(UUID loanTransactionId, UUID loanId, UUID transactionId) {
+        this.loanTransactionId = loanTransactionId;
+        this.loanId = loanId;
+        this.transactionId = transactionId;
+    }
+
     // Getters and Setters
-/*
     public UUID getLoanTransactionId() {
         return loanTransactionId;
     }
@@ -43,19 +24,19 @@ public class LoanTransaction {
         this.loanTransactionId = loanTransactionId;
     }
 
-    public Loan getLoan() {
-        return loan;
+    public UUID getLoanId() {
+        return loanId;
     }
 
-    public void setLoan(Loan loan) {
-        this.loan = loan;
+    public void setLoanId(UUID loanId) {
+        this.loanId = loanId;
     }
 
-    public Long getTransactionId() {
+    public UUID getTransactionId() {
         return transactionId;
     }
 
-    public void setTransactionId(Long  transactionId) {
+    public void setTransactionId(UUID transactionId) {
         this.transactionId = transactionId;
-    }*/
+    }
 }

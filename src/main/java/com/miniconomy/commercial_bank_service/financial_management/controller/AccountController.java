@@ -8,7 +8,6 @@ import com.miniconomy.commercial_bank_service.financial_management.response.Resp
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
 import com.miniconomy.commercial_bank_service.financial_management.utils.AccountUtils;
 
-import java.util.HashMap;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -47,7 +46,7 @@ public class AccountController {
 
     if (accountOptional.isPresent()) {
       Account account = accountOptional.get();
-      AccountResponse accountResponse = AccountUtils.accountResponseMapper(account); // account balance is the sum of all transactions
+      AccountResponse accountResponse = AccountUtils.accountResponseMapper(account);
       response.setData(accountResponse);
     } else {
       status = HttpStatus.NOT_FOUND.value();
@@ -56,12 +55,6 @@ public class AccountController {
 
     response.setStatus(status);
     return ResponseEntity.status(status).body(response);
-  }
-
-  public HashMap<String, Object> createEntity(String x, Object y) {
-    HashMap<String, Object> map = new HashMap<String, Object>();
-    map.put(x, y);
-    return map;
   }
 
 }

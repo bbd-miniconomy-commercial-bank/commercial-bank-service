@@ -21,3 +21,5 @@ databaseChangeLog:
       file: sql/references.sql
    - include:
       file: sql/views.sql
+   - include:
+      file: sql/functions.sql

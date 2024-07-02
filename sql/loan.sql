@@ -10,5 +10,6 @@ CREATE TABLE loan (
     account_id UUID NOT NULL,
     loan_amount BIGINT NOT NULL,
     loan_type loan_type_enum NOT NULL
+    loan_created_date CHAR(8) NOT NULL
 );
 -- rollback DROP TABLE loan
