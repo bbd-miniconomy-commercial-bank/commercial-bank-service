@@ -2,7 +2,7 @@
 
 -- changeset ryanbasiltrickett:create-intebank-transaction-status-enum
 CREATE TYPE interbank_transaction_status_enum AS ENUM ('failed', 'processing', 'completed');
--- rollback DROP TYPE transaction_status_enum
+-- rollback DROP TYPE interbank_transaction_status_enum
 
 -- changeset ryanbasiltrickett:create-intebank-transaction-table
 CREATE TABLE interbank_transaction (
