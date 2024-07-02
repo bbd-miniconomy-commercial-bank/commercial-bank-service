@@ -23,11 +23,12 @@ public class AccountRepository {
         account.setAccountName(rs.getString("account_name"));
         account.setAccountCn(rs.getString("account_cn"));
         account.setAccountNotificationEndpoint(rs.getString("account_notification_endpoint"));
+        account.setAccountBalance(Long.parseLong(rs.getString("account_balance")));
         return account;
     };
 
     public Optional<Account> findById(UUID accountId) {
-        String sql = "SELECT * FROM account WHERE account_id = :accountId";
+        String sql = "SELECT * FROM account_balances_view WHERE account_id = :accountId";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("accountId", accountId);
         return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
@@ -36,7 +37,7 @@ public class AccountRepository {
     }
 
     public Optional<Account> findByAccountName(String accountName) {
-        String sql = "SELECT * FROM account WHERE account_name = :accountName";
+        String sql = "SELECT * FROM account_balances_view WHERE account_name = :accountName";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("accountName", accountName);
         return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
@@ -45,7 +46,7 @@ public class AccountRepository {
     }
 
     public Optional<Account> findByAccountCN(String accountCN) {
-        String sql = "SELECT * FROM account WHERE account_cn = :accountCN";
+        String sql = "SELECT * FROM account_balances_view_view WHERE account_cn = :accountCN";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("accountCN", accountCN);
         return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)

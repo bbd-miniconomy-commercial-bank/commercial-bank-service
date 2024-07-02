@@ -104,7 +104,7 @@ public class DebitOrderRepository {
     }
 
     public List<DebitOrderTransaction> getAllDebitOrderTransactions() {
-        String sql = "SELECT * FROM debit_order_transactions";
+        String sql = "SELECT * FROM debit_order_transactions_view";
         return namedParameterJdbcTemplate.query(sql, debitOrderTransactionRowMapper);
     }
 }

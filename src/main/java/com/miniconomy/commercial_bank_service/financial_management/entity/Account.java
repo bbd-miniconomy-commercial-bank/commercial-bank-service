@@ -14,4 +14,5 @@ public class Account {
     private String accountName;
     private String accountCn;
     private String accountNotificationEndpoint;
+    private long accountBalance;
 }

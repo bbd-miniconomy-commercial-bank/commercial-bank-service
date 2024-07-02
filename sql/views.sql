@@ -1,29 +1,26 @@
 -- liquibase formatted sql
 
--- changeset devwasabi2:create-debit-account-transactions-total-view
-CREATE VIEW debit_account_total AS
+-- changeset ryanbasiltrickett:create-account_balances-view
+CREATE VIEW account_balances_view AS
 SELECT 
-    debit_account_id,
-    SUM(transaction_amount)::BIGINT AS total_amount
+    a.account_id,
+    a.account_name,
+    a.account_cn,
+    a.account_notification_endpoint,
+    COALESCE(SUM(CASE WHEN t.credit_account_id = a.account_id THEN t.transaction_amount ELSE 0 END), 0) - 
+    COALESCE(SUM(CASE WHEN t.debit_account_id = a.account_id THEN t.transaction_amount ELSE 0 END), 0) AS account_balance
 FROM 
-    transaction
+    account a
+LEFT JOIN 
+    transaction t
+ON 
+    a.account_id = t.debit_account_id OR a.account_id = t.credit_account_id
 GROUP BY 
-    debit_account_id;
--- rollback DROP VIEW IF EXISTS debit_account_total;
-
--- changeset devwasabi2:create-credit-account-transactions-total-view
-CREATE VIEW credit_account_total AS 
-SELECT 
-    credit_account_id,
-    SUM(transaction_amount)::BIGINT AS total_amount
-FROM 
-    transaction
-GROUP BY 
-    credit_account_id;
+    a.account_id;
 -- rollback DROP VIEW IF EXISTS credit_account_total;
 
 -- changeset thashilbbd:create-debit-order-transactions-view
-CREATE VIEW debit_order_transactions AS
+CREATE VIEW debit_order_transactions_view AS
 SELECT 
     dot.debit_order_transaction_id,
     dot.debit_order_id,
