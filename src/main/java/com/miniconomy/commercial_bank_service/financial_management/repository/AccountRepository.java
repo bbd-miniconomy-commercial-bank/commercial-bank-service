@@ -46,7 +46,7 @@ public class AccountRepository {
     }
 
     public Optional<Account> findByAccountCN(String accountCN) {
-        String sql = "SELECT * FROM account_balances_view_view WHERE account_cn = :accountCN";
+        String sql = "SELECT * FROM account_balances_view WHERE account_cn = :accountCN";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("accountCN", accountCN);
         return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
