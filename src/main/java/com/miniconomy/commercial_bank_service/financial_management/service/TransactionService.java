@@ -9,64 +9,68 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.command.BasicTransactionCommand;
-import com.miniconomy.commercial_bank_service.financial_management.command.NotifyTransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.command.TransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
-import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusType;
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusEnum;
 import com.miniconomy.commercial_bank_service.financial_management.invoker.TransactionInvoker;
-import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.TransactionRepository;
 
 @Service
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
-    private final AccountRepository accountRepository;
 
-    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository) {
+    private final AccountService accountService;
+
+    public TransactionService(TransactionRepository transactionRepository, AccountService accountService) {
         this.transactionRepository = transactionRepository;
-        this.accountRepository = accountRepository;
+        this.accountService = accountService;
     }
 
     public List<Transaction> retrieveTransactions(String accountName, Pageable pageable) {
         
         List<Transaction> transactions = List.of();
-        Optional<Account> accountOptional = accountRepository.findByAccountName(accountName);
+        Optional<Account> accountOptional = accountService.retrieveAccountByName(accountName);
         
         if (accountOptional.isPresent()) {
             transactions = transactionRepository.findByAccountName(accountName, pageable);
         }
 
-        return transactions; // returns empty list if account not found
+        return transactions;
     }
 
     public Optional<Transaction> retrieveTransactionById(UUID id, String accountName) {
         return transactionRepository.findById(id, accountName);
     }
 
+    public Optional<Transaction> saveTransaction(Transaction transaction) {
+        return this.transactionRepository.insert(transaction);
+    }
+
     public List<Transaction> saveTransactions(List<Transaction> transactions, String accountName) {
         List<Transaction> createdTransactions = new ArrayList<>();
 
         for (Transaction transaction : transactions) {
-            Optional<Account> dbAcc = accountRepository.findByAccountName(transaction.getDebitAccountName());
-            Optional<Account> crAcc = accountRepository.findByAccountName(transaction.getCreditAccountName());
+            Transaction createdTransaction;
 
-            if (dbAcc.isPresent() && crAcc.isPresent()) {
-                Optional<Transaction> createdTransactionOptional = transactionRepository.save(transaction);
-                Transaction createdTransaction;
-
-                if (createdTransactionOptional.isPresent()) {
-                    createdTransaction = createdTransactionOptional.get();
-                } else {
-                    createdTransaction = transaction;
-                    createdTransaction.setTransactionStatus(TransactionStatusType.failed);
-                }
-
-                createdTransactions.add(createdTransaction);
+            if (transaction.getDebitAccountName().equals(accountName)) {
+                TransactionCommand transactionCommand = transactionCommandBuilder(transaction);
+                createdTransaction = TransactionInvoker.handler(transactionCommand); 
+            } else {
+                createdTransaction = transaction;
+                transaction.setTransactionStatus(TransactionStatusEnum.failed);
             }
+            
+            createdTransactions.add(createdTransaction);
         }
 
         return createdTransactions;
+    }
+
+    private TransactionCommand transactionCommandBuilder(Transaction transaction) {
+        TransactionCommand transactionCommand = new BasicTransactionCommand(transaction, this, accountService);
+
+        return transactionCommand;
     }
 }

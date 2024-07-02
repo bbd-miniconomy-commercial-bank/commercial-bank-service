@@ -1,13 +1,11 @@
 package com.miniconomy.commercial_bank_service.financial_management.response;
 
-import com.miniconomy.commercial_bank_service.financial_management.entity.TransactionStatusType;
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusEnum;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.UUID;
-
-import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusType;
 
 @Data
 @AllArgsConstructor
@@ -19,5 +17,5 @@ public class TransactionResponse
   private String reference;
   private Long amount;
   private String date;
-  private TransactionStatusType status;
+  private TransactionStatusEnum status;
 }

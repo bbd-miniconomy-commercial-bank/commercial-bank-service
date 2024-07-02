@@ -5,13 +5,15 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Transa
 public class DebitOrderTransactionCommand extends TransactionCommandDecorator {
 
     public DebitOrderTransactionCommand(Transaction transaction, TransactionCommand transactionCommand) {
-        super(transaction, transactionCommand);
+        super(transactionCommand);
     }
 
     @Override
-    public void execute() {
-        this.transactionCommand.execute();
+        public Transaction execute() {
+        Transaction transaction = this.transactionCommand.execute();
         // Add to Debit Order Transaction Table
+
+        return transaction;
     }
     
 }

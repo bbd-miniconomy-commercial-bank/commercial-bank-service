@@ -6,8 +6,7 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Transa
 public class TransactionInvoker {
     
     public static Transaction handler(TransactionCommand transactionCommand) {
-        transactionCommand.execute();
-        return transactionCommand.getTransaction();
+        return transactionCommand.execute();
     }
 
 }

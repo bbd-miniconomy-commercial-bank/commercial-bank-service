@@ -4,14 +4,16 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Transa
 
 public class LoanTransactionCommand extends TransactionCommandDecorator {
 
-    public LoanTransactionCommand(Transaction transaction, TransactionCommand transactionCommand) {
-        super(transaction, transactionCommand);
+    public LoanTransactionCommand(TransactionCommand transactionCommand) {
+        super(transactionCommand);
     }
     
     @Override
-    public void execute() {
-        this.transactionCommand.execute();
+    public Transaction execute() {
+        Transaction transaction = this.transactionCommand.execute();
         // Add to Loan Transaction Table
+
+        return transaction;
     }
     
 }

@@ -4,14 +4,16 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Transa
 
 public class InterbankTransactionCommand extends TransactionCommandDecorator {
 
-    public InterbankTransactionCommand(Transaction transaction, TransactionCommand transactionCommand) {
-        super(transaction, transactionCommand);
+    public InterbankTransactionCommand(TransactionCommand transactionCommand) {
+        super(transactionCommand);
     }
 
     @Override
-    public void execute() {
-        this.transactionCommand.execute();
+    public Transaction execute() {
+        Transaction transaction = this.transactionCommand.execute();
         // Deposit into Retail Bank
+
+        return transaction;
     }
     
 }

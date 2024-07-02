@@ -12,7 +12,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
-import com.miniconomy.commercial_bank_service.financial_management.entity.LoanType;
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.LoanTypeEnum;
 
 @Repository
 public class LoanRepository {
@@ -25,7 +25,7 @@ public class LoanRepository {
         loan.setLoanId(UUID.fromString(rs.getString("loan_id")));
         loan.setAccountName(rs.getString("account_name"));
         loan.setLoanAmount(rs.getLong("loan_amount"));
-        loan.setLoanType(LoanType.valueOf(rs.getString("loan_type")));
+        loan.setLoanType(LoanTypeEnum.valueOf(rs.getString("loan_type")));
         loan.setLoanCreatedDate(rs.getString("loan_created_date"));
         return loan;
     };
@@ -57,7 +57,7 @@ public class LoanRepository {
         return namedParameterJdbcTemplate.query(sql, paramMap, loanRowMapper);
     }
 
-    public Optional<Loan> save(Loan loan) {
+    public Optional<Loan> insert(Loan loan) {
         String sql = "SELECT * " +
                      "FROM insert_and_return_loan(:accountName, :loanAmount, :loanType, :loanCreatedDate)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()

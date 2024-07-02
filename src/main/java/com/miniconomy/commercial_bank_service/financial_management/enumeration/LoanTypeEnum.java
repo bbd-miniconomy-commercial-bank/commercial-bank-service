@@ -1,7 +1,6 @@
 package com.miniconomy.commercial_bank_service.financial_management.enumeration;
 
-public enum TransactionStatusType {
-    failed,
-    pending,
-    complete
+public enum LoanTypeEnum {
+    short_term,
+    long_term
 }

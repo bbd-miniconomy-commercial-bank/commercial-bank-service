@@ -1,7 +1,7 @@
 package com.miniconomy.commercial_bank_service.financial_management.utils;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
-import com.miniconomy.commercial_bank_service.financial_management.entity.TransactionStatusType;
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusEnum;
 import com.miniconomy.commercial_bank_service.financial_management.request.TransactionRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.TransactionResponse;
 
@@ -37,7 +37,7 @@ public class TransactionUtils {
             transactionRequest.getCreditRef(),
             transactionRequest.getAmount(), 
             null, // IMPLEMENT
-            TransactionStatusType.pending
+            TransactionStatusEnum.pending
         );
     }
 

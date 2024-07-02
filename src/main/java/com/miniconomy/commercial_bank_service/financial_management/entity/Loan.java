@@ -1,5 +1,7 @@
 package com.miniconomy.commercial_bank_service.financial_management.entity;
 
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.LoanTypeEnum;
+
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -13,6 +15,6 @@ public class Loan {
     private UUID loanId;
     private String accountName;
     private long loanAmount;
-    private LoanType loanType;
+    private LoanTypeEnum loanType;
     private String loanCreatedDate; 
 }

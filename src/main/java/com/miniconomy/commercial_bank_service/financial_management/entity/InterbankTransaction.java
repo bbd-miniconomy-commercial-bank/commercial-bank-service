@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.InterbankTransactionStatusEnum;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,5 +15,5 @@ public class InterbankTransaction {
     
     UUID interbankTransactionId;
     UUID transactionId;
-    String interbankTransactionStatus;
+    InterbankTransactionStatusEnum interbankTransactionStatus;
 }

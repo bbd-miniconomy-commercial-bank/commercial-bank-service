@@ -62,7 +62,7 @@ public class DebitOrderRepository {
                 .findFirst();
     }
 
-    public Optional<DebitOrder> save(DebitOrder debitOrder) {
+    public Optional<DebitOrder> insert(DebitOrder debitOrder) {
         String sql = "SELECT * " +
                      "FROM update_and_return_debit_order(:debitOrderId, :creditAccountName, :debitOrderDebitRef, :debitOrderCreditRef, :debitOrderAmount, :debitOrderCreatedDate, :debitOrderDisabled)";
         Map<String, Object> paramMap = new HashMap<>();
