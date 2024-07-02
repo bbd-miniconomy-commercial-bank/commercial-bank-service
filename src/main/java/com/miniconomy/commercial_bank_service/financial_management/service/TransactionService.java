@@ -13,78 +13,56 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Transa
 import com.miniconomy.commercial_bank_service.financial_management.entity.TransactionStatusType;
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.TransactionRepository;
-import com.miniconomy.commercial_bank_service.financial_management.request.TransactionRequest;
 
 @Service
-public class TransactionService
-{
-  private final TransactionRepository transactionRepository;
-  private final AccountRepository accountRepository;
+public class TransactionService {
 
-  public TransactionService(TransactionRepository transactionRepository, AccountRepository accRepo)
-  {
-    this.transactionRepository = transactionRepository;
-    this.accountRepository = accRepo;
-  }
-  
-  public List<Transaction> retrieveTransactions(UUID creditAccountId, Pageable pages)
-  {
-    Optional<Account> acc = accountRepository.findById(creditAccountId);
-    if (acc.isPresent()) {
-      List<Transaction> credT = transactionRepository.findByCreditAccount(acc.get(), pages);
-      List<Transaction> debT = transactionRepository.findByDebitAccount(acc.get(), pages); 
+    private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
 
-      credT.addAll(debT);
-      return credT;
-    }
-    return List.of(); // returns empty list
-  } 
-
-  public Optional<Transaction> retrieveTransactionsById(UUID id)
-  {
-    Optional<Transaction> transaction = transactionRepository.findById(id);
-    return transaction;
-    //if 
-    //Account creditAccount = accountRepository.findById(transaction.getCreditAccountId()).get();
-    //Account debitAccount = accountRepository.findById(transaction.getDebitAccountId()).get();
-//
-    //TransactionResponse transactionResponse = new TransactionResponse(debitAccount.getAccountName(), creditAccount.getAccountName(), transaction.getTransactionAmount(), transaction.getTransactionStatus(), transaction.getDebitRef(), transaction.getCreditRef(), transaction.getTransactionDate());
-    //return transactionResponse;
-  } 
-
-  public List<Transaction> saveTransactions(List<TransactionRequest> tRequests)
-  {
-    //tRequests.forEach(t -> System.out.println(t.getDebitRef()));
-    List<Transaction> transactions = new ArrayList<>();
-
-    for (TransactionRequest request : tRequests)
-    {
-      Transaction transaction = new Transaction();
-
-      Optional<Account> dbAcc = accountRepository.findByAccountName(request.getDebitAccountName());
-      Optional<Account> crAcc = accountRepository.findByAccountName(request.getCreditAccountName()); // for now it's commercial-bank, but their api token should have an account-name
-      
-      if (dbAcc.isPresent() && crAcc.isPresent()) {
-        transaction.setDebitAccount(dbAcc.get());
-        transaction.setCreditAccount(crAcc.get());
-        transaction.setTransactionAmount(request.getAmount());
-        transaction.setCreditRef(request.getCreditRef());
-        transaction.setDebitRef(request.getDebitRef());
-
-        transaction.setTransactionStatus(TransactionStatusType.pending);
-
-        transaction.setTransactionDate(java.time.LocalDate.now().toString().replace("-", ""));
-
-        transactions.add(transaction);
-      }
-      else {
-        continue;
-      }
-    }
-    if (transactions.size()>0) {
-      transactionRepository.saveAll(transactions);
+    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository) {
+        this.transactionRepository = transactionRepository;
+        this.accountRepository = accountRepository;
     }
 
-    return transactions;
-  }
+    public List<Transaction> retrieveTransactions(String accountName, Pageable pageable) {
+        
+        List<Transaction> transactions = List.of();
+        Optional<Account> accountOptional = accountRepository.findByAccountName(accountName);
+        
+        if (accountOptional.isPresent()) {
+            transactions = transactionRepository.findByAccountName(accountName, pageable);
+        }
+
+        return transactions; // returns empty list if account not found
+    }
+
+    public Optional<Transaction> retrieveTransactionById(UUID id, String accountName) {
+        return transactionRepository.findById(id, accountName);
+    }
+
+    public List<Transaction> saveTransactions(List<Transaction> transactions, String accountName) {
+        List<Transaction> createdTransactions = new ArrayList<>();
+
+        for (Transaction transaction : transactions) {
+            Optional<Account> dbAcc = accountRepository.findByAccountName(transaction.getDebitAccountName());
+            Optional<Account> crAcc = accountRepository.findByAccountName(transaction.getCreditAccountName());
+
+            if (dbAcc.isPresent() && crAcc.isPresent()) {
+                Optional<Transaction> createdTransactionOptional = transactionRepository.save(transaction);
+                Transaction createdTransaction;
+
+                if (createdTransactionOptional.isPresent()) {
+                    createdTransaction = createdTransactionOptional.get();
+                } else {
+                    createdTransaction = transaction;
+                    createdTransaction.setTransactionStatus(TransactionStatusType.failed);
+                }
+
+                createdTransactions.add(createdTransaction);
+            }
+        }
+
+        return createdTransactions;
+    }
 }

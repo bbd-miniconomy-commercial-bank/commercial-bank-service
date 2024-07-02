@@ -4,10 +4,10 @@ import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
-import com.miniconomy.commercial_bank_service.financial_management.entity.LoanType;
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.LoanRepository;
-import com.miniconomy.commercial_bank_service.financial_management.request.LoanRequest;
+
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,29 +24,23 @@ public class LoanService {
         this.accRepo = acc;
     }
 
-    public Optional<Loan> createLoan(LoanRequest loan) {
-        System.out.println(loan.toString());
-        Loan newLoan = new Loan();
-        if (loan.getType().equals(LoanType.LONG_TERM)) {
-            newLoan.setLoanType(LoanType.LONG_TERM);
-        }
-        else if (loan.getType().equals(LoanType.SHORT_TERM)) {
-            newLoan.setLoanType(LoanType.SHORT_TERM);
-        }
-        Optional<Account> acc = accRepo.findByAccountName(loan.getAccountName());
-        if (acc.isPresent()) {
-            newLoan.setLoanAmount(loan.getAmount());
-            newLoan.setAccount(acc.get());
+    public Optional<Loan> createLoan(Loan loan, String accountName) {
+    
+        Optional<Loan> createdLoan = Optional.empty();
+
+        Optional<Account> accountOptional = accRepo.findByAccountName(accountName);
+        if (accountOptional.isPresent()) {
+            createdLoan = loanRepository.save(loan);
         }
 
-        return Optional.of(loanRepository.save(newLoan));
+        return createdLoan;
     }
 
-    public Optional<Loan> getLoanById(UUID loanId) {
-        return Optional.of(loanRepository.findById(loanId).orElse(null));
+    public Optional<Loan> retrieveLoanById(UUID loanId, String accountName) {
+        return loanRepository.findById(loanId, accountName);
     }
 
-    public List<Loan> getAllLoans() {
-        return loanRepository.findAll();
+    public List<Loan> retrieveAccountLoans(String accountName, Pageable pageable) {
+        return loanRepository.findAllByAccountName(accountName, pageable);
     }
 }

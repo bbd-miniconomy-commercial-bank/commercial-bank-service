@@ -10,6 +10,7 @@ import com.miniconomy.commercial_bank_service.financial_management.repository.Ac
 @Service
 public class AccountService
 {
+
   private final AccountRepository accountRepository;
 
   public AccountService(AccountRepository accountRepository)
@@ -22,4 +23,8 @@ public class AccountService
     return accountRepository.findByAccountName(accountName);
   } 
 
+  public Optional<Account> retrieveAccountByCn(String cn)
+  {
+    return accountRepository.findByAccountCN(cn);
+  }
 }

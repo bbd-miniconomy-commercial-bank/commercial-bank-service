@@ -1,6 +1,5 @@
 package com.miniconomy.commercial_bank_service.financial_management.response;
 
-
 import com.miniconomy.commercial_bank_service.financial_management.entity.TransactionStatusType;
 
 import lombok.AllArgsConstructor;
@@ -17,8 +16,8 @@ public class TransactionResponse
   private UUID id;
   private String debitAccountName;
   private String creditAccountName;
+  private String reference;
   private Long amount;
-  private TransactionStatusType status;
-  private String transactionRef;
   private String date;
+  private TransactionStatusType status;
 }

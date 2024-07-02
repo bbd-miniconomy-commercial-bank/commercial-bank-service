@@ -40,13 +40,17 @@ class DebitOrderController {
     description = "Allows services to create debit orders"
   )
   @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<ListResponseTemplate<DebitOrderResponse>>> postDebitOrders(@RequestBody DebitOrdersCreateRequest dbOrders) {
+  public ResponseEntity<ResponseTemplate<ListResponseTemplate<DebitOrderResponse>>> postDebitOrders(@RequestBody DebitOrdersCreateRequest debitOrderCreateRequest, @RequestAttribute String accountName) {
     
     ResponseTemplate<ListResponseTemplate<DebitOrderResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
 
-    List<DebitOrder> debitOrders = this.debitOrderService.saveDebitOrders(dbOrders.getDebitOrders());
-    List<DebitOrderResponse> debitOrderResponses = debitOrders.stream().map(
+    List<DebitOrder> debitOrders = debitOrderCreateRequest.getDebitOrders().stream().map(
+      (debitOrderRequest) -> DebitOrderUtils.debitOrderMapper(debitOrderRequest)
+    ).collect(Collectors.toList());
+
+    List<DebitOrder> createdDebitOrders = this.debitOrderService.saveDebitOrders(debitOrders, accountName);
+    List<DebitOrderResponse> debitOrderResponses = createdDebitOrders.stream().map(
       (debitOrder) -> DebitOrderUtils.debitOrderResponseMapper(debitOrder)
     ).collect(Collectors.toList());
 
@@ -62,16 +66,20 @@ class DebitOrderController {
     description = "Allows services to view their debit orders"
   )
   @GetMapping(value = "", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<ListResponseTemplate<DebitOrderResponse>>> getDebitOrders(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize) {
+  public ResponseEntity<ResponseTemplate<ListResponseTemplate<DebitOrderResponse>>> getDebitOrders(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize, @RequestAttribute String accountName) {
     
     ResponseTemplate<ListResponseTemplate<DebitOrderResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
 
-    UUID creditAccountId = UUID.fromString("3d807dc5-5a12-455c-9b66-6876906e70d6");
     Pageable pageable = PageRequest.of(page, pageSize);
-    List<DebitOrderResponse> debitOrders = this.debitOrderService.retrieveDebitOrders(creditAccountId, pageable);
+    List<DebitOrder> debitOrders = this.debitOrderService.retrieveDebitOrders(accountName, pageable);
+
+    List<DebitOrderResponse> debitOrderResponses = debitOrders.stream().map(
+      (debitOrder) -> DebitOrderUtils.debitOrderResponseMapper(debitOrder)
+    ).collect(Collectors.toList());
+
     
-    ListResponseTemplate<DebitOrderResponse> listResponseTemplate = new ListResponseTemplate<>(page, pageSize, debitOrders);
+    ListResponseTemplate<DebitOrderResponse> listResponseTemplate = new ListResponseTemplate<>(page, pageSize, debitOrderResponses);
     response.setData(listResponseTemplate);
 
     response.setStatus(status);
@@ -83,12 +91,12 @@ class DebitOrderController {
     description = "Retrieves the information for a specific debit order by its ID"
   )
   @GetMapping(value = "/{id}", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<DebitOrderResponse>> getDebitOrderById(@PathVariable UUID id) {
+  public ResponseEntity<ResponseTemplate<DebitOrderResponse>> getDebitOrderById(@PathVariable UUID id, @RequestAttribute String accountName) {
     
     ResponseTemplate<DebitOrderResponse> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
 
-    Optional<DebitOrder> debitOrderOptional = debitOrderService.getDebitOrderById(id);
+    Optional<DebitOrder> debitOrderOptional = debitOrderService.getDebitOrderById(id, accountName);
     if (debitOrderOptional.isPresent()) {
       DebitOrder debitOrder = debitOrderOptional.get();
       DebitOrderResponse debitOrderResponse = DebitOrderUtils.debitOrderResponseMapper(debitOrder);
@@ -108,15 +116,17 @@ class DebitOrderController {
     description = "Updates the information for a specific debit order by its ID"
   )
   @PutMapping(value = "/{id}", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<DebitOrderResponse>> updateDebitOrder(@PathVariable UUID id, @RequestBody DebitOrderRequest body) {
+  public ResponseEntity<ResponseTemplate<DebitOrderResponse>> updateDebitOrder(@PathVariable UUID id, @RequestBody DebitOrderRequest debitOrderRequest, @RequestAttribute String accountName) {
     
     ResponseTemplate<DebitOrderResponse> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
+
+    DebitOrder debitOrder = DebitOrderUtils.debitOrderMapper(debitOrderRequest);
     
-    Optional<DebitOrder> updateDbOrder = debitOrderService.updateDebitOrder(id, body);
-    if (updateDbOrder.isPresent()) {
-      DebitOrder debitOrder = updateDbOrder.get();
-      DebitOrderResponse debitOrderResponse = DebitOrderUtils.debitOrderResponseMapper(debitOrder);
+    Optional<DebitOrder> updateDbOrderOptional = debitOrderService.updateDebitOrder(id, debitOrder, accountName);
+    if (updateDbOrderOptional.isPresent()) {
+      DebitOrder updatedDebitOrder = updateDbOrderOptional.get();
+      DebitOrderResponse debitOrderResponse = DebitOrderUtils.debitOrderResponseMapper(updatedDebitOrder);
 
       response.setData(debitOrderResponse);
     } else {
