@@ -7,7 +7,7 @@ CREATE TYPE interbank_transaction_status_enum AS ENUM ('failed', 'processing', '
 -- changeset ryanbasiltrickett:create-intebank-transaction-table
 CREATE TABLE interbank_transaction (
     interbank_transaction_id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    transaction_id UUID
+    transaction_id UUID,
     interbank_transaction_status interbank_transaction_status_enum NOT NULL
 );
 -- rollback DROP TABLE interbank_transaction
