@@ -64,7 +64,7 @@ BEGIN
         ado.debit_order_id = v_new_debit_order_id;
 END;
 ';
--- rollback DROP PROCEDURE update_and_return_debit_order;
+-- rollback DROP FUNCTION update_and_return_debit_order;
 
 -- changeset ryanbasiltrickett:insert_and_return_debit_order_func
 CREATE OR REPLACE FUNCTION insert_and_return_debit_order(
@@ -140,7 +140,7 @@ BEGIN
         ado.debit_order_id = v_new_debit_order_id;
 END;
 ';
--- rollback DROP PROCEDURE insert_and_return_debit_order;
+-- rollback DROP FUNCTION insert_and_return_debit_order;
 
 -- changeset ryanbasiltrickett:insert_and_return_loan_func
 CREATE OR REPLACE FUNCTION insert_and_return_loan(
@@ -194,7 +194,7 @@ BEGIN
         al.loan_id = v_new_loan_id;
 END;
 ';
--- rollback DROP PROCEDURE insert_and_return_loan;
+-- rollback DROP FUNCTION insert_and_return_loan;
 
 -- changeset ryanbasiltrickett:insert_and_return_transaction_func
 CREATE OR REPLACE FUNCTION insert_and_return_transaction(
@@ -270,7 +270,7 @@ BEGIN
         at.transaction_id = v_new_transaction_id;
 END;
 ';
--- rollback DROP PROCEDURE insert_and_return_transaction;
+-- rollback DROP FUNCTION insert_and_return_transaction;
 
 -- changeset ryanbasiltrickett:insert_and_return_interbank_transaction_func
 CREATE OR REPLACE FUNCTION insert_and_return_interbank_transaction(
@@ -314,7 +314,7 @@ BEGIN
         it.interbank_transaction_id = v_new_interbank_transaction_id;
 END;
 ';
--- rollback DROP PROCEDURE insert_and_return_interbank_transaction;
+-- rollback DROP FUNCTION insert_and_return_interbank_transaction;
 
 -- changeset ryanbasiltrickett:update_and_return_interbank_transaction_func
 CREATE OR REPLACE FUNCTION update_and_return_interbank_transaction(
@@ -354,4 +354,4 @@ BEGIN
         it.interbank_transaction_id = p_interbank_transaction_id;
 END;
 ';
--- rollback DROP PROCEDURE update_and_return_interbank_transaction;
+-- rollback DROP FUNCTION update_and_return_interbank_transaction;
