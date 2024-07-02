@@ -9,11 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.command.BasicTransactionCommand;
-import com.miniconomy.commercial_bank_service.financial_management.command.InterbankDepositTransactionCommand;
+import com.miniconomy.commercial_bank_service.financial_management.command.OutgoingInterbankTransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.command.NotifyTransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.command.TransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
-import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
 import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusEnum;
 import com.miniconomy.commercial_bank_service.financial_management.invoker.TransactionInvoker;
@@ -26,11 +25,13 @@ public class TransactionService {
 
     private final AccountService accountService;
     private final NotificationService notificationService;
+    private final InterbankService interbankService;
 
-    public TransactionService(TransactionRepository transactionRepository, AccountService accountService, NotificationService notificationService) {
+    public TransactionService(TransactionRepository transactionRepository, AccountService accountService, NotificationService notificationService, InterbankService interbankService) {
         this.transactionRepository = transactionRepository;
         this.accountService = accountService;
         this.notificationService = notificationService;
+        this.interbankService = interbankService;
     }
 
     public List<Transaction> retrieveTransactions(String accountName, Pageable pageable) {
@@ -82,7 +83,7 @@ public class TransactionService {
         } else {
             transaction.setDebitAccountName("retail-bank");
             transactionCommand = new BasicTransactionCommand(transaction, this, accountService);
-            transactionCommand = new InterbankDepositTransactionCommand(transactionCommand);
+            transactionCommand = new OutgoingInterbankTransactionCommand(transactionCommand, interbankService);
         }
 
         if (notifyDebitAccount) {
