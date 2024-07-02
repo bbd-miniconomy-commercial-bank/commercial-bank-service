@@ -81,9 +81,10 @@ public class TransactionService {
         if (dbAccountOptional.isPresent()) {
             transactionCommand = new BasicTransactionCommand(transaction, this, accountService);
         } else {
+            String externalAccountId = transaction.getCreditAccountName();
             transaction.setDebitAccountName("retail-bank");
             transactionCommand = new BasicTransactionCommand(transaction, this, accountService);
-            transactionCommand = new OutgoingInterbankTransactionCommand(transactionCommand, interbankService);
+            transactionCommand = new OutgoingInterbankTransactionCommand(transactionCommand, interbankService, "retail-bank", externalAccountId);
         }
 
         if (notifyDebitAccount) {

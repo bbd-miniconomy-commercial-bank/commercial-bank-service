@@ -64,7 +64,7 @@ BEGIN
         ado.debit_order_id = v_new_debit_order_id;
 END;
 ';
--- rollback DROP PROCEDURE IF EXISTS update_and_return_debit_order;
+-- rollback DROP PROCEDURE update_and_return_debit_order;
 
 -- changeset ryanbasiltrickett:insert_and_return_debit_order_func
 CREATE OR REPLACE FUNCTION insert_and_return_debit_order(
@@ -140,20 +140,20 @@ BEGIN
         ado.debit_order_id = v_new_debit_order_id;
 END;
 ';
--- rollback DROP PROCEDURE IF EXISTS insert_and_return_debit_order;
+-- rollback DROP PROCEDURE insert_and_return_debit_order;
 
 -- changeset ryanbasiltrickett:insert_and_return_loan_func
 CREATE OR REPLACE FUNCTION insert_and_return_loan(
     p_account_name VARCHAR,
     p_loan_amount BIGINT,
-    p_loan_type VARCHAR,
+    p_loan_type loan_type_enum,
     p_loan_created_date CHAR(8)
 )
 RETURNS TABLE (
     loan_id UUID,
     account_name VARCHAR,
     loan_amount BIGINT,
-    loan_type VARCHAR,
+    loan_type loan_type_enum,
     loan_created_date CHAR(8)
 ) 
 LANGUAGE plpgsql
@@ -167,7 +167,7 @@ BEGIN
     FROM account
     WHERE account_name = p_account_name;
 
-    -- Insert the new debit order and get the new ID
+    -- Insert the new loan and get the new ID
     INSERT INTO loan (
         account_id,
         loan_amount,
@@ -194,7 +194,7 @@ BEGIN
         al.loan_id = v_new_loan_id;
 END;
 ';
--- rollback DROP PROCEDURE IF EXISTS insert_and_return_loan;
+-- rollback DROP PROCEDURE insert_and_return_loan;
 
 -- changeset ryanbasiltrickett:insert_and_return_transaction_func
 CREATE OR REPLACE FUNCTION insert_and_return_transaction(
@@ -204,7 +204,7 @@ CREATE OR REPLACE FUNCTION insert_and_return_transaction(
     p_transaction_credit_ref VARCHAR,
     p_transaction_amount BIGINT,
     p_transaction_date CHAR(8),
-    p_transaction_status BOOLEAN
+    p_transaction_status transaction_status_enum
 )
 RETURNS TABLE (
     transaction_id UUID,
@@ -214,7 +214,7 @@ RETURNS TABLE (
     transaction_credit_ref VARCHAR,
     transaction_amount BIGINT,
     transaction_date CHAR(8),
-    transaction_status VARCHAR
+    transaction_status transaction_status_enum
 ) 
 LANGUAGE plpgsql
 AS '
@@ -233,7 +233,7 @@ BEGIN
     FROM account
     WHERE account_name = p_credit_account_name;
 
-    -- Insert the new debit order and get the new ID
+    -- Insert the new transaction and get the new ID
     INSERT INTO transaction (
         debit_account_id,
         credit_account_id,
@@ -270,4 +270,88 @@ BEGIN
         at.transaction_id = v_new_transaction_id;
 END;
 ';
--- rollback DROP PROCEDURE IF EXISTS insert_and_return_transaction;
+-- rollback DROP PROCEDURE insert_and_return_transaction;
+
+-- changeset ryanbasiltrickett:insert_and_return_interbank_transaction_func
+CREATE OR REPLACE FUNCTION insert_and_return_interbank_transaction(
+    p_transaction_id UUID,
+    p_external_account_id VARCHAR,
+    p_interbank_transaction_status interbank_transaction_status_enum
+)
+RETURNS TABLE (
+    interbank_transaction_id UUID,
+    transaction_id UUID,
+    external_account_id VARCHAR,
+    interbank_transaction_status interbank_transaction_status_enum
+) 
+LANGUAGE plpgsql
+AS '
+DECLARE
+    v_new_interbank_transaction_id UUID;
+BEGIN
+    -- Insert the new interbank transaction and get the new ID
+    INSERT INTO interbank_transaction (
+        transaction_id,
+        external_account_id,
+        interbank_transaction_status
+    ) VALUES (
+        p_transaction_id,
+        p_external_account_id,
+        p_interbank_transaction_status
+    )
+    RETURNING interbank_transaction.interbank_transaction_id INTO v_new_interbank_transaction_id;
+
+    -- Return the inserted row
+    RETURN QUERY
+    SELECT
+        it.interbank_transaction_id,
+        it.transaction_id,
+        it.external_account_id,
+        it.interbank_transaction_status
+    FROM
+        interbank_transaction it
+    WHERE
+        it.interbank_transaction_id = v_new_interbank_transaction_id;
+END;
+';
+-- rollback DROP PROCEDURE insert_and_return_interbank_transaction;
+
+-- changeset ryanbasiltrickett:update_and_return_interbank_transaction_func
+CREATE OR REPLACE FUNCTION update_and_return_interbank_transaction(
+    p_interbank_transaction_id UUID,
+    p_transaction_id UUID,
+    p_external_account_id VARCHAR,
+    p_interbank_transaction_status interbank_transaction_status_enum
+)
+RETURNS TABLE (
+    interbank_transaction_id UUID,
+    transaction_id UUID,
+    external_account_id VARCHAR,
+    interbank_transaction_status interbank_transaction_status_enum
+) 
+LANGUAGE plpgsql
+AS '
+BEGIN
+    -- Update the interbank transaction
+    UPDATE interbank_transaction
+    SET
+        transaction_id = p_transaction_id,
+        external_account_id = p_external_account_id,
+        interbank_transaction_status = p_interbank_transaction_status
+    WHERE
+        interbank_transaction_id = p_interbank_transaction_id;
+
+    -- Return the inserted row
+    RETURN QUERY
+    SELECT
+        it.interbank_transaction_id,
+        it.transaction_id,
+        it.external_account_id,
+        it.interbank_transaction_status
+    FROM
+        interbank_transaction it
+    WHERE
+        it.interbank_transaction_id = p_interbank_transaction_id;
+END;
+';
+-- rollback DROP PROCEDURE update_and_return_interbank_transaction;

@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class InterbankDeposit {
+public class IncomingInterbankDeposit {
+    private String debitAccountName;
     private String creditAccountName;
     private Long amount;
     private String debitRef;

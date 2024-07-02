@@ -36,10 +36,9 @@ public class LoanInterestRepository {
 
     public void insert(LoanInterest loanInterest) {
         String sql = "INSERT INTO loan_interest " +
-                     "(loan_interest_id, loan_type, interest_rate) " + 
-                     "VALUES (:loanInterestId, :loanType, :interestRate)";
+                     "(loan_type, interest_rate) " + 
+                     "VALUES (:loanType, :interestRate)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("loanInterestId", loanInterest.getLoanInterestId())
             .addValue("loanType", loanInterest.getLoanType())
             .addValue("interestRate", loanInterest.getInterestRate());
         namedParameterJdbcTemplate.update(sql, paramMap);

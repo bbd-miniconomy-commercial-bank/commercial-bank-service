@@ -40,12 +40,12 @@ public class InterbankController {
     description = "Allows extrenal banks to create deposits"
   )
   @PostMapping(value = "/deposit", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<ListResponseTemplate<InterbankDepositResponse>>> postDeposit(@RequestBody InterbankDepositCreateRequest deposits, @RequestAttribute String accountName) {
+  public ResponseEntity<ResponseTemplate<ListResponseTemplate<InterbankDepositResponse>>> postDeposit(@RequestBody InterbankDepositCreateRequest interbankDepositCreateRequest, @RequestAttribute String accountName) {
     
     ResponseTemplate<ListResponseTemplate<InterbankDepositResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
     
-    List<InterbankTransaction> interbankTransactions = this.interbankService.processDeposits(deposits.getDeposits(), accountName);
+    List<InterbankTransaction> interbankTransactions = this.interbankService.processDeposits(interbankDepositCreateRequest.getDeposits(), accountName);
     List<InterbankDepositResponse> interbankDepositResponses = interbankTransactions.stream().map(
             (deposit) -> InterbankUtils.interbankDepositResponseMapper(deposit)
           ).collect(Collectors.toList());
@@ -62,7 +62,7 @@ public class InterbankController {
     description = "Allows extrenal banks to create deposits"
   )
   @PostMapping(value = "/callback", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<Object>> postCallback(@RequestBody InterbankCallbackRequest callbackRequest, @RequestAttribute String accountName) {
+  public ResponseEntity<ResponseTemplate<Object>> postCallback(@RequestBody InterbankCallbackRequest interbankCallbackRequest, @RequestAttribute String accountName) {
     
     ResponseTemplate<Object> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();

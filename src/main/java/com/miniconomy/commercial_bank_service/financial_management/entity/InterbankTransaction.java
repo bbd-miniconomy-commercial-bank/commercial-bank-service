@@ -15,5 +15,6 @@ public class InterbankTransaction {
     
     UUID interbankTransactionId;
     UUID transactionId;
+    String externalAccountId;
     InterbankTransactionStatusEnum interbankTransactionStatus;
 }
