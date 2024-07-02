@@ -160,7 +160,7 @@ LANGUAGE plpgsql
 AS '
 DECLARE
     v_account_id UUID;
-    v_loan_id UUID;
+    v_new_loan_id UUID;
 BEGIN
     -- Get the account_id for the account name
     SELECT account_id INTO v_account_id
