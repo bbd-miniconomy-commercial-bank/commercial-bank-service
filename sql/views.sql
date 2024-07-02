@@ -7,8 +7,11 @@ SELECT
     a.account_name,
     a.account_cn,
     a.account_notification_endpoint,
-    COALESCE(SUM(CASE WHEN t.credit_account_id = a.account_id THEN t.transaction_amount ELSE 0 END), 0) - 
-    COALESCE(SUM(CASE WHEN t.debit_account_id = a.account_id THEN t.transaction_amount ELSE 0 END), 0) AS account_balance
+    CAST(
+        COALESCE(SUM(CASE WHEN t.credit_account_id = a.account_id THEN t.transaction_amount ELSE 0 END), 0) - 
+        COALESCE(SUM(CASE WHEN t.debit_account_id = a.account_id THEN t.transaction_amount ELSE 0 END), 0)
+        AS BIGINT
+    ) AS account_balance
 FROM 
     account a
 LEFT JOIN 
