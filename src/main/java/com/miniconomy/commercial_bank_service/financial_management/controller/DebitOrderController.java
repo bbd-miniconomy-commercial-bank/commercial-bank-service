@@ -9,10 +9,12 @@ import com.miniconomy.commercial_bank_service.financial_management.response.Debi
 import com.miniconomy.commercial_bank_service.financial_management.response.ListResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.service.DebitOrderService;
+import com.miniconomy.commercial_bank_service.financial_management.utils.DebitOrderUtils;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,20 +40,18 @@ class DebitOrderController {
     description = "Allows services to create debit orders"
   )
   @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<ListResponseTemplate<DebitOrderResponse>>> postDebitOrders(@RequestBody DebitOrdersCreateRequest dbOrders) {
+  public ResponseEntity<ResponseTemplate<ListResponseTemplate<DebitOrderResponse>>> postDebitOrders(@RequestBody DebitOrdersCreateRequest dbOrders, @RequestAttribute String accountName) {
     
     ResponseTemplate<ListResponseTemplate<DebitOrderResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
 
-    if (dbOrders.getDebitOrders().size() > 5) {
-      status = HttpStatus.BAD_REQUEST.value();
-      response.setMessage("Cannot create more than 5 debit orders at once");
-    } else {
-      List<DebitOrderResponse> dbos = this.debitOrderService.saveDebitOrders(dbOrders.getDebitOrders());
+    List<DebitOrder> debitOrders = this.debitOrderService.saveDebitOrders(dbOrders.getDebitOrders(), accountName);
+    List<DebitOrderResponse> debitOrderResponses = debitOrders.stream().map(
+      (debitOrder) -> DebitOrderUtils.debitOrderResponseMapper(debitOrder)
+    ).collect(Collectors.toList());
 
-      ListResponseTemplate<DebitOrderResponse> listResponseTemplate = new ListResponseTemplate<>(1, dbos.size(), dbos);
-      response.setData(listResponseTemplate);
-    }
+    ListResponseTemplate<DebitOrderResponse> listResponseTemplate = new ListResponseTemplate<>(1, debitOrderResponses.size(), debitOrderResponses);
+    response.setData(listResponseTemplate);
     
     response.setStatus(status);
     return ResponseEntity.status(status).body(response);
@@ -62,14 +62,13 @@ class DebitOrderController {
     description = "Allows services to view their debit orders"
   )
   @GetMapping(value = "", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<ListResponseTemplate<DebitOrderResponse>>> getDebitOrders(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize) {
+  public ResponseEntity<ResponseTemplate<ListResponseTemplate<DebitOrderResponse>>> getDebitOrders(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize, @RequestAttribute String accountName) {
     
     ResponseTemplate<ListResponseTemplate<DebitOrderResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
 
-    UUID creditAccountId = UUID.fromString("3d807dc5-5a12-455c-9b66-6876906e70d6");
     Pageable pageable = PageRequest.of(page, pageSize);
-    List<DebitOrderResponse> debitOrders = this.debitOrderService.retrieveDebitOrders(creditAccountId, pageable);
+    List<DebitOrderResponse> debitOrders = this.debitOrderService.retrieveDebitOrders(accountName, pageable);
     
     ListResponseTemplate<DebitOrderResponse> listResponseTemplate = new ListResponseTemplate<>(page, pageSize, debitOrders);
     response.setData(listResponseTemplate);
@@ -83,12 +82,12 @@ class DebitOrderController {
     description = "Retrieves the information for a specific debit order by its ID"
   )
   @GetMapping(value = "/{id}", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<DebitOrderResponse>> getDebitOrderById(@PathVariable UUID id) {
+  public ResponseEntity<ResponseTemplate<DebitOrderResponse>> getDebitOrderById(@PathVariable UUID id, @RequestAttribute String accountName) {
     
     ResponseTemplate<DebitOrderResponse> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
 
-    Optional<DebitOrder> debitOrderOptional = debitOrderService.getDebitOrderById(id);
+    Optional<DebitOrder> debitOrderOptional = debitOrderService.getDebitOrderById(id, accountName);
     if (debitOrderOptional.isPresent()) {
       DebitOrder debitOrder = debitOrderOptional.get();
       DebitOrderResponse debitOrderResponse = new DebitOrderResponse(
@@ -117,12 +116,12 @@ class DebitOrderController {
     description = "Updates the information for a specific debit order by its ID"
   )
   @PutMapping(value = "/{id}", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<DebitOrderResponse>> updateDebitOrder(@PathVariable UUID id, @RequestBody DebitOrderRequest body) {
+  public ResponseEntity<ResponseTemplate<DebitOrderResponse>> updateDebitOrder(@PathVariable UUID id, @RequestBody DebitOrderRequest body, @RequestAttribute String accountName) {
     
     ResponseTemplate<DebitOrderResponse> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
     
-    Optional<DebitOrder> updateDbOrder = debitOrderService.updateDebitOrder(id, body);
+    Optional<DebitOrder> updateDbOrder = debitOrderService.updateDebitOrder(id, body, accountName);
     if (updateDbOrder.isPresent()) {
       DebitOrder debitOrder = updateDbOrder.get();
       DebitOrderResponse debitOrderResponse = new DebitOrderResponse(

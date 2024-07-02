@@ -8,6 +8,7 @@ import com.miniconomy.commercial_bank_service.financial_management.response.Resp
 import com.miniconomy.commercial_bank_service.financial_management.response.LoanResponse;
 import com.miniconomy.commercial_bank_service.financial_management.response.ListResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.service.LoanService;
+import com.miniconomy.commercial_bank_service.financial_management.utils.LoanUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,20 +41,16 @@ public class LoanController {
         description = "Create a new loan for an account"
     )
     @PostMapping(value = "/apply", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ResponseTemplate<LoanResponse>> createLoan(@RequestBody LoanRequest loan) {
+    public ResponseEntity<ResponseTemplate<LoanResponse>> createLoan(@RequestBody LoanRequest loan, @RequestAttribute String accountName) {
 
         ResponseTemplate<LoanResponse> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
 
-        Optional<Loan> createdLoan = loanService.createLoan(loan);
+        Optional<Loan> createdLoanOptional = loanService.createLoan(loan, accountName);
 
-        if (createdLoan.isPresent()) {
-            LoanResponse loanResponse = new LoanResponse(
-                    createdLoan.get().getLoanId(),
-                    createdLoan.get().getLoanAmount(),
-                    createdLoan.get().getLoanType(),
-                    createdLoan.get().getAccountId().toString()
-            );
+        if (createdLoanOptional.isPresent()) {
+            Loan createdLoan = createdLoanOptional.get();
+            LoanResponse loanResponse = LoanUtils.loanResponseMappper(createdLoan);
             
             response.setData(loanResponse);
         } else {
@@ -70,20 +67,16 @@ public class LoanController {
         description = "Retrieve loan details by loan ID"
     )
     @GetMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity<ResponseTemplate<LoanResponse>> getLoanById(@PathVariable UUID id) {
+    public ResponseEntity<ResponseTemplate<LoanResponse>> getLoanById(@PathVariable UUID id, @RequestAttribute String accountName) {
         
         ResponseTemplate<LoanResponse> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
 
-        Optional<Loan> loan = loanService.getLoanById(id);
+        Optional<Loan> loanOptional = loanService.getLoanById(id, accountName);
         
-        if (loan.isPresent()) {
-            LoanResponse loanResponse = new LoanResponse(
-                loan.get().getLoanId(),
-                loan.get().getLoanAmount(),
-                loan.get().getLoanType(),
-                loan.get().getAccountId().toString()
-            );
+        if (loanOptional.isPresent()) {
+            Loan loan = loanOptional.get();
+            LoanResponse loanResponse = LoanUtils.loanResponseMappper(loan);
             
             response.setData(loanResponse);
         } else {
@@ -103,7 +96,7 @@ public class LoanController {
         value = "", 
         produces = "application/json"
     )
-    public ResponseEntity<ResponseTemplate<ListResponseTemplate<LoanResponse>>> getAllLoans(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize) {
+    public ResponseEntity<ResponseTemplate<ListResponseTemplate<LoanResponse>>> getAllLoans(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize, @RequestAttribute String accountName) {
 
         ResponseTemplate<ListResponseTemplate<LoanResponse>> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
@@ -112,15 +105,11 @@ public class LoanController {
             pageSize = 25;
         }
 
-        List<Loan> loans = loanService.getAllLoans();
+        List<Loan> loans = loanService.getAllLoans(accountName);
 
         List<LoanResponse> loanResponsesList = loans.stream().map(
-            loan -> new LoanResponse(
-                loan.getLoanId(),
-                loan.getLoanAmount(),
-                loan.getLoanType(),
-                loan.getAccountId().toString()
-            )).collect(Collectors.toList());
+            loan -> LoanUtils.loanResponseMappper(loan)
+        ).collect(Collectors.toList());
 
         ListResponseTemplate<LoanResponse> listResponseTemplate = new ListResponseTemplate<>(page, pageSize, loanResponsesList);
 

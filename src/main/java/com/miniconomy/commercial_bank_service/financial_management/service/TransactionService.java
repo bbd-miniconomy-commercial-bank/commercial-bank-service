@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
@@ -14,7 +18,6 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Transa
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.TransactionRepository;
 import com.miniconomy.commercial_bank_service.financial_management.request.TransactionRequest;
-import com.miniconomy.commercial_bank_service.financial_management.response.TransactionResponse;
 
 @Service
 public class TransactionService {
