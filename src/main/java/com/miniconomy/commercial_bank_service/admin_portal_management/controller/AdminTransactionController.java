@@ -3,7 +3,6 @@ package com.miniconomy.commercial_bank_service.admin_portal_management.controlle
 import org.springframework.web.bind.annotation.*;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
-import com.miniconomy.commercial_bank_service.financial_management.request.TransactionsCreateRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.ListResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.response.TransactionResponse;
@@ -11,8 +10,6 @@ import com.miniconomy.commercial_bank_service.financial_management.service.Trans
 import com.miniconomy.commercial_bank_service.financial_management.utils.TransactionUtils;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -22,11 +19,11 @@ import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/admin")
-class TransactionController {
+class AdminTransactionController {
     
   private final TransactionService transactionService;
 
-  public TransactionController(TransactionService transactionService) {
+  public AdminTransactionController(TransactionService transactionService) {
     this.transactionService = transactionService;
   }
   

@@ -3,7 +3,6 @@ package com.miniconomy.commercial_bank_service.admin_portal_management.controlle
 import org.springframework.web.bind.annotation.*;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
-import com.miniconomy.commercial_bank_service.financial_management.request.LoanRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 import com.miniconomy.commercial_bank_service.financial_management.response.LoanResponse;
 import com.miniconomy.commercial_bank_service.financial_management.response.ListResponseTemplate;
@@ -11,8 +10,6 @@ import com.miniconomy.commercial_bank_service.financial_management.service.LoanS
 import com.miniconomy.commercial_bank_service.financial_management.utils.LoanUtils;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -23,11 +20,11 @@ import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/admin")
-public class LoanController {
+public class AdminLoanController {
 
     final LoanService loanService;
 
-    public LoanController(LoanService loanService)
+    public AdminLoanController(LoanService loanService)
     {
         this.loanService = loanService;
     }

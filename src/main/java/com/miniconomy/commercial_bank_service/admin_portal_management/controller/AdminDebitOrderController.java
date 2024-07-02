@@ -3,7 +3,6 @@ package com.miniconomy.commercial_bank_service.admin_portal_management.controlle
 import org.springframework.web.bind.annotation.*;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.DebitOrder;
-import com.miniconomy.commercial_bank_service.financial_management.request.*;
 import com.miniconomy.commercial_bank_service.financial_management.response.*;
 import com.miniconomy.commercial_bank_service.financial_management.service.DebitOrderService;
 import com.miniconomy.commercial_bank_service.financial_management.utils.DebitOrderUtils;
@@ -17,11 +16,11 @@ import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/admin")
-class DebitOrderController {
+class AdminDebitOrderController {
     
   private final DebitOrderService debitOrderService;
 
-  public DebitOrderController(DebitOrderService debitOrderService) {
+  public AdminDebitOrderController(DebitOrderService debitOrderService) {
     this.debitOrderService = debitOrderService;
   }
   

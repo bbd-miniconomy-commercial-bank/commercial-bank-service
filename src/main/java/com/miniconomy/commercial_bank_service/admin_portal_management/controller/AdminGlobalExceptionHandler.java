@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @ControllerAdvice
-public class GlobalExceptionHandler
+public class AdminGlobalExceptionHandler
 {
   @ExceptionHandler(DataAccessException.class)
   @ApiResponses(value = {
