@@ -1,5 +1,6 @@
 package com.miniconomy.commercial_bank_service.financial_management.adapter;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,9 @@ import com.miniconomy.commercial_bank_service.financial_management.utils.Interba
 @Service
 public class RetailBankAdapter implements InterbankAdapter {
 
+    @Value("${externalbanks.retailbank.endpoint}")
+    private String retailBankEndpoint;
+
     private final RestTemplate restTemplate;
 
     public RetailBankAdapter(RestTemplate restTemplate) {
@@ -19,9 +23,8 @@ public class RetailBankAdapter implements InterbankAdapter {
     }
 
     public boolean processInterbankDeposit(OutgoingInterbankDeposit outgoingInterbankDeposit) {
-        String url = "localhost:5500"; // TEMP
         OutgoingRetailBankRequest outgoingRetailBankRequest = InterbankUtils.outgoingRetailBankMapper(outgoingInterbankDeposit);
-        ResponseEntity<OutgoingRetailBankRequest> response = restTemplate.postForEntity(url, outgoingRetailBankRequest, OutgoingRetailBankRequest.class);
+        ResponseEntity<OutgoingRetailBankRequest> response = restTemplate.postForEntity(retailBankEndpoint, outgoingRetailBankRequest, OutgoingRetailBankRequest.class);
 
         return response.getStatusCode() == HttpStatus.ACCEPTED;
     }
