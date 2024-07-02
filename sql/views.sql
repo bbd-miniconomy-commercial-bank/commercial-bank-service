@@ -105,3 +105,37 @@ JOIN
 JOIN
     account a_credit ON "do".credit_account_id = a_credit.account_id;
 -- rollback DROP VIEW IF EXISTS account_debit_order_view;
+
+-- changeset ryanbasiltrickett:account-loan-view
+CREATE VIEW account_loan_view AS 
+SELECT
+    l.loan_id,
+    a.account_name,
+    l.loan_amount,
+    l.debit_order_credit_ref,
+    l.loan_type,
+    l.loan_created_date
+FROM
+    loan l
+JOIN
+    account a ON l.account_id = a.account_id;
+-- rollback DROP VIEW IF EXISTS account_loan_view;
+
+-- changeset ryanbasiltrickett:account-transaction-view
+CREATE VIEW account_transaction_view AS 
+SELECT
+    t.debit_order_id,
+    a_debit.account_name AS debit_account_name,
+    a_credit.account_name AS credit_account_name,
+    t.transaction_debit_ref,
+    t.transaction_credit_ref,
+    t.transaction_amount,
+    t.transaction_date,
+    t.transaction_status
+FROM
+    "transaction" t
+JOIN
+    account a_debit ON t.debit_account_id = a_debit.account_id
+JOIN
+    account a_credit ON t.credit_account_id = a_credit.account_id;
+-- rollback DROP VIEW IF EXISTS account_transaction_view;

@@ -16,8 +16,8 @@ public class TransactionResponse
   private UUID id;
   private String debitAccountName;
   private String creditAccountName;
+  private String reference;
   private Long amount;
-  private TransactionStatusType status;
-  private String transactionRef;
   private String date;
+  private TransactionStatusType status;
 }

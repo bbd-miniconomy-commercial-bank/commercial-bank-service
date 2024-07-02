@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -80,14 +81,14 @@ public class DebitOrderRepository {
     public Optional<DebitOrder> update(DebitOrder debitOrder) {
         String sql = "SELECT * " +
                      "FROM insert_and_return_debit_order(:debitAccountName, :creditAccountName, :debitOrderDebitRef, :debitOrderCreditRef, :debitOrderAmount, :debitOrderCreatedDate, :debitOrderDisabled)";
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("debitAccountName", debitOrder.getDebitAccountName());
-        paramMap.put("creditAccountName", debitOrder.getCreditAccountName());
-        paramMap.put("debitOrderDebitRef", debitOrder.getDebitOrderDebitRef());
-        paramMap.put("debitOrderCreditRef", debitOrder.getDebitOrderCreditRef());
-        paramMap.put("debitOrderAmount", debitOrder.getDebitOrderAmount());
-        paramMap.put("debitOrderCreatedDate", debitOrder.getDebitOrderCreatedDate());
-        paramMap.put("debitOrderDisabled", debitOrder.isDebitOrderDisabled());
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("debitAccountName", debitOrder.getDebitAccountName())
+            .addValue("creditAccountName", debitOrder.getCreditAccountName())
+            .addValue("debitOrderDebitRef", debitOrder.getDebitOrderDebitRef())
+            .addValue("debitOrderCreditRef", debitOrder.getDebitOrderCreditRef())
+            .addValue("debitOrderAmount", debitOrder.getDebitOrderAmount())
+            .addValue("debitOrderCreatedDate", debitOrder.getDebitOrderCreatedDate())
+            .addValue("debitOrderDisabled", debitOrder.isDebitOrderDisabled());
         return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
                 .stream()
                 .findFirst();
@@ -95,10 +96,10 @@ public class DebitOrderRepository {
 
     public List<DebitOrder> findAllByCreditAccount(String creditAccountName, Pageable pageable) {
         String sql = "SELECT * FROM account_debit_order_view WHERE credit_account_name = :creditAccountName LIMIT :limit OFFSET :offset";
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("creditAccountName", creditAccountName);
-        paramMap.put("limit", pageable.getPageSize());
-        paramMap.put("offset", pageable.getOffset());
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("creditAccountName", creditAccountName)
+            .addValue("limit", pageable.getPageSize())
+            .addValue("offset", pageable.getOffset());
         return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper);
     }
 

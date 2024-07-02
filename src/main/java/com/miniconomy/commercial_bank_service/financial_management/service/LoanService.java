@@ -1,17 +1,13 @@
 package com.miniconomy.commercial_bank_service.financial_management.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
-import com.miniconomy.commercial_bank_service.financial_management.entity.LoanType;
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.LoanRepository;
-import com.miniconomy.commercial_bank_service.financial_management.request.LoanRequest;
+
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +15,6 @@ import java.util.UUID;
 
 @Service
 public class LoanService {
-    @Autowired
-    private NamedParameterJdbcTemplate jdbcTemplate;
 
     private final LoanRepository loanRepository;
     private final AccountRepository accRepo;
@@ -30,39 +24,23 @@ public class LoanService {
         this.accRepo = acc;
     }
 
-    public Optional<Loan> createLoan(LoanRequest loan, String accountName) {
-        System.out.println(loan.toString());
-        Loan newLoan = new Loan();
-        if (loan.getType() == LoanType.LONG_TERM) {
-            newLoan.setLoanType(LoanType.LONG_TERM);
-        }
-        else if (loan.getType().equals(LoanType.SHORT_TERM)) {
-            newLoan.setLoanType(LoanType.SHORT_TERM);
-        }
-        Optional<Account> acc = accRepo.findByAccountName(accountName);
-        if (acc.isPresent()) {
-            newLoan.setLoanAmount(loan.getAmount());
-            newLoan.setAccountId(acc.get().getAccountId());
+    public Optional<Loan> createLoan(Loan loan, String accountName) {
+    
+        Optional<Loan> createdLoan = Optional.empty();
+
+        Optional<Account> accountOptional = accRepo.findByAccountName(accountName);
+        if (accountOptional.isPresent()) {
+            createdLoan = loanRepository.save(loan);
         }
 
-        return Optional.of(loanRepository.save(newLoan));
+        return createdLoan;
     }
 
-    public Optional<Loan> getLoanById(UUID loanId, String accountName) {
-        Optional<Account> accountOptional = accRepo.findByAccountName(accountName);
-
-        String sql = "SELECT * FROM loan WHERE loan_id = :id AND account_id = :accountId";
-        SqlParameterSource parameters = new MapSqlParameterSource()
-            .addValue("id", loanId)
-            .addValue("accountId", accountOptional.get().getId());
-        Loan loan = jdbcTemplate.queryForObject(sql, parameters, Loan.class);
-
-        return Optional.of(loan);
+    public Optional<Loan> retrieveLoanById(UUID loanId, String accountName) {
+        return loanRepository.findById(loanId, accountName);
     }
 
-    public List<Loan> getAllLoans(String accountName) {
-        Optional<Account> accountOptional = accRepo.findByAccountName(accountName);
-
-        return loanRepository.findByAccountId(accountOptional.get().getId());
+    public List<Loan> retrieveAccountLoans(String accountName, Pageable pageable) {
+        return loanRepository.findAllByAccountName(accountName, pageable);
     }
 }

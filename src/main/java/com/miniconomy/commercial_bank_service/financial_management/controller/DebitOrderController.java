@@ -40,12 +40,12 @@ class DebitOrderController {
     description = "Allows services to create debit orders"
   )
   @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<ListResponseTemplate<DebitOrderResponse>>> postDebitOrders(@RequestBody DebitOrdersCreateRequest dbOrders, @RequestAttribute String accountName) {
+  public ResponseEntity<ResponseTemplate<ListResponseTemplate<DebitOrderResponse>>> postDebitOrders(@RequestBody DebitOrdersCreateRequest debitOrderCreateRequest, @RequestAttribute String accountName) {
     
     ResponseTemplate<ListResponseTemplate<DebitOrderResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
 
-    List<DebitOrder> debitOrders = dbOrders.getDebitOrders().stream().map(
+    List<DebitOrder> debitOrders = debitOrderCreateRequest.getDebitOrders().stream().map(
       (debitOrderRequest) -> DebitOrderUtils.debitOrderMapper(debitOrderRequest)
     ).collect(Collectors.toList());
 

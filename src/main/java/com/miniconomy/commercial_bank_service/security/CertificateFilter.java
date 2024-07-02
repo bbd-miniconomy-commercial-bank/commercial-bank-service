@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
+import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
 
 import jakarta.servlet.Filter;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Component
 public class CertificateFilter implements Filter
@@ -86,12 +88,15 @@ public class CertificateFilter implements Filter
             }
 
             String cn = extractCommonName(clientCert);
-            String accountName = accountService.findAccountNameByCn(cn);
-            if(accountName == null)
+            Optional<Account> accountOptional = accountService.retrieveAccountByCn(cn);
+            if(accountOptional.isEmpty())
             {
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + cn);
                 return;
             }
+
+            Account account = accountOptional.get();
+            String accountName = account.getAccountCn();
             
             request.setAttribute("accountName", accountName);
 

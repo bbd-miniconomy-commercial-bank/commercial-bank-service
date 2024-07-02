@@ -15,6 +15,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -41,11 +44,12 @@ public class LoanController {
         description = "Create a new loan for an account"
     )
     @PostMapping(value = "/apply", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ResponseTemplate<LoanResponse>> createLoan(@RequestBody LoanRequest loan, @RequestAttribute String accountName) {
+    public ResponseEntity<ResponseTemplate<LoanResponse>> createLoan(@RequestBody LoanRequest loanRequest, @RequestAttribute String accountName) {
 
         ResponseTemplate<LoanResponse> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
 
+        Loan loan = LoanUtils.loanMappper(loanRequest);
         Optional<Loan> createdLoanOptional = loanService.createLoan(loan, accountName);
 
         if (createdLoanOptional.isPresent()) {
@@ -72,7 +76,7 @@ public class LoanController {
         ResponseTemplate<LoanResponse> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
 
-        Optional<Loan> loanOptional = loanService.getLoanById(id, accountName);
+        Optional<Loan> loanOptional = loanService.retrieveLoanById(id, accountName);
         
         if (loanOptional.isPresent()) {
             Loan loan = loanOptional.get();
@@ -101,11 +105,8 @@ public class LoanController {
         ResponseTemplate<ListResponseTemplate<LoanResponse>> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
 
-        if (pageSize > 25) {
-            pageSize = 25;
-        }
-
-        List<Loan> loans = loanService.getAllLoans(accountName);
+        Pageable pageable = PageRequest.of(page, pageSize);
+        List<Loan> loans = loanService.retrieveAccountLoans(accountName, pageable);
 
         List<LoanResponse> loanResponsesList = loans.stream().map(
             loan -> LoanUtils.loanResponseMappper(loan)
