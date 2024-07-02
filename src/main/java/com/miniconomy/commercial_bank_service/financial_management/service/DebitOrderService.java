@@ -69,7 +69,7 @@ public class DebitOrderService {
             Optional<Account> crAcc = accountRepository.findByAccountName(dbOrder.getCreditAccountName());
 
             if (dbAcc.isPresent() && crAcc.isPresent()) {
-                Optional<DebitOrder> savedDbo = debitOrderRepository.save(dbOrder);
+                Optional<DebitOrder> savedDbo = debitOrderRepository.insert(dbOrder);
 
                 if (savedDbo.isPresent()) {
                     debitOrders.add(savedDbo.get());

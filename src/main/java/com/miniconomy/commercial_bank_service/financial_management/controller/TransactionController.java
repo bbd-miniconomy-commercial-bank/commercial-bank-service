@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Transactions", description = "Queries related to service's transactions")
 @RestController
 @RequestMapping("/transactions")
-class TransactionController {
+public class TransactionController {
     
   private final TransactionService transactionService;
 

@@ -1,5 +1,7 @@
 package com.miniconomy.commercial_bank_service.financial_management.entity;
 
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusEnum;
+
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -18,5 +20,5 @@ public class Transaction {
     private String transactionCreditRef;
     private long transactionAmount;
     private String transactionDate;
-    private TransactionStatusType transactionStatus;
+    private TransactionStatusEnum transactionStatus;
 }

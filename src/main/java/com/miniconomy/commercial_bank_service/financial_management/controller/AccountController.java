@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Account", description = "Queries related to service's account")
 @RestController
 @RequestMapping("/account")
-class AccountController {
+public class AccountController {
     
   private final AccountService accountService;
 

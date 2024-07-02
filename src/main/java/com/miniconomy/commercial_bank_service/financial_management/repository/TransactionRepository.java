@@ -1,7 +1,7 @@
 package com.miniconomy.commercial_bank_service.financial_management.repository;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
-import com.miniconomy.commercial_bank_service.financial_management.entity.TransactionStatusType;
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusEnum;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -30,7 +30,7 @@ public class TransactionRepository {
         transaction.setTransactionCreditRef(rs.getString("transaction_credit_ref"));
         transaction.setTransactionAmount(rs.getLong("transaction_amount"));
         transaction.setTransactionDate(rs.getString("transaction_date"));
-        transaction.setTransactionStatus(TransactionStatusType.valueOf(rs.getString("transaction_status")));
+        transaction.setTransactionStatus(TransactionStatusEnum.valueOf(rs.getString("transaction_status")));
         return transaction;
     };
 
@@ -53,7 +53,7 @@ public class TransactionRepository {
             .findFirst();
     }
 
-    public Optional<Transaction> save(Transaction transaction) {
+    public Optional<Transaction> insert(Transaction transaction) {
         String sql = "SELECT * " +
                      "FROM insert_and_return_transaction(:debitAccountName, :creditAccountName, :tranasactionDebitRef, :tranasactionCreditRef, :transactionAmount, :transactionDate, :transactionStatus)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()

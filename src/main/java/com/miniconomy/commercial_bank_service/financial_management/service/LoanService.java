@@ -30,7 +30,7 @@ public class LoanService {
 
         Optional<Account> accountOptional = accRepo.findByAccountName(accountName);
         if (accountOptional.isPresent()) {
-            createdLoan = loanRepository.save(loan);
+            createdLoan = loanRepository.insert(loan);
         }
 
         return createdLoan;
