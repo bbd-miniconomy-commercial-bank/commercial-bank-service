@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.util.UUID;
 
-import com.miniconomy.commercial_bank_service.financial_management.entity.LoanType;
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.LoanType;
 
 @Data
 @AllArgsConstructor

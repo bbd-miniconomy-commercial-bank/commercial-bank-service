@@ -12,9 +12,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 
+import com.miniconomy.commercial_bank_service.financial_management.command.BasicTransactionCommand;
+import com.miniconomy.commercial_bank_service.financial_management.command.NotifyTransactionCommand;
+import com.miniconomy.commercial_bank_service.financial_management.command.TransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
-import com.miniconomy.commercial_bank_service.financial_management.entity.TransactionStatusType;
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusType;
+import com.miniconomy.commercial_bank_service.financial_management.invoker.TransactionInvoker;
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.TransactionRepository;
 import com.miniconomy.commercial_bank_service.financial_management.request.TransactionRequest;
@@ -25,11 +29,14 @@ public class TransactionService
   @Autowired
   private NamedParameterJdbcTemplate jdbcTemplate;
 
+  private final NotificationService notificationService;
+
   private final TransactionRepository transactionRepository;
   private final AccountRepository accountRepository;
 
-  public TransactionService(TransactionRepository transactionRepository, AccountRepository accRepo)
+  public TransactionService(NotificationService notificationService, TransactionRepository transactionRepository, AccountRepository accRepo)
   {
+    this.notificationService = notificationService;
     this.transactionRepository = transactionRepository;
     this.accountRepository = accRepo;
   }
@@ -89,16 +96,29 @@ public class TransactionService
 
         transaction.setTransactionDate(java.time.LocalDate.now().toString().replace("-", ""));
 
-        transactions.add(transaction);
+        TransactionCommand transactionCommand = buildTransactionCommand(transaction, creditAccountName, false);
+        transactions.add(TransactionInvoker.handler(transactionCommand));
       }
       else {
         continue;
       }
     }
-    if (transactions.size()>0) {
-      transactionRepository.saveAll(transactions);
-    }
 
     return transactions;
+  }
+
+  private TransactionCommand buildTransactionCommand(Transaction transaction, String accountName, boolean notifyDebitor) {
+    
+    TransactionCommand transactionCommand = new BasicTransactionCommand(transaction, transactionRepository);
+
+    if (notifyDebitor) {
+      NotifyTransactionCommand notifyDebitorTransactionCommand = new NotifyTransactionCommand(transaction, transactionCommand, notificationService, accountName);
+      transactionCommand = notifyDebitorTransactionCommand;
+    } 
+
+    NotifyTransactionCommand notifyCreditorTransactionCommand = new NotifyTransactionCommand(transaction, transactionCommand, notificationService, accountName);
+    transactionCommand = notifyCreditorTransactionCommand;
+
+    return transactionCommand;
   }
 }

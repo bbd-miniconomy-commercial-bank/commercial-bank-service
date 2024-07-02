@@ -1,6 +1,7 @@
 package com.miniconomy.commercial_bank_service.financial_management.request;
 
-import com.miniconomy.commercial_bank_service.financial_management.entity.LoanType;
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.LoanType;
+
 import lombok.Data;
 
 @Data

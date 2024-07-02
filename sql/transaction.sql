@@ -1,7 +1,7 @@
 -- liquibase formatted sql
 
 -- changeset devwasabi2:create-transaction-status-enum
-CREATE TYPE transaction_status_enum AS ENUM ('failed', 'processing', 'completed');
+CREATE TYPE transaction_status_enum AS ENUM ('failed', 'pending', 'complete');
 -- rollback DROP TYPE transaction_status_enum
 
 -- changeset devwasabi2:create-transaction-table

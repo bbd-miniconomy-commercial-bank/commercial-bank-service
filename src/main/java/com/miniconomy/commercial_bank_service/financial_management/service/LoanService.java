@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
-import com.miniconomy.commercial_bank_service.financial_management.entity.LoanType;
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.LoanType;
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.LoanRepository;
 import com.miniconomy.commercial_bank_service.financial_management.request.LoanRequest;
