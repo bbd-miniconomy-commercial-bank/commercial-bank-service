@@ -1,6 +1,7 @@
 package com.miniconomy.commercial_bank_service.financial_management.utils;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
+import com.miniconomy.commercial_bank_service.financial_management.request.LoanRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.LoanResponse;
 
 public class LoanUtils {
@@ -11,7 +12,18 @@ public class LoanUtils {
             loan.getLoanId(),
             loan.getLoanAmount(),
             loan.getLoanType(),
-            loan.getAccount().getAccountName()
+            loan.getAccountName()
+        );
+    }
+
+    public static Loan loanMappper(LoanRequest loanRequest) {
+
+        return new Loan(
+            null, 
+            loanRequest.getAccountName(), 
+            loanRequest.getAmount(), 
+            loanRequest.getType(), 
+            null // IMPLEMENT
         );
     }
 }

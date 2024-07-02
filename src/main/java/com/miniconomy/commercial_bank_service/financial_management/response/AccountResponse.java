@@ -8,5 +8,5 @@ import lombok.Data;
 public class AccountResponse
 {
   private String accountName;
-  private Integer accountBalance;  
+  private long accountBalance;  
 }
