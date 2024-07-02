@@ -43,4 +43,8 @@ public class LoanService {
     public List<Loan> retrieveAccountLoans(String accountName, Pageable pageable) {
         return loanRepository.findAllByAccountName(accountName, pageable);
     }
+
+    public List<Loan> retrieveAllLoans(Pageable pageable) {
+        return loanRepository.findAllLoans(pageable);
+    }
 }

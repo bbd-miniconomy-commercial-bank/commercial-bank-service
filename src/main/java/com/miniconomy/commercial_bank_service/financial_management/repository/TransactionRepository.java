@@ -43,6 +43,14 @@ public class TransactionRepository {
         return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper);
     }
 
+    public List<Transaction> findAllTransactions(Pageable pageable) {
+        String sql = "SELECT * FROM account_transaction_view LIMIT :limit OFFSET :offset";
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("limit", pageable.getPageSize())
+            .addValue("offset", pageable.getOffset());
+        return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper);
+    }
+
     public Optional<Transaction> findById(UUID id, String accountName) {
         String sql = "SELECT * FROM account_transaction_view WHERE transaction_id = :transactionId AND account_name = :accountName";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()

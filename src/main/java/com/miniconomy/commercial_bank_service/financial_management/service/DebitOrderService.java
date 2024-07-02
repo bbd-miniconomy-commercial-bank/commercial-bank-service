@@ -60,6 +60,10 @@ public class DebitOrderService {
         return debitOrderRepository.findAllByCreditAccount(accountName, pageable);
     }
 
+    public List<DebitOrder> retrieveAllDebitOrders(Pageable pageable) {
+        return debitOrderRepository.findAllDebitOrders(pageable);
+    }
+
     public List<DebitOrder> saveDebitOrders(List<DebitOrder> dbOrders, String requestingAccountName) {
         List<DebitOrder> debitOrders = new ArrayList<>();
 

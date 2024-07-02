@@ -1,4 +1,4 @@
-package com.miniconomy.commercial_bank_service.admin_portal.controller;
+package com.miniconomy.commercial_bank_service.admin_portal_management.controller;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.miniconomy.commercial_bank_service.admin_portal.response.ResponseTemplate;
+import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

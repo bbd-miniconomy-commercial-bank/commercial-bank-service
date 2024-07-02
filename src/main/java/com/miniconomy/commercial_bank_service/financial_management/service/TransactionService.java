@@ -37,6 +37,13 @@ public class TransactionService {
         return transactions; // returns empty list if account not found
     }
 
+    public List<Transaction> retrieveAllTransactions(Pageable pageable) {
+        
+        List<Transaction> transactions = transactionRepository.findAllTransactions(pageable);
+
+        return transactions; // returns empty list if account not found
+    }
+
     public Optional<Transaction> retrieveTransactionById(UUID id, String accountName) {
         return transactionRepository.findById(id, accountName);
     }

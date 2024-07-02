@@ -103,6 +103,14 @@ public class DebitOrderRepository {
         return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper);
     }
 
+    public List<DebitOrder> findAllDebitOrders(Pageable pageable) {
+        String sql = "SELECT * FROM debit_order LIMIT :limit OFFSET :offset";
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("limit", pageable.getPageSize())
+            .addValue("offset", pageable.getOffset());
+        return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper);
+    }
+
     public List<DebitOrderTransaction> getAllDebitOrderTransactions() {
         String sql = "SELECT * FROM debit_order_transactions_view";
         return namedParameterJdbcTemplate.query(sql, debitOrderTransactionRowMapper);

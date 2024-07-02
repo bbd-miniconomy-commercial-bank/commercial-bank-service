@@ -49,9 +49,17 @@ public class LoanRepository {
     }
 
     public List<Loan> findAllByAccountName(String accountName, Pageable pageable) {
-        String sql = "SELECT * FROM account_loan_view WHER account_name = :accountName LIMIT :limit OFFSET :offset";
+        String sql = "SELECT * FROM account_loan_view WHERE account_name = :accountName LIMIT :limit OFFSET :offset";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("accountName", accountName)
+            .addValue("limit", pageable.getPageSize())
+            .addValue("offset", pageable.getOffset());
+        return namedParameterJdbcTemplate.query(sql, paramMap, loanRowMapper);
+    }
+
+    public List<Loan> findAllLoans(Pageable pageable) {
+        String sql = "SELECT * FROM loans WHERE LIMIT :limit OFFSET :offset";
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("limit", pageable.getPageSize())
             .addValue("offset", pageable.getOffset());
         return namedParameterJdbcTemplate.query(sql, paramMap, loanRowMapper);

@@ -1,9 +1,11 @@
 package com.miniconomy.commercial_bank_service.financial_management.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -32,8 +34,8 @@ public class AccountRepository {
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("accountId", accountId);
         return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
-                .stream()
-                .findFirst();
+            .stream()
+            .findFirst();
     }
 
     public Optional<Account> findByAccountName(String accountName) {
@@ -41,8 +43,8 @@ public class AccountRepository {
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("accountName", accountName);
         return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
-                .stream()
-                .findFirst();
+            .stream()
+            .findFirst();
     }
 
     public Optional<Account> findByAccountCN(String accountCN) {
@@ -50,7 +52,15 @@ public class AccountRepository {
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("accountCN", accountCN);
         return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
-                .stream()
-                .findFirst();
+            .stream()
+            .findFirst();
+    }
+
+    public List<Account> findAllAccounts(Pageable pageable) {
+        String sql = "SELECT * FROM account LIMIT :limit OFFSET :offset";
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("limit", pageable.getPageSize())
+            .addValue("offset", pageable.getOffset());
+        return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper);
     }
 }
