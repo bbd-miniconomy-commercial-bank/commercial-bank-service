@@ -1,12 +1,14 @@
 package com.miniconomy.commercial_bank_service.financial_management.repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
@@ -16,7 +18,7 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.LoanTy
 public class LoanRepository {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private final RowMapper<Loan> loanRowMapper = (rs, rowNum) -> {
         Loan loan = new Loan();
@@ -29,32 +31,47 @@ public class LoanRepository {
     };
 
     public Optional<Loan> findById(UUID loanId) {
-        String sql = "SELECT * FROM loan WHERE loan_id = ?";
-        List<Loan> results = jdbcTemplate.query(sql, loanRowMapper, loanId.toString());
+        String sql = "SELECT * FROM loan WHERE loan_id = :loanId";
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("loanId", loanId.toString());
+        List<Loan> results = namedParameterJdbcTemplate.query(sql, paramMap, loanRowMapper);
         return results.stream().findFirst();
     }
 
     public List<Loan> findAll() {
         String sql = "SELECT * FROM loan";
-        return jdbcTemplate.query(sql, loanRowMapper);
+        return namedParameterJdbcTemplate.query(sql, loanRowMapper);
     }
 
     public Loan save(Loan loan) {
-        String sql = "INSERT INTO loan (loan_id, account_id, loan_amount, loan_type, loan_created_date) VALUES (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, loan.getLoanId(), loan.getAccountId(), loan.getLoanAmount(),
-                            loan.getLoanType().toString(), loan.getLoanCreatedDate());
+        String sql = "INSERT INTO loan (loan_id, account_id, loan_amount, loan_type, loan_created_date) " +
+                     "VALUES (:loanId, :accountId, :loanAmount, :loanType, :loanCreatedDate)";
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("loanId", loan.getLoanId().toString());
+        paramMap.put("accountId", loan.getAccountId().toString());
+        paramMap.put("loanAmount", loan.getLoanAmount());
+        paramMap.put("loanType", loan.getLoanType().toString());
+        paramMap.put("loanCreatedDate", loan.getLoanCreatedDate());
+        namedParameterJdbcTemplate.update(sql, paramMap);
         return loan;
-
     }
 
     public void update(Loan loan) {
-        String sql = "UPDATE loan SET account_id = ?, loan_amount = ?, loan_type = ?, loan_created_date = ? WHERE loan_id = ?";
-        jdbcTemplate.update(sql, loan.getAccountId(), loan.getLoanAmount(), loan.getLoanType().toString(),
-                            loan.getLoanCreatedDate(), loan.getLoanId());
+        String sql = "UPDATE loan SET account_id = :accountId, loan_amount = :loanAmount, loan_type = :loanType, loan_created_date = :loanCreatedDate " +
+                     "WHERE loan_id = :loanId";
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("accountId", loan.getAccountId().toString());
+        paramMap.put("loanAmount", loan.getLoanAmount());
+        paramMap.put("loanType", loan.getLoanType().toString());
+        paramMap.put("loanCreatedDate", loan.getLoanCreatedDate());
+        paramMap.put("loanId", loan.getLoanId().toString());
+        namedParameterJdbcTemplate.update(sql, paramMap);
     }
 
     public void deleteById(UUID loanId) {
-        String sql = "DELETE FROM loan WHERE loan_id = ?";
-        jdbcTemplate.update(sql, loanId);
+        String sql = "DELETE FROM loan WHERE loan_id = :loanId";
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("loanId", loanId.toString());
+        namedParameterJdbcTemplate.update(sql, paramMap);
     }
 }
