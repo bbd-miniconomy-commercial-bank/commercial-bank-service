@@ -8,7 +8,7 @@ import lombok.Data;
 public class DebitOrderRequest {
     private String debitAccountName;
     private String creditAccountName;
-    private Long amount;
     private String debitRef;
     private String creditRef;
+    private Long amount;
 }

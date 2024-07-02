@@ -43,7 +43,7 @@ FROM
     JOIN transaction t ON dot.transaction_id = t.transaction_id
     JOIN account credit_account ON "do".credit_account_id = credit_account.account_id
     JOIN account debit_account ON "do".debit_account_id = debit_account.account_id;
--- rollback DROP VIEW debit_order_transactions
+-- rollback DROP VIEW IF EXISTS debit_order_transactions
 
 -- changeset tawanda-bbd:create-loan-interest-view
 CREATE VIEW loan_interest_view AS
@@ -85,3 +85,23 @@ JOIN
 JOIN 
     transaction t ON lt.transaction_id = t.transaction_id;
 -- rollback DROP VIEW IF EXISTS loan_transactions_view;
+
+
+-- changeset ryanbasiltrickett:account-debit-order-view
+CREATE VIEW account_debit_order_view AS 
+SELECT
+    "do".debit_order_id,
+    a_debit.account_name AS debit_account_name,
+    a_credit.account_name AS credit_account_name,
+    "do".debit_order_debit_ref,
+    "do".debit_order_credit_ref,
+    "do".debit_order_amount,
+    "do".debit_order_created_date,
+    "do".debit_order_disabled
+FROM
+    debit_order "do"
+JOIN
+    account a_debit ON "do".debit_account_id = a_debit.account_id
+JOIN
+    account a_credit ON "do".credit_account_id = a_credit.account_id;
+-- rollback DROP VIEW IF EXISTS account_debit_order_view;

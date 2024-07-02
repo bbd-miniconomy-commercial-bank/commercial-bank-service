@@ -45,8 +45,12 @@ class DebitOrderController {
     ResponseTemplate<ListResponseTemplate<DebitOrderResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
 
-    List<DebitOrder> debitOrders = this.debitOrderService.saveDebitOrders(dbOrders.getDebitOrders(), accountName);
-    List<DebitOrderResponse> debitOrderResponses = debitOrders.stream().map(
+    List<DebitOrder> debitOrders = dbOrders.getDebitOrders().stream().map(
+      (debitOrderRequest) -> DebitOrderUtils.debitOrderMapper(debitOrderRequest)
+    ).collect(Collectors.toList());
+
+    List<DebitOrder> createdDebitOrders = this.debitOrderService.saveDebitOrders(debitOrders, accountName);
+    List<DebitOrderResponse> debitOrderResponses = createdDebitOrders.stream().map(
       (debitOrder) -> DebitOrderUtils.debitOrderResponseMapper(debitOrder)
     ).collect(Collectors.toList());
 
@@ -68,9 +72,14 @@ class DebitOrderController {
     int status = HttpStatus.OK.value();
 
     Pageable pageable = PageRequest.of(page, pageSize);
-    List<DebitOrderResponse> debitOrders = this.debitOrderService.retrieveDebitOrders(accountName, pageable);
+    List<DebitOrder> debitOrders = this.debitOrderService.retrieveDebitOrders(accountName, pageable);
+
+    List<DebitOrderResponse> debitOrderResponses = debitOrders.stream().map(
+      (debitOrder) -> DebitOrderUtils.debitOrderResponseMapper(debitOrder)
+    ).collect(Collectors.toList());
+
     
-    ListResponseTemplate<DebitOrderResponse> listResponseTemplate = new ListResponseTemplate<>(page, pageSize, debitOrders);
+    ListResponseTemplate<DebitOrderResponse> listResponseTemplate = new ListResponseTemplate<>(page, pageSize, debitOrderResponses);
     response.setData(listResponseTemplate);
 
     response.setStatus(status);
@@ -90,16 +99,7 @@ class DebitOrderController {
     Optional<DebitOrder> debitOrderOptional = debitOrderService.getDebitOrderById(id, accountName);
     if (debitOrderOptional.isPresent()) {
       DebitOrder debitOrder = debitOrderOptional.get();
-      DebitOrderResponse debitOrderResponse = new DebitOrderResponse(
-        debitOrder.getDebitOrderId(),
-        debitOrder.getCreditAccountId().toString(),
-        debitOrder.getDebitAccountId().toString(),
-        debitOrder.getDebitOrderCreatedDate(),
-        debitOrder.getDebitOrderAmount(),
-        debitOrder.getDebitOrderReceiverRef(),
-        debitOrder.getDebitOrderSenderRef(),
-        debitOrder.isDebitOrderDisabled()
-      );
+      DebitOrderResponse debitOrderResponse = DebitOrderUtils.debitOrderResponseMapper(debitOrder);
 
       response.setData(debitOrderResponse);
     } else {
@@ -116,24 +116,17 @@ class DebitOrderController {
     description = "Updates the information for a specific debit order by its ID"
   )
   @PutMapping(value = "/{id}", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<DebitOrderResponse>> updateDebitOrder(@PathVariable UUID id, @RequestBody DebitOrderRequest body, @RequestAttribute String accountName) {
+  public ResponseEntity<ResponseTemplate<DebitOrderResponse>> updateDebitOrder(@PathVariable UUID id, @RequestBody DebitOrderRequest debitOrderRequest, @RequestAttribute String accountName) {
     
     ResponseTemplate<DebitOrderResponse> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
+
+    DebitOrder debitOrder = DebitOrderUtils.debitOrderMapper(debitOrderRequest);
     
-    Optional<DebitOrder> updateDbOrder = debitOrderService.updateDebitOrder(id, body, accountName);
-    if (updateDbOrder.isPresent()) {
-      DebitOrder debitOrder = updateDbOrder.get();
-      DebitOrderResponse debitOrderResponse = new DebitOrderResponse(
-        debitOrder.getDebitOrderId(),
-        debitOrder.getCreditAccountId().toString(),
-        debitOrder.getDebitAccountId().toString(),
-        debitOrder.getDebitOrderCreatedDate(),
-        debitOrder.getDebitOrderAmount(),
-        debitOrder.getDebitOrderReceiverRef(),
-        debitOrder.getDebitOrderSenderRef(),
-        debitOrder.isDebitOrderDisabled()
-      );
+    Optional<DebitOrder> updateDbOrderOptional = debitOrderService.updateDebitOrder(id, debitOrder, accountName);
+    if (updateDbOrderOptional.isPresent()) {
+      DebitOrder updatedDebitOrder = updateDbOrderOptional.get();
+      DebitOrderResponse debitOrderResponse = DebitOrderUtils.debitOrderResponseMapper(updatedDebitOrder);
 
       response.setData(debitOrderResponse);
     } else {

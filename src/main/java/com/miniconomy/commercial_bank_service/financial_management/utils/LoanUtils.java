@@ -11,7 +11,7 @@ public class LoanUtils {
             loan.getLoanId(),
             loan.getLoanAmount(),
             loan.getLoanType(),
-            loan.getAccount().getAccountName()
+            loan.getAccountId().toString()
         );
     }
 }

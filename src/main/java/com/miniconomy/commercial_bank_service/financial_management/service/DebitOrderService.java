@@ -19,6 +19,7 @@ import com.miniconomy.commercial_bank_service.financial_management.repository.Ac
 import com.miniconomy.commercial_bank_service.financial_management.repository.DebitOrderRepository;
 import com.miniconomy.commercial_bank_service.financial_management.request.DebitOrderRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.DebitOrderResponse;
+import com.miniconomy.commercial_bank_service.financial_management.utils.DebitOrderUtils;
 
 @Service
 public class DebitOrderService {
@@ -31,8 +32,8 @@ public class DebitOrderService {
         this.accountRepository = accountRepository;
     }
 
-    public boolean disableDebitOrder(UUID debitOrderId) {
-        Optional<DebitOrder> debitOrderOptional = debitOrderRepository.findById(debitOrderId);
+    public boolean disableDebitOrder(UUID debitOrderId, String accountName) {
+        Optional<DebitOrder> debitOrderOptional = debitOrderRepository.findById(debitOrderId, accountName);
         if (debitOrderOptional.isPresent()) {
             DebitOrder debitOrder = debitOrderOptional.get();
             debitOrder.setDebitOrderDisabled(true);
@@ -42,97 +43,52 @@ public class DebitOrderService {
         return false;
     }
 
-    public Optional<DebitOrder> updateDebitOrder(UUID id, DebitOrderRequest dbOrder) {
-        Optional<DebitOrder> dbo = debitOrderRepository.findById(id);
-        Optional<Account> credAcc = accountRepository.findByAccountName(dbOrder.getCreditAccountName());
-        Optional<Account> debAcc = accountRepository.findByAccountName(dbOrder.getDebitAccountName());
+    public Optional<DebitOrder> updateDebitOrder(UUID debitOrderId, DebitOrder dbOrder, String accountName) {
+        
+        Optional<DebitOrder> dbo = Optional.empty();
 
-        if (dbo.isPresent() && credAcc.isPresent() && debAcc.isPresent()) {
-            DebitOrder d = dbo.get();
-            d.setCreditAccountId(credAcc.get().getAccountId());
-            d.setDebitAccountId(debAcc.get().getAccountId());
-            d.setDebitOrderAmount(dbOrder.getAmount());
-            d.setDebitOrderCreatedDate("Zeus");
-            d.setDebitOrderReceiverRef(dbOrder.getCreditRef());
-            d.setDebitOrderSenderRef(dbOrder.getDebitRef());
-            debitOrderRepository.update(d);
-            return Optional.of(d);
+        if (dbOrder.getDebitOrderId().equals(debitOrderId)) {
+            dbo = debitOrderRepository.findById(debitOrderId, accountName);
+            Optional<Account> credAcc = accountRepository.findByAccountName(dbOrder.getCreditAccountName());
+            Optional<Account> debAcc = accountRepository.findByAccountName(dbOrder.getDebitAccountName());
+
+            if (dbo.isPresent() && credAcc.isPresent() && debAcc.isPresent()) {
+                dbo = debitOrderRepository.update(dbOrder);
+            }
         }
-        return Optional.empty();
+        
+        return dbo;
     }
 
-    public Optional<DebitOrder> getDebitOrderById(UUID debitOrderId) {
-        return debitOrderRepository.findById(debitOrderId);
+    public Optional<DebitOrder> getDebitOrderById(UUID debitOrderId, String accountName) {
+        return debitOrderRepository.findById(debitOrderId, accountName);
     }
 
-    public List<DebitOrderResponse> retrieveDebitOrders(UUID creditAccountId, Pageable pageable) {
-        Optional<Account> acc = accountRepository.findById(creditAccountId);
-        if (acc.isPresent()) {
-            List<DebitOrder> cOrders = debitOrderRepository.findByCreditAccount(acc.get().getAccountId(), pageable);
-            List<DebitOrderResponse> dList = new ArrayList<>();
-            cOrders.forEach(debitOrder -> {
-                Optional<Account> creditAccount = accountRepository.findById(debitOrder.getCreditAccountId());
-                Optional<Account> debitAccount = accountRepository.findById(debitOrder.getDebitAccountId());
-                if (creditAccount.isPresent() && debitAccount.isPresent()) {
-                    DebitOrderResponse debitOrderResponse = new DebitOrderResponse(
-                        debitOrder.getDebitOrderId(),
-                        creditAccount.get().getAccountName(),
-                        debitAccount.get().getAccountName(),
-                        debitOrder.getDebitOrderCreatedDate(),
-                        debitOrder.getDebitOrderAmount(),
-                        debitOrder.getDebitOrderReceiverRef(),
-                        debitOrder.getDebitOrderSenderRef(),
-                        debitOrder.isDebitOrderDisabled()
-                    );
-                    dList.add(debitOrderResponse);
-                }
-            });
-            return dList;
-        }
-        return List.of();
+    public List<DebitOrder> retrieveDebitOrders(String accountName, Pageable pageable) {
+        return debitOrderRepository.findAllByCreditAccount(accountName, pageable);
     }
 
-    public List<DebitOrderResponse> saveDebitOrders(List<DebitOrderRequest> dbOrders) {
-        List<DebitOrderResponse> response = new ArrayList<>();
+    public List<DebitOrder> saveDebitOrders(List<DebitOrder> dbOrders, String requestingAccountName) {
+        List<DebitOrder> debitOrders = new ArrayList<>();
 
-        for (DebitOrderRequest dbOrder : dbOrders) {
-            DebitOrder dbo = new DebitOrder();
-            DebitOrderResponse res = new DebitOrderResponse();
+        for (DebitOrder dbOrder : dbOrders) {
 
             Optional<Account> dbAcc = accountRepository.findByAccountName(dbOrder.getDebitAccountName());
             Optional<Account> crAcc = accountRepository.findByAccountName(dbOrder.getCreditAccountName());
 
             if (dbAcc.isPresent() && crAcc.isPresent()) {
-                dbo.setCreditAccountId(crAcc.get().getAccountId());
-                res.setCreditAccountName(crAcc.get().getAccountName());
+                Optional<DebitOrder> savedDbo = debitOrderRepository.save(dbOrder);
 
-                dbo.setDebitAccountId(dbAcc.get().getAccountId());
-                res.setDebitAccountName(dbAcc.get().getAccountName());
-
-                dbo.setDebitOrderAmount(dbOrder.getAmount());
-                res.setAmount(dbOrder.getAmount());
-
-                dbo.setDebitOrderCreatedDate("zeus");
-                res.setCreationDate("zeus");
-
-                dbo.setDebitOrderReceiverRef(dbOrder.getCreditRef());
-                res.setReceiverRef(dbOrder.getCreditRef());
-
-                dbo.setDebitOrderSenderRef(dbOrder.getDebitRef());
-                res.setSenderRef(dbOrder.getDebitRef());
-
-                dbo.setDebitOrderDisabled(false);
-                res.setDisabled(false);
-
-                DebitOrder savedDbo = debitOrderRepository.save(dbo);
-                res.setId(savedDbo.getDebitOrderId());
-                response.add(res);
+                if (savedDbo.isPresent()) {
+                    debitOrders.add(savedDbo.get());
+                }
             }
         }
-        return response;
+
+        return debitOrders;
     }
 
     public List<DebitOrderTransaction> getDebitOrderTransactions() {
-        return debitOrderRepository.getDebitOrderTransactions();
+        return debitOrderRepository.getAllDebitOrderTransactions();
     }
 }

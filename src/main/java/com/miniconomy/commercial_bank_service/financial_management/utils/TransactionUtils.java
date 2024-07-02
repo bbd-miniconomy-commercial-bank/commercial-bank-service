@@ -16,8 +16,8 @@ public class TransactionUtils {
 
         return new TransactionResponse(
             transaction.getTransactionId(),
-            transaction.getDebitAccount().getAccountName(), 
-            transaction.getCreditAccount().getAccountName(), 
+            transaction.getDebitAccountId().toString(),
+            transaction.getCreditAccountId().toString(),
             transaction.getTransactionAmount(), 
             transaction.getTransactionStatus(), 
             transactionReference,
