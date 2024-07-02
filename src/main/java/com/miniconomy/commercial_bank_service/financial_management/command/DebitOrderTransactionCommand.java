@@ -4,7 +4,7 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Transa
 
 public class DebitOrderTransactionCommand extends TransactionCommandDecorator {
 
-    public DebitOrderTransactionCommand(Transaction transaction, TransactionCommand transactionCommand) {
+    public DebitOrderTransactionCommand(TransactionCommand transactionCommand) {
         super(transactionCommand);
     }
 
