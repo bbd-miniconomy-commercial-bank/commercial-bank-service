@@ -64,7 +64,7 @@ public class CertificateFilter implements Filter
     {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-        String clientCertHeader = req.getHeader("X-Amzn-Mtls-Clientcert");
+        String clientCertHeader = req.getHeader("x-amzn-mtls-clientcert");
 
         if (clientCertHeader == null)
         {
@@ -106,8 +106,13 @@ public class CertificateFilter implements Filter
     }
 
     private X509Certificate loadCertificateFromHeader(String clientCertHeader) throws Exception
-    {
-        byte[] certBytes = Base64.getDecoder().decode(clientCertHeader);
+    {        
+        String cleanedCertHeader = clientCertHeader.replace("-----BEGIN%20CERTIFICATE-----", "")
+                                                    .replace("-----END%20CERTIFICATE-----", "")
+                                                    .replace("%0A", "")
+                                                    .replace("%20", "");
+                                                    
+        byte[] certBytes = Base64.getDecoder().decode(cleanedCertHeader);
         CertificateFactory factory = CertificateFactory.getInstance("X.509");
         return (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(certBytes));
     }
