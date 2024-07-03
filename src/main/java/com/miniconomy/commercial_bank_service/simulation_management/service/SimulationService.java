@@ -1,14 +1,11 @@
 package com.miniconomy.commercial_bank_service.simulation_management.service;
 
-import java.net.URISyntaxException;
-
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.miniconomy.commercial_bank_service.simulation_management.repository.SimulationManagementRepository;
 import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
-import com.miniconomy.commercial_bank_service.tax_management.service.TaxService;
 
 @Service
 public class SimulationService {
@@ -60,9 +57,9 @@ public class SimulationService {
 
     private String incrementDate(String currentDate) {
         String[] parts = currentDate.split("\\|");
-        int day = Integer.parseInt(parts[0]);
+        int year = Integer.parseInt(parts[0]);
         int month = Integer.parseInt(parts[1]);
-        int year = Integer.parseInt(parts[2]);
+        int day = Integer.parseInt(parts[2]);
 
         day++;
         if (day > 30) {
@@ -71,16 +68,9 @@ public class SimulationService {
             if (month > 12) {
                 month = 1;
                 year++;
-
-                try {
-                    TaxService taxService = new TaxService();
-                    taxService.payTax(year - 1);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                }
             }
         }
 
-        return String.format("%02d|%02d|%02d", day, month, year);
+        return String.format("%02d|%02d|%02d", year, month, day);
     }
 }

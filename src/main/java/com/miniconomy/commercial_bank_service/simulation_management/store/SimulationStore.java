@@ -3,6 +3,7 @@ package com.miniconomy.commercial_bank_service.simulation_management.store;
 import org.springframework.stereotype.Component;
 
 import com.miniconomy.commercial_bank_service.simulation_management.event.EndOfMonthEvent;
+import com.miniconomy.commercial_bank_service.simulation_management.event.EndOfYearEvent;
 import com.miniconomy.commercial_bank_service.simulation_management.observer.SimulationStoreObserver;
 
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +13,7 @@ import java.util.List;
 @Component
 public class SimulationStore {
 
-    private static String currentDate = "01|01|01"; // Initial date in the format dd|MM|yy
+    private static String currentDate = "01|01|01"; // Initial date in the format yy|MM|dd
     private static boolean simOnline = true;
 
     private static List<SimulationStoreObserver> SimulationStoreObservers = List.of(); 
@@ -33,9 +34,16 @@ public class SimulationStore {
         if (!currentDate.equals(newDate)) {
             currentDate = newDate;
 
-            if (newDate.startsWith("30")) {
+            if (newDate.endsWith("30")) {
                 for (SimulationStoreObserver SimulationStoreObserver : SimulationStoreObservers) {
                     SimulationStoreObserver.update(new EndOfMonthEvent());
+                }
+            }
+
+            if(newDate.endsWith("12|30"))
+            {
+                for (SimulationStoreObserver SimulationStoreObserver : SimulationStoreObservers) {
+                    SimulationStoreObserver.update(new EndOfYearEvent());
                 }
             }
         }

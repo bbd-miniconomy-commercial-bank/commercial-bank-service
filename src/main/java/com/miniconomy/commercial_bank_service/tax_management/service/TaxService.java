@@ -14,20 +14,21 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Transa
 import com.miniconomy.commercial_bank_service.financial_management.repository.TransactionRepository;
 import com.miniconomy.commercial_bank_service.financial_management.request.TransactionRequest;
 import com.miniconomy.commercial_bank_service.financial_management.utils.TransactionUtils;
+import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
 
 import java.util.List;
 
 @Service
 public class TaxService {
 
-  private TransactionRepository transactionRepository;
+  private final TransactionRepository transactionRepository;
 
   public TaxService() throws URISyntaxException {
     this.transactionRepository = new TransactionRepository();
   }
 
 
-  public void payTax(int year) throws URISyntaxException
+  public void processTax() throws URISyntaxException
   {
     HttpClient client = HttpClient.newHttpClient();
 
@@ -40,15 +41,10 @@ public class TaxService {
     {
       HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-      System.out.println("Response Code: " + response.statusCode());
-
-      System.out.println(response.body());
-
       JSONObject jsonResponse = new JSONObject(response.body());
 
-      String value = jsonResponse.getString("business");
+      String value = !jsonResponse.getString("business").equals(null) ? jsonResponse.getString("business") : "40";
       Double taxRate = Double.parseDouble(value) / 100;
-      System.out.println("Tax Rate: " + taxRate);
 
       Long income = (long) 0;
       Long expenses = (long) 0;
@@ -56,13 +52,9 @@ public class TaxService {
       int pageNumber = 0;
       Pageable page = PageRequest.of(pageNumber, 25);
       
-      String stringYear = String.valueOf(year);
-      if(year < 10)
-      {
-        stringYear = "0" + stringYear;
-      }
+      String year = SimulationStore.getCurrentDate().substring(0, 2);
 
-      List<Transaction> transactions = transactionRepository.findByAccountNameAndDate("commercial-bank", stringYear, page);
+      List<Transaction> transactions = transactionRepository.findByAccountNameAndDate("commercial-bank", year, page);
       while(transactions.size() > 0)
       {
         for (Transaction transaction : transactions) {
@@ -77,7 +69,7 @@ public class TaxService {
         }
 
         page = PageRequest.of(++pageNumber, 25);
-        transactions = transactionRepository.findByAccountNameAndDate("commercial-bank", stringYear, page);
+        transactions = transactionRepository.findByAccountNameAndDate("commercial-bank", year, page);
       }
 
       Long profit = income - expenses;
