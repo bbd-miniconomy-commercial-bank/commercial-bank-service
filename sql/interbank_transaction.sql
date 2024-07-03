@@ -1,7 +1,7 @@
 -- liquibase formatted sql
 
 -- changeset ryanbasiltrickett:create-intebank-transaction-status-enum
-CREATE TYPE interbank_transaction_status_enum AS ENUM ('failed', 'processing', 'completed');
+CREATE TYPE interbank_transaction_status_enum AS ENUM ('failed', 'processing', 'complete');
 -- rollback DROP TYPE interbank_transaction_status_enum
 
 -- changeset ryanbasiltrickett:create-intebank-transaction-table

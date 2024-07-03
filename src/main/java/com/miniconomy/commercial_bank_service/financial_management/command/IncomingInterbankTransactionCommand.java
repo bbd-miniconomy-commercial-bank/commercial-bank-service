@@ -30,7 +30,7 @@ public class IncomingInterbankTransactionCommand extends TransactionCommandDecor
             // Update Interbank Transaction Table
             interbankTransaction.setTransactionId(transaction.getTransactionId());
             interbankTransaction.setInterbankTransactionStatus(InterbankTransactionStatusEnum.complete);
-            Optional<InterbankTransaction> interbankTransactionOptional = interbankService.updateInterbankTransaction(interbankTransaction);
+            Optional<InterbankTransaction> interbankTransactionOptional = interbankService.saveInterbankTransaction(interbankTransaction);
 
             if (interbankTransactionOptional.isPresent()) {
                 interbankTransaction = interbankTransactionOptional.get();

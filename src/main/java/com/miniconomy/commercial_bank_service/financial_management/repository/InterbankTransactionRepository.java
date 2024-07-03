@@ -64,4 +64,21 @@ public class InterbankTransactionRepository {
         }
     }
 
+    public Optional<InterbankTransaction> getByTransactionId(UUID transactionId) {
+        String sql = "SELECT * " +
+                     "FROM interbank_transaction " +
+                     "WHERE transaction_id = :transactionId::UUID";
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("transactionId", transactionId.toString());
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, interbankTransactionRowMapper)
+                .stream()
+                .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
 }

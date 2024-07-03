@@ -111,7 +111,7 @@ public class LoanController {
         ResponseTemplate<ListResponseTemplate<LoanResponse>> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();
 
-        Pageable pageable = PageRequest.of(page, pageSize);
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
         List<Loan> loans = loanService.retrieveAccountLoans(accountName, pageable);
 
         List<LoanResponse> loanResponsesList = loans.stream().map(

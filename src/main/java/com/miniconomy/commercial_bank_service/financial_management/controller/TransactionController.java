@@ -50,7 +50,7 @@ public class TransactionController {
     ResponseTemplate<ListResponseTemplate<TransactionResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
 
-    Pageable pageable = PageRequest.of(page, pageSize);
+    Pageable pageable = PageRequest.of(page - 1, pageSize);
     List<Transaction> transactions = this.transactionService.retrieveTransactions(accountName, pageable);
     List<TransactionResponse> transactionResponses = transactions.stream().map(
             (transaction) -> TransactionUtils.transactionResponseMapper(transaction, accountName)

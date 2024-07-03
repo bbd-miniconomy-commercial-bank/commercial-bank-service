@@ -77,7 +77,7 @@ public class DebitOrderController {
     ResponseTemplate<ListResponseTemplate<DebitOrderResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
 
-    Pageable pageable = PageRequest.of(page, pageSize);
+    Pageable pageable = PageRequest.of(page - 1, pageSize);
     List<DebitOrder> debitOrders = this.debitOrderService.retrieveDebitOrders(accountName, pageable);
 
     List<DebitOrderResponse> debitOrderResponses = debitOrders.stream().map(

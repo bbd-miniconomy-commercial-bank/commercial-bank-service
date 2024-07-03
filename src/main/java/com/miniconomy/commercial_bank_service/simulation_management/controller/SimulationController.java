@@ -31,20 +31,15 @@ public class SimulationController {
         description = "Reset or start the Commercial Bank Service"
     )
     @PostMapping(value = "/setup", produces = "application/json")
-    public ResponseEntity<ResponseTemplate<String>> postSetup(@RequestBody SetupRequest setupRequest) {
-        ResponseTemplate<String> response = new ResponseTemplate<>();
-        int status = HttpStatus.OK.value();
-
+    public ResponseEntity<Object> postSetup(@RequestBody SetupRequest setupRequest) {
+        
         if (setupRequest.getAction().equals(SetupActionEnum.reset)) {
             simulationService.resetSimulation(); 
         } else {
             simulationService.initializeSimulation();
         }
 
-        response.setMessage("Successfully reset commercial Bank");
-
-        response.setStatus(status);
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.status(HttpStatus.OK.value()).body(null);
     }
 
 

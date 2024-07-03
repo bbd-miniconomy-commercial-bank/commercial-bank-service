@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 
@@ -17,8 +18,8 @@ public class GlobalExceptionHandler
 {
   @ExceptionHandler(HttpMessageNotReadableException.class)
   @ApiResponses(value = {
-        @ApiResponse(responseCode = "400", description = "Bad Request")
-    })
+      @ApiResponse(responseCode = "400", description = "Bad Request")
+  })
   public ResponseEntity<ResponseTemplate<Object>> handleDatabaseExceptions(DataAccessException ex)
   {
     ResponseTemplate<Object> response = new ResponseTemplate<>();
@@ -30,8 +31,8 @@ public class GlobalExceptionHandler
 
   @ExceptionHandler(Exception.class)
   @ApiResponses(value = {
-        @ApiResponse(responseCode = "500", description = "Internal Server Error")
-    })
+      @ApiResponse(responseCode = "500", description = "Internal Server Error")
+  })
   public ResponseEntity<ResponseTemplate<Object>> handleGeneralExceptions(Exception ex)
   {
     ex.printStackTrace();
@@ -40,6 +41,19 @@ public class GlobalExceptionHandler
     response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+  }
+
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "404", description = "Not found")
+  })
+  public ResponseEntity<ResponseTemplate<Object>> handleGeneralExceptions(MethodArgumentTypeMismatchException ex)
+  {
+
+    ResponseTemplate<Object> response = new ResponseTemplate<>();
+    response.setStatus(HttpStatus.NOT_FOUND.value());
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
   }
 }
 

@@ -34,6 +34,10 @@ public class CertificateFilterConfig
         registrationBean.addUrlPatterns("/transactions");
         registrationBean.addUrlPatterns("/transactions/*");
 
+        registrationBean.addUrlPatterns("/interbank/*");
+        
+        registrationBean.addUrlPatterns("/simulation/*");
+
         registrationBean.setOrder(1);
 
         registrationBean.setEnabled(filterEnabled);

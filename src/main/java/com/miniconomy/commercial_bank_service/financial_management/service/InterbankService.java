@@ -14,6 +14,7 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Incomi
 import com.miniconomy.commercial_bank_service.financial_management.port.InterbankPort;
 import com.miniconomy.commercial_bank_service.financial_management.repository.InterbankTransactionRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,7 @@ public class InterbankService {
     }
 
     public List<InterbankTransaction> processDeposits(List<IncomingInterbankDeposit> incomingInterbankDeposits, String accountName) {
-        List<InterbankTransaction> interbankTransactions = List.of();
+        List<InterbankTransaction> interbankTransactions = new ArrayList<>();
         
         for (IncomingInterbankDeposit incomingInterbankDeposit : incomingInterbankDeposits) {
             TransactionCommand transactionCommand = transactionCommandBuilder.buildTransactionCommand(incomingInterbankDeposit);
@@ -40,6 +41,15 @@ public class InterbankService {
 
             if (transaction.getTransactionStatus().equals(TransactionStatusEnum.failed)) {
                 // PERFORM RESOLUTION
+            }
+
+            if (transaction.getTransactionId() != null) {
+                Optional<InterbankTransaction> interbankTransactionOptional = interbankTransactionRepository.getByTransactionId(transaction.getTransactionId());
+
+                if (interbankTransactionOptional.isPresent()) {
+                    InterbankTransaction interbankTransaction = interbankTransactionOptional.get();
+                    interbankTransactions.add(interbankTransaction);
+                }
             }
         }
 
