@@ -64,7 +64,7 @@ public class CertificateFilter implements Filter
     {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-        String clientCertHeader = req.getHeader("x-amzn-mtls-clientcert");
+        String clientCertHeader = req.getHeader("X-Origin");
 
         if (clientCertHeader == null)
         {
