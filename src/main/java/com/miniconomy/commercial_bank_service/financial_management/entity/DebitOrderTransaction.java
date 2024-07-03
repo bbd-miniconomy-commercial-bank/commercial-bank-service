@@ -13,13 +13,4 @@ public class DebitOrderTransaction {
     private UUID debitOrderTransactionId;
     private UUID debitOrderId;
     private UUID transactionId;
-    private UUID creditAccountId;
-    private String creditAccountName;
-    private UUID debitAccountId;
-    private String debitAccountName;
-    private String transactionDate;
-    private Long transactionAmount;
-    private String creditRef;
-    private String debitRef;
-    private String transactionStatus;
 }

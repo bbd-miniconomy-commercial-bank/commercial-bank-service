@@ -1,8 +1,6 @@
 package com.miniconomy.commercial_bank_service.financial_management.repository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,7 +12,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.DebitOrder;
-import com.miniconomy.commercial_bank_service.financial_management.entity.DebitOrderTransaction;
 
 @Repository
 public class DebitOrderRepository {
@@ -35,50 +32,23 @@ public class DebitOrderRepository {
         return debitOrder;
     };
 
-    private final RowMapper<DebitOrderTransaction> debitOrderTransactionRowMapper = (rs, rowNum) -> {
-        DebitOrderTransaction transaction = new DebitOrderTransaction();
-        transaction.setDebitOrderTransactionId(UUID.fromString(rs.getString("debit_order_transaction_id")));
-        transaction.setDebitOrderId(UUID.fromString(rs.getString("debit_order_id")));
-        transaction.setTransactionId(UUID.fromString(rs.getString("transaction_id")));
-        transaction.setCreditAccountId(UUID.fromString(rs.getString("credit_account_id")));
-        transaction.setCreditAccountName(rs.getString("credit_account_name"));
-        transaction.setDebitAccountId(UUID.fromString(rs.getString("debit_account_id")));
-        transaction.setDebitAccountName(rs.getString("debit_account_name"));
-        transaction.setTransactionDate(rs.getString("transaction_date"));
-        transaction.setTransactionAmount(rs.getLong("transaction_amount"));
-        transaction.setCreditRef(rs.getString("credit_ref"));
-        transaction.setDebitRef(rs.getString("debit_ref"));
-        transaction.setTransactionStatus(rs.getString("transaction_status"));
-        return transaction;
-    };
-
     public Optional<DebitOrder> findById(UUID debitOrderId, String creditAccountName) {
         String sql = "SELECT * FROM account_debit_order_view WHERE debit_order_id = :debitOrderId AND credit_account_name = :creditAccountName";
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("debitOrderId", debitOrderId);
-        paramMap.put("creditAccountName", creditAccountName);
-        return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("debitOrderId", debitOrderId)
+            .addValue("creditAccountName", creditAccountName);
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
                 .stream()
                 .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     public Optional<DebitOrder> insert(DebitOrder debitOrder) {
-        String sql = "SELECT * " +
-                     "FROM update_and_return_debit_order(:debitOrderId, :creditAccountName, :debitOrderDebitRef, :debitOrderCreditRef, :debitOrderAmount, :debitOrderCreatedDate, :debitOrderDisabled)";
-        MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("debitOrderId", debitOrder.getDebitOrderId())
-            .addValue("creditAccountName", debitOrder.getCreditAccountName())
-            .addValue("debitOrderDebitRef", debitOrder.getDebitOrderDebitRef())
-            .addValue("debitOrderCreditRef", debitOrder.getDebitOrderCreditRef())
-            .addValue("debitOrderAmount", debitOrder.getDebitOrderAmount())
-            .addValue("debitOrderCreatedDate", debitOrder.getDebitOrderCreatedDate())
-            .addValue("debitOrderDisabled", debitOrder.isDebitOrderDisabled());
-        return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
-                .stream()
-                .findFirst();
-    }
-
-    public Optional<DebitOrder> update(DebitOrder debitOrder) {
         String sql = "SELECT * " +
                      "FROM insert_and_return_debit_order(:debitAccountName, :creditAccountName, :debitOrderDebitRef, :debitOrderCreditRef, :debitOrderAmount, :debitOrderCreatedDate, :debitOrderDisabled)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
@@ -89,9 +59,37 @@ public class DebitOrderRepository {
             .addValue("debitOrderAmount", debitOrder.getDebitOrderAmount())
             .addValue("debitOrderCreatedDate", debitOrder.getDebitOrderCreatedDate())
             .addValue("debitOrderDisabled", debitOrder.isDebitOrderDisabled());
-        return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
                 .stream()
                 .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    public Optional<DebitOrder> update(DebitOrder debitOrder) {
+        String sql = "SELECT * " +
+                     "FROM update_and_return_debit_order(:debitOrderId, :creditAccountName, :debitOrderDebitRef, :debitOrderCreditRef, :debitOrderAmount, :debitOrderCreatedDate, :debitOrderDisabled)";
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("debitOrderId", debitOrder.getDebitOrderId().toString())
+            .addValue("creditAccountName", debitOrder.getCreditAccountName())
+            .addValue("debitOrderDebitRef", debitOrder.getDebitOrderDebitRef())
+            .addValue("debitOrderCreditRef", debitOrder.getDebitOrderCreditRef())
+            .addValue("debitOrderAmount", debitOrder.getDebitOrderAmount())
+            .addValue("debitOrderCreatedDate", debitOrder.getDebitOrderCreatedDate())
+            .addValue("debitOrderDisabled", debitOrder.isDebitOrderDisabled());
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
+                .stream()
+                .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     public List<DebitOrder> findAllByCreditAccount(String creditAccountName, Pageable pageable) {
@@ -100,11 +98,26 @@ public class DebitOrderRepository {
             .addValue("creditAccountName", creditAccountName)
             .addValue("limit", pageable.getPageSize())
             .addValue("offset", pageable.getOffset());
-        return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper);
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
-    public List<DebitOrderTransaction> getAllDebitOrderTransactions() {
-        String sql = "SELECT * FROM debit_order_transactions_view";
-        return namedParameterJdbcTemplate.query(sql, debitOrderTransactionRowMapper);
+    public List<DebitOrder> findAll(Pageable pageable) {
+        String sql = "SELECT * FROM account_debit_order_view LIMIT :limit OFFSET :offset";
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("limit", pageable.getPageSize())
+            .addValue("offset", pageable.getOffset());
+            
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 }

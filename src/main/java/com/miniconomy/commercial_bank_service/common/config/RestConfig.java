@@ -20,7 +20,6 @@ public class RestConfig {
         // Create a list for interceptors
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
 
-        // Add your custom interceptor
         interceptors.add(new HeaderRequestInterceptor("X-Origin", "commercial_bank"));
 
         // Set the interceptors to the RestTemplate

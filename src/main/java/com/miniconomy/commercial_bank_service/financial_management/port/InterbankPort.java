@@ -3,6 +3,7 @@ package com.miniconomy.commercial_bank_service.financial_management.port;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.adapter.RetailBankAdapter;
+import com.miniconomy.commercial_bank_service.financial_management.entity.IncomingInterbankDepositCallback;
 import com.miniconomy.commercial_bank_service.financial_management.entity.OutgoingInterbankDeposit;
 
 @Service
@@ -19,10 +20,16 @@ public class InterbankPort {
         
         if (outgoingInterbankDeposit.getExternalBankId().equals("retail-bank")) {
             processed = retailBankAdapter.processInterbankDeposit(outgoingInterbankDeposit);
+        } 
 
-            if (!processed) {
-                //ADD TO RETRY QUEUE
-            }
+        return processed;
+    }
+
+    public boolean sendIncomingDepositCallback(IncomingInterbankDepositCallback incomingInterbankDepositCallback) {
+        boolean processed = false;
+        
+        if (incomingInterbankDepositCallback.getExternalBankId().equals("retail-bank")) {
+            processed = retailBankAdapter.processInterbankDepositCallback(incomingInterbankDepositCallback);
         } 
 
         return processed;

@@ -17,18 +17,18 @@ FROM
 LEFT JOIN 
     transaction t
 ON 
-    a.account_id = t.debit_account_id OR a.account_id = t.credit_account_id
+    (a.account_id = t.debit_account_id OR a.account_id = t.credit_account_id) AND t.transaction_status <> 'failed'
 GROUP BY 
     a.account_id;
 -- rollback DROP VIEW account_balances_view;
 
 
 -- changeset ryanbasiltrickett:create-account-debit-order-view
-CREATE VIEW account_debit_order_view AS 
+CREATE VIEW account_debit_order_view AS
 SELECT
     "do".debit_order_id,
-    a_debit.account_name AS debit_account_name,
-    a_credit.account_name AS credit_account_name,
+    a.account_name AS debit_account_name,
+    "do".credit_account_name,
     "do".debit_order_debit_ref,
     "do".debit_order_credit_ref,
     "do".debit_order_amount,
@@ -37,9 +37,7 @@ SELECT
 FROM
     debit_order "do"
 JOIN
-    account a_debit ON "do".debit_account_id = a_debit.account_id
-JOIN
-    account a_credit ON "do".credit_account_id = a_credit.account_id;
+    account a ON "do".debit_account_id = a.account_id
 -- rollback DROP VIEW account_debit_order_view;
 
 -- changeset ryanbasiltrickett:create-account-loan-view
@@ -122,8 +120,8 @@ SELECT
     dot.debit_order_transaction_id,
     dot.debit_order_id,
     dot.transaction_id,
-    debit_account.account_name AS debit_account_name,
-    credit_account.account_name AS credit_account_name,
+    a.account_name AS debit_account_name,
+    "do".credit_account_name,
     t.transaction_debit_ref,
     t.transaction_credit_ref,
     t.transaction_amount,
@@ -136,7 +134,25 @@ JOIN
 JOIN 
     "transaction" t ON dot.transaction_id = t.transaction_id
 JOIN 
-    account credit_account ON "do".credit_account_id = credit_account.account_id
-JOIN 
-    account debit_account ON "do".debit_account_id = debit_account.account_id;
+    account a ON "do".debit_account_id = a.account_id;
 -- rollback DROP VIEW debit_order_transactions_view
+
+-- changeset ryanbasiltrickett:create-interbank-transaction-view
+CREATE VIEW interbank_transaction_view AS 
+SELECT
+    atv.transaction_id,
+    atv.debit_account_name,
+    atv.credit_account_name,
+    atv.transaction_debit_ref,
+    atv.transaction_credit_ref,
+    atv.transaction_amount,
+    atv.transaction_date,
+    atv.transaction_status,
+    it.interbank_transaction_id,
+    it.external_account_id,
+    it.interbank_transaction_status
+FROM
+    account_transaction_view atv
+JOIN
+    interbank_transaction it ON atv.transaction_id = it.transaction_id;
+-- rollback DROP VIEW interbank_transaction_view;

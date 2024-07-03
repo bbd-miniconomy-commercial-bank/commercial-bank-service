@@ -31,26 +31,44 @@ public class AccountRepository {
         String sql = "SELECT * FROM account_balances_view WHERE account_id = :accountId";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("accountId", accountId);
-        return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
+
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
                 .stream()
                 .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     public Optional<Account> findByAccountName(String accountName) {
         String sql = "SELECT * FROM account_balances_view WHERE account_name = :accountName";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("accountName", accountName);
-        return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
                 .stream()
                 .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     public Optional<Account> findByAccountCN(String accountCN) {
         String sql = "SELECT * FROM account_balances_view WHERE account_cn = :accountCN";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("accountCN", accountCN);
-        return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
                 .stream()
                 .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 }

@@ -7,15 +7,18 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Transa
 import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusEnum;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
 import com.miniconomy.commercial_bank_service.financial_management.service.TransactionService;
+import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
+
+import jakarta.validation.constraints.NotNull;
 
 public class BasicTransactionCommand extends TransactionCommand {
     
     private final TransactionService transactionService;
     private final AccountService accountService;
 
-    public final Transaction transaction;
+    private Transaction transaction;
 
-    public BasicTransactionCommand(Transaction transaction, TransactionService transactionService, AccountService accountService) {
+    public BasicTransactionCommand(@NotNull Transaction transaction, TransactionService transactionService, AccountService accountService) {
         this.transaction = transaction;
         this.transactionService = transactionService;
         this.accountService = accountService;
@@ -23,24 +26,38 @@ public class BasicTransactionCommand extends TransactionCommand {
 
     @Override
     public Transaction execute() {
-        Transaction createdTransaction;
 
         Optional<Account> dbAcc = accountService.retrieveAccountByName(transaction.getDebitAccountName());
         Optional<Account> crAcc = accountService.retrieveAccountByName(transaction.getCreditAccountName());
 
-        if (dbAcc.isPresent() && crAcc.isPresent()) {
+        if (dbAcc.isPresent() && crAcc.isPresent() && !transaction.getCreditAccountName().equals(transaction.getDebitAccountName())) {
+            transaction.setTransactionDate(SimulationStore.getCurrentDate());
             Optional<Transaction> transactionOptional = transactionService.saveTransaction(transaction);
             if (transactionOptional.isPresent()) {
-                createdTransaction = transactionOptional.get();
+                transaction = transactionOptional.get();
             } else {
-                createdTransaction = transaction;
-                createdTransaction.setTransactionStatus(TransactionStatusEnum.failed);
+                transaction.setTransactionStatus(TransactionStatusEnum.failed);
             }
         } else {
-            createdTransaction = transaction;
-            createdTransaction.setTransactionStatus(TransactionStatusEnum.failed);
+            transaction.setTransactionStatus(TransactionStatusEnum.failed);
         }
 
-        return createdTransaction; 
+        return transaction; 
     }
+
+    @Override
+    public Transaction rollback() {
+        transaction.setTransactionStatus(TransactionStatusEnum.failed);
+        Optional<Transaction> transactionOptional = transactionService.updateTransaction(transaction);
+
+        if (transactionOptional.isEmpty()) {
+            System.out.println("ERROR OCCURED WHILE REVERTING TRANSACTION: " + transaction.getTransactionId());
+        } else {
+            transaction = transactionOptional.get();
+        }
+
+        return transaction;
+    }
+
+    
 }

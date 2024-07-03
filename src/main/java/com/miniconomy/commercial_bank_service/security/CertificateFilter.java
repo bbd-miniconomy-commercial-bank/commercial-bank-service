@@ -1,20 +1,21 @@
 package com.miniconomy.commercial_bank_service.security;
 
-import org.bouncycastle.asn1.x500.RDN;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.asn1.x500.style.IETFUtils;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.openssl.PEMParser;
-import org.springframework.beans.factory.annotation.Autowired;
+// import org.bouncycastle.asn1.x500.RDN;
+// import org.bouncycastle.asn1.x500.X500Name;
+// import org.bouncycastle.asn1.x500.style.BCStyle;
+// import org.bouncycastle.asn1.x500.style.IETFUtils;
+// import org.bouncycastle.cert.X509CertificateHolder;
+// import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+// import org.bouncycastle.openssl.PEMParser;
+// import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.S3Object;
+// import com.amazonaws.services.s3.AmazonS3;
+// import com.amazonaws.services.s3.model.S3Object;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
+import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -25,19 +26,19 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.ByteArrayInputStream;
+// import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.Base64;
+// import java.io.InputStreamReader;
+// import java.security.cert.CertificateFactory;
+// import java.security.cert.X509Certificate;
+// import java.util.Base64;
 import java.util.Optional;
 
 @Component
 public class CertificateFilter implements Filter
 {
-    @Autowired
-    private AmazonS3 amazonS3;
+    // @Autowired
+    // private AmazonS3 amazonS3;
 
     @Value("${aws.s3.certstore.bucket.name}")
     private String bucketName;
@@ -62,9 +63,15 @@ public class CertificateFilter implements Filter
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain filterChain) throws ServletException, IOException
     {
+
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         String clientCertHeader = req.getHeader("x-origin");
+        
+        if (!SimulationStore.getSimOnline()) {
+            res.sendError(HttpServletResponse.SC_FORBIDDEN, "Simulation is currently restarting, no requests accepted");
+            return;
+        }
 
         try
         {
@@ -125,50 +132,50 @@ public class CertificateFilter implements Filter
         // }
     }
 
-    private X509Certificate loadCertificateFromHeader(String clientCertHeader) throws Exception
-    {        
-        String cleanedCertHeader = clientCertHeader.replace("-----BEGIN%20CERTIFICATE-----", "")
-                                                    .replace("-----END%20CERTIFICATE-----", "")
-                                                    .replace("%0A", "")
-                                                    .replace("%20", "");
+    // private X509Certificate loadCertificateFromHeader(String clientCertHeader) throws Exception
+    // {        
+    //     String cleanedCertHeader = clientCertHeader.replace("-----BEGIN%20CERTIFICATE-----", "")
+    //                                                 .replace("-----END%20CERTIFICATE-----", "")
+    //                                                 .replace("%0A", "")
+    //                                                 .replace("%20", "");
                                                     
-        byte[] certBytes = Base64.getDecoder().decode(cleanedCertHeader);
-        CertificateFactory factory = CertificateFactory.getInstance("X.509");
-        return (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(certBytes));
-    }
+    //     byte[] certBytes = Base64.getDecoder().decode(cleanedCertHeader);
+    //     CertificateFactory factory = CertificateFactory.getInstance("X.509");
+    //     return (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(certBytes));
+    // }
 
-    private X509Certificate loadTrustedCertificateFromS3() throws Exception
-    {
-        S3Object s3Object = amazonS3.getObject(bucketName, trustFileName);
-        String certContent = new String(s3Object.getObjectContent().readAllBytes());
+    // private X509Certificate loadTrustedCertificateFromS3() throws Exception
+    // {
+    //     S3Object s3Object = amazonS3.getObject(bucketName, trustFileName);
+    //     String certContent = new String(s3Object.getObjectContent().readAllBytes());
 
-        try (PEMParser pemParser = new PEMParser(new InputStreamReader(new ByteArrayInputStream(certContent.getBytes()))))
-        {
-            X509CertificateHolder certificateHolder = (X509CertificateHolder) pemParser.readObject();
-            return new JcaX509CertificateConverter().getCertificate(certificateHolder);
-        }
+    //     try (PEMParser pemParser = new PEMParser(new InputStreamReader(new ByteArrayInputStream(certContent.getBytes()))))
+    //     {
+    //         X509CertificateHolder certificateHolder = (X509CertificateHolder) pemParser.readObject();
+    //         return new JcaX509CertificateConverter().getCertificate(certificateHolder);
+    //     }
 
-    }
+    // }
 
-    private boolean verifyCertificate(X509Certificate clientCert, X509Certificate trustedCert) throws Exception
-    {
-        try
-        {
-            clientCert.verify(trustedCert.getPublicKey());
-            clientCert.checkValidity();
-            return true;
-        }
-        catch (Exception e)
-        {
-            return false;
-        }
-    }
+    // private boolean verifyCertificate(X509Certificate clientCert, X509Certificate trustedCert) throws Exception
+    // {
+    //     try
+    //     {
+    //         clientCert.verify(trustedCert.getPublicKey());
+    //         clientCert.checkValidity();
+    //         return true;
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         return false;
+    //     }
+    // }
 
-    private String extractCommonName(X509Certificate certificate) throws Exception
-    {
-        X500Name x500Name = new X500Name(certificate.getSubjectX500Principal().getName());
-        RDN cnRdn = x500Name.getRDNs(BCStyle.CN)[0];
-        return IETFUtils.valueToString(cnRdn.getFirst().getValue());
-    }
+    // private String extractCommonName(X509Certificate certificate) throws Exception
+    // {
+    //     X500Name x500Name = new X500Name(certificate.getSubjectX500Principal().getName());
+    //     RDN cnRdn = x500Name.getRDNs(BCStyle.CN)[0];
+    //     return IETFUtils.valueToString(cnRdn.getFirst().getValue());
+    // }
 }
 

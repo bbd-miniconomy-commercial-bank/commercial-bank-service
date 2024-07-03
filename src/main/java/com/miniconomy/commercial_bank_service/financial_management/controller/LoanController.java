@@ -23,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Positive;
 
 @Tag(
     name = "Loans", 
@@ -100,7 +102,11 @@ public class LoanController {
         value = "", 
         produces = "application/json"
     )
-    public ResponseEntity<ResponseTemplate<ListResponseTemplate<LoanResponse>>> getAllLoans(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize, @RequestAttribute String accountName) {
+    public ResponseEntity<ResponseTemplate<ListResponseTemplate<LoanResponse>>> getAllLoans(
+        @RequestParam(defaultValue = "1") @Positive(message = "page must be greater than or equal to 1.") int page, 
+        @RequestParam(defaultValue = "10") @Positive(message = "pageSize must be greater than or equal to 1")  @Max(value = 25, message = "Maximum pageSize is 25") int pageSize, 
+        @RequestAttribute String accountName
+    ) {
 
         ResponseTemplate<ListResponseTemplate<LoanResponse>> response = new ResponseTemplate<>();
         int status = HttpStatus.OK.value();

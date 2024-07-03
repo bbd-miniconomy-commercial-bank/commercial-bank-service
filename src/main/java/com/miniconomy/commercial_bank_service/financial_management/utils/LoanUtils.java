@@ -3,6 +3,7 @@ package com.miniconomy.commercial_bank_service.financial_management.utils;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
 import com.miniconomy.commercial_bank_service.financial_management.request.LoanRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.LoanResponse;
+import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
 
 public class LoanUtils {
     
@@ -23,7 +24,7 @@ public class LoanUtils {
             loanRequest.getAccountName(), 
             loanRequest.getAmount(), 
             loanRequest.getType(), 
-            null // IMPLEMENT
+            SimulationStore.getCurrentDate()
         );
     }
 }

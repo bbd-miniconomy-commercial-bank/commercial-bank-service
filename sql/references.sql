@@ -1,10 +1,5 @@
 -- liquibase formatted sql
 
--- changeset devwasabi2:add-fk-constraints-debit-order-credit-acc
-ALTER TABLE debit_order
-ADD CONSTRAINT fk_db_order_credit_account_id FOREIGN KEY (credit_account_id) REFERENCES account(account_id);
--- rollback ALTER TABLE debit_order DROP CONSTRAINT fk_db_order_credit_account_id
-
 -- changeset devwasabi2:add-fk-constraints-debit-order-debit-acc
 ALTER TABLE debit_order
 ADD CONSTRAINT fk_db_order_debit_account_id FOREIGN KEY (debit_account_id) REFERENCES account(account_id);
@@ -49,16 +44,6 @@ ADD CONSTRAINT fk_db_order_transactions_debit_order_id FOREIGN KEY (debit_order_
 ALTER TABLE debit_order_transaction
 ADD CONSTRAINT fk_db_order_transactions_transaction_id FOREIGN KEY (transaction_id) REFERENCES transaction(transaction_id);
 -- rollback ALTER TABLE debit_order_transaction DROP CONSTRAINT fk_db_order_transactions_transaction_id
-
--- changeset ryanbasiltrickett:add-fk-constraints-account-delegation-account
-ALTER TABLE account_delegation
-ADD CONSTRAINT fk_account_delegation_account_id FOREIGN KEY (account_id) REFERENCES account(account_id);
--- rollback ALTER TABLE account_delegation DROP CONSTRAINT fk_account_delegation_account_id
-
--- changeset ryanbasiltrickett:add-fk-constraints-account-delegation-delegated-account
-ALTER TABLE account_delegation
-ADD CONSTRAINT fk_account_delegation_delegated_account_id FOREIGN KEY (delegated_account_id) REFERENCES account(account_id);
--- rollback ALTER TABLE account_delegation DROP CONSTRAINT fk_account_delegation_delegated_account_id
 
 -- changeset ryanbasiltrickett:add-fk-constraints-interbank-transaction-transaction
 ALTER TABLE interbank_transaction
