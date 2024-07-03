@@ -32,6 +32,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.Enumeration;
 
 @Component
 public class CertificateFilter implements Filter
@@ -65,6 +66,15 @@ public class CertificateFilter implements Filter
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         String clientCertHeader = req.getHeader("x-amzn-mtls-clientcert");
+
+        Enumeration<String> headers = req.getHeaderNames();
+        while(headers.hasMoreElements())
+        {
+            String headerName = headers.nextElement();
+            System.out.println(headerName + ": " + req.getHeader(headerName));
+        }
+
+        System.out.println("Cert: " + clientCertHeader);
 
         if (clientCertHeader == null)
         {
@@ -150,5 +160,6 @@ public class CertificateFilter implements Filter
         RDN cnRdn = x500Name.getRDNs(BCStyle.CN)[0];
         return IETFUtils.valueToString(cnRdn.getFirst().getValue());
     }
+    
 }
 
