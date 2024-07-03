@@ -8,24 +8,30 @@ import com.miniconomy.commercial_bank_service.simulation_management.observer.Dat
 import java.util.List;
 
 @Component
-public class DateStore {
+public class SimulationStore {
 
-    private String currentDate = "01|01|01"; // Initial date in the format dd|MM|yy
-    private List<DateStoreObserver> dateStoreObservers = List.of(); 
+    private static String currentDate = "01|01|01"; // Initial date in the format dd|MM|yy
+    private static boolean simOnline = true;
 
-    public void attachObserver(DateStoreObserver dateStoreObserver) {
+    private static List<DateStoreObserver> dateStoreObservers = List.of(); 
+
+    public static void attachObserver(DateStoreObserver dateStoreObserver) {
         if (dateStoreObserver != null) {
             dateStoreObservers.add(dateStoreObserver);
         }
     }
 
-    public String getCurrentDate() {
-        return currentDate;
+    public static void setSimOnline(boolean newSimOnline) {
+        simOnline = newSimOnline;
     }
 
-    public void setCurrentDate(String currentDate) {
-        if (!this.currentDate.equals(currentDate)) {
-            this.currentDate = currentDate;
+    public static boolean getSimOnline() {
+        return simOnline;
+    }
+
+    public static void setCurrentDate(String newDate) {
+        if (!currentDate.equals(newDate)) {
+            currentDate = newDate;
 
             DateChangedEvent dateChangedEvent = new DateChangedEvent(
                 currentDate
@@ -35,5 +41,9 @@ public class DateStore {
                 dateStoreObserver.update(dateChangedEvent);
             }
         }
+    }
+
+    public static String getCurrentDate() {
+        return currentDate;
     }
 }

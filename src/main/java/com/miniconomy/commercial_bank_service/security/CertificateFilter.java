@@ -15,6 +15,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
+import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -62,9 +63,15 @@ public class CertificateFilter implements Filter
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain filterChain) throws ServletException, IOException
     {
+
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         String clientCertHeader = req.getHeader("x-origin");
+        
+        if (!SimulationStore.getSimOnline()) {
+            res.sendError(HttpServletResponse.SC_FORBIDDEN, "Simulation is currently restarting, no requests accepted");
+            return;
+        }
 
         try
         {

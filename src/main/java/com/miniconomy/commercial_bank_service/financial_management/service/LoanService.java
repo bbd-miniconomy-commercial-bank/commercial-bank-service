@@ -6,6 +6,7 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Accoun
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.LoanRepository;
+import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
 
 import org.springframework.data.domain.Pageable;
 
@@ -27,9 +28,10 @@ public class LoanService {
     public Optional<Loan> createLoan(Loan loan, String accountName) {
     
         Optional<Loan> createdLoan = Optional.empty();
-
+    
         Optional<Account> accountOptional = accRepo.findByAccountName(accountName);
         if (accountOptional.isPresent()) {
+            loan.setLoanCreatedDate(SimulationStore.getCurrentDate());
             createdLoan = loanRepository.insert(loan);
         }
 

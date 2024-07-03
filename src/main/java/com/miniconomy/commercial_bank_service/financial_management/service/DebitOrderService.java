@@ -13,6 +13,7 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.DebitO
 import com.miniconomy.commercial_bank_service.financial_management.entity.DebitOrderTransaction;
 import com.miniconomy.commercial_bank_service.financial_management.repository.AccountRepository;
 import com.miniconomy.commercial_bank_service.financial_management.repository.DebitOrderRepository;
+import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
 @Service
 public class DebitOrderService {
 
@@ -69,6 +70,8 @@ public class DebitOrderService {
             Optional<Account> crAcc = accountRepository.findByAccountName(dbOrder.getCreditAccountName());
 
             if (dbAcc.isPresent() && crAcc.isPresent()) {
+                
+                dbOrder.setDebitOrderCreatedDate(SimulationStore.getCurrentDate());
                 Optional<DebitOrder> savedDbo = debitOrderRepository.insert(dbOrder);
 
                 if (savedDbo.isPresent()) {

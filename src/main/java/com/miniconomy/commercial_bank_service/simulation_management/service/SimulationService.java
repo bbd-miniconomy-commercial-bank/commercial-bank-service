@@ -1,47 +1,41 @@
 package com.miniconomy.commercial_bank_service.simulation_management.service;
 
-import jakarta.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.miniconomy.commercial_bank_service.simulation_management.repository.SimulationManagementRepository;
-import com.miniconomy.commercial_bank_service.simulation_management.store.DateStore;
+import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
 
 @Service
 public class SimulationService {
 
-    private final RestTemplate restTemplate;
-
-    private final DateStore SimulationManagementStore;
-
     private final SimulationManagementRepository simulationRepository;
 
-    public void resetTables() {
-        simulationRepository.deleteAllTables();
-    }
-
-    @Autowired
-    public SimulationService(DateStore SimulationManagementStore, SimulationManagementRepository simulationRepository) {
-        
-        this.restTemplate = new RestTemplate();
-        this.SimulationManagementStore = SimulationManagementStore;
+    public SimulationService(SimulationManagementRepository simulationRepository) {
         this.simulationRepository = simulationRepository;
-        initialize();
+        bootupSimulation();
     }
 
-    @PostConstruct
-    public void initialize() {
+    private void bootupSimulation() {
         fetchAndSetCurrentDate();
+    }
+
+    public void initializeSimulation() {
+        SimulationStore.setCurrentDate("01|01|01");
+        SimulationStore.setSimOnline(true);
+    }
+
+    public void resetSimulation() {
+        SimulationStore.setSimOnline(false);
+        simulationRepository.deleteAllTables();
     }
 
     @Scheduled(cron = "0 */2 * * * *")
     public void updateSimulationDate() {
-        String currentDate = SimulationManagementStore.getCurrentDate();
+        String currentDate = SimulationStore.getCurrentDate();
         String updatedDate = incrementDate(currentDate);
-        SimulationManagementStore.setCurrentDate(updatedDate);
+        SimulationStore.setCurrentDate(updatedDate);
     }
 
     @Scheduled(cron = "0 */15 * * * *")
@@ -51,12 +45,13 @@ public class SimulationService {
 
     private void fetchAndSetCurrentDate() {
         try {
+            RestTemplate restTemplate = new RestTemplate();
             String currentDate = restTemplate.getForObject("https://api.zeus.projects.bbdgrad.com/date", String.class); //NEED TO BE FIXED
-            if (currentDate != null && !currentDate.equals(SimulationManagementStore.getCurrentDate())) {
-                SimulationManagementStore.setCurrentDate(currentDate);
+            if (currentDate != null && !currentDate.equals(SimulationStore.getCurrentDate())) {
+                SimulationStore.setCurrentDate(currentDate);
             }
         } catch (Exception e) {
-            SimulationManagementStore.setCurrentDate("10|10|10");
+            SimulationStore.setCurrentDate("01|01|01");
         }
     }
 
@@ -77,9 +72,5 @@ public class SimulationService {
         }
 
         return String.format("%02d|%02d|%02d", day, month, year);
-    }
-
-    public String getSimulationDate() {
-        return SimulationManagementStore.getCurrentDate();
     }
 }
