@@ -45,16 +45,6 @@ ALTER TABLE debit_order_transaction
 ADD CONSTRAINT fk_db_order_transactions_transaction_id FOREIGN KEY (transaction_id) REFERENCES transaction(transaction_id);
 -- rollback ALTER TABLE debit_order_transaction DROP CONSTRAINT fk_db_order_transactions_transaction_id
 
--- changeset ryanbasiltrickett:add-fk-constraints-account-delegation-account
-ALTER TABLE account_delegation
-ADD CONSTRAINT fk_account_delegation_account_id FOREIGN KEY (account_id) REFERENCES account(account_id);
--- rollback ALTER TABLE account_delegation DROP CONSTRAINT fk_account_delegation_account_id
-
--- changeset ryanbasiltrickett:add-fk-constraints-account-delegation-delegated-account
-ALTER TABLE account_delegation
-ADD CONSTRAINT fk_account_delegation_delegated_account_id FOREIGN KEY (delegated_account_id) REFERENCES account(account_id);
--- rollback ALTER TABLE account_delegation DROP CONSTRAINT fk_account_delegation_delegated_account_id
-
 -- changeset ryanbasiltrickett:add-fk-constraints-interbank-transaction-transaction
 ALTER TABLE interbank_transaction
 ADD CONSTRAINT fk_interbank_transaction_transaction_id FOREIGN KEY (transaction_id) REFERENCES transaction(transaction_id);

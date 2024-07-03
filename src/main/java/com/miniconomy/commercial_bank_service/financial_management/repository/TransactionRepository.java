@@ -24,8 +24,8 @@ public class TransactionRepository {
     private final RowMapper<Transaction> transactionRowMapper = (rs, rowNum) -> {
         Transaction transaction = new Transaction();
         transaction.setTransactionId(UUID.fromString(rs.getString("transaction_id")));
-        transaction.setDebitAccountName(rs.getString("debit_account_id"));
-        transaction.setCreditAccountName(rs.getString("credit_account_id"));
+        transaction.setDebitAccountName(rs.getString("debit_account_name"));
+        transaction.setCreditAccountName(rs.getString("credit_account_name"));
         transaction.setTransactionDebitRef(rs.getString("transaction_debit_ref"));
         transaction.setTransactionCreditRef(rs.getString("transaction_credit_ref"));
         transaction.setTransactionAmount(rs.getLong("transaction_amount"));

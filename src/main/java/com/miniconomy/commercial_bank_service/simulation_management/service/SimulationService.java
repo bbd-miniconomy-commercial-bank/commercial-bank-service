@@ -7,7 +7,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.miniconomy.commercial_bank_service.simulation_management.repository.SimulationRepository;
 import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
-import com.miniconomy.commercial_bank_service.tax_management.service.TaxService;
 
 @Service
 public class SimulationService {
@@ -64,16 +63,6 @@ public class SimulationService {
         int day = Integer.parseInt(parts[0]);
         int month = Integer.parseInt(parts[1]);
         int year = Integer.parseInt(parts[2]);
-
-        day++;
-        if (day > 30) {
-            day = 1;
-            month++;
-            if (month > 12) {
-                month = 1;
-                year++;
-            }
-        }
 
         return String.format("%02d|%02d|%02d", day, month, year);
     }

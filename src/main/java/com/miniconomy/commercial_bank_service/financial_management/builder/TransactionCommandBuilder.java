@@ -60,6 +60,7 @@ public class TransactionCommandBuilder {
 
         Optional<Account> crAccountOptional = accountService.retrieveAccountByName(transaction.getCreditAccountName());
         if (crAccountOptional.isPresent()) {
+            transaction.setTransactionStatus(TransactionStatusEnum.complete);
             transactionCommand = new BasicTransactionCommand(transaction, transactionService, accountService);
         } else {
             String externalAccountId = transaction.getCreditAccountName();

@@ -144,9 +144,9 @@ DECLARE
     v_new_loan_id UUID;
 BEGIN
     -- Get the account_id for the account name
-    SELECT account_id INTO v_account_id
-    FROM account
-    WHERE account_name = p_account_name;
+    SELECT a.account_id INTO v_account_id
+    FROM account a
+    WHERE a.account_name = p_account_name;
 
     -- Insert the new loan and get the new ID
     INSERT INTO loan (
@@ -165,6 +165,7 @@ BEGIN
     -- Return the inserted row
     RETURN QUERY
     SELECT
+		al.loan_id,
         al.account_name,
         al.loan_amount,
         al.loan_type,

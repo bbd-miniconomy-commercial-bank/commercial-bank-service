@@ -46,9 +46,9 @@ public class DebitOrderRepository {
 
     public Optional<DebitOrder> insert(DebitOrder debitOrder) {
         String sql = "SELECT * " +
-                     "FROM insert_and_return_debit_order(:debitOrderId, :creditAccountName, :debitOrderDebitRef, :debitOrderCreditRef, :debitOrderAmount, :debitOrderCreatedDate, :debitOrderDisabled)";
+                     "FROM insert_and_return_debit_order(:debitAccountName, :creditAccountName, :debitOrderDebitRef, :debitOrderCreditRef, :debitOrderAmount, :debitOrderCreatedDate, :debitOrderDisabled)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("debitOrderId", debitOrder.getDebitOrderId())
+        .addValue("debitAccountName", debitOrder.getDebitAccountName())
             .addValue("creditAccountName", debitOrder.getCreditAccountName())
             .addValue("debitOrderDebitRef", debitOrder.getDebitOrderDebitRef())
             .addValue("debitOrderCreditRef", debitOrder.getDebitOrderCreditRef())
@@ -62,9 +62,9 @@ public class DebitOrderRepository {
 
     public Optional<DebitOrder> update(DebitOrder debitOrder) {
         String sql = "SELECT * " +
-                     "FROM update_and_return_debit_order(:debitAccountName, :creditAccountName, :debitOrderDebitRef, :debitOrderCreditRef, :debitOrderAmount, :debitOrderCreatedDate, :debitOrderDisabled)";
+                     "FROM update_and_return_debit_order(:debitOrderId, :creditAccountName, :debitOrderDebitRef, :debitOrderCreditRef, :debitOrderAmount, :debitOrderCreatedDate, :debitOrderDisabled)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("debitAccountName", debitOrder.getDebitAccountName())
+            .addValue("debitOrderId", debitOrder.getDebitOrderId())
             .addValue("creditAccountName", debitOrder.getCreditAccountName())
             .addValue("debitOrderDebitRef", debitOrder.getDebitOrderDebitRef())
             .addValue("debitOrderCreditRef", debitOrder.getDebitOrderCreditRef())

@@ -19,7 +19,7 @@ INSERT INTO account (account_name, account_cn, account_notification_endpoint) VA
 ('health-care', 'health_care', ''),
 ('central-revenue-service', 'central_revenue', ''),
 ('labour-broker', 'labour', ''),
-('stock-exchange', 'stock_exchange', ''),
+('stock-exchange', 'stock_exchange', 'https://api.mese.projects.bbdgrad.com/transactionsCallBack'),
 ('real-estate-property-sales', 'real_estate_sales', ''),
 ('real-estate-rentals', 'real_estate_agent', ''),
 ('short-term-lender', 'short_term_lender', ''),
