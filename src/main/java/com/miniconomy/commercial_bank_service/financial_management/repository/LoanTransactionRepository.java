@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.LoanTransaction;
 
+@Repository
 public class LoanTransactionRepository {
+    
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 

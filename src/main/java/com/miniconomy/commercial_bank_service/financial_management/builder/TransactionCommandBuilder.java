@@ -1,5 +1,6 @@
 package com.miniconomy.commercial_bank_service.financial_management.builder;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.command.BasicTransactionCommand;
@@ -39,12 +40,12 @@ public class TransactionCommandBuilder {
     private final NotificationService notificationService;
 
     public TransactionCommandBuilder(
-        AccountService accountService, 
-        TransactionService transactionService, 
-        LoanService loanService,
-        DebitOrderService debitOrderService,
-        InterbankService interbankService,
-        NotificationService notificationService
+        @Lazy AccountService accountService, 
+        @Lazy TransactionService transactionService, 
+        @Lazy LoanService loanService,
+        @Lazy DebitOrderService debitOrderService,
+        @Lazy InterbankService interbankService,
+        @Lazy NotificationService notificationService
     ) {
         this.accountService = accountService;
         this.transactionService = transactionService;

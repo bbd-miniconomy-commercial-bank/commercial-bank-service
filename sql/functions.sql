@@ -60,7 +60,7 @@ CREATE OR REPLACE FUNCTION insert_and_return_debit_order(
     p_debit_order_debit_ref VARCHAR,
     p_debit_order_credit_ref VARCHAR,
     p_debit_order_amount BIGINT,
-    p_debit_order_created_date CHAR(8),
+    p_debit_order_created_date VARCHAR,
     p_debit_order_disabled BOOLEAN
 )
 RETURNS TABLE (
@@ -127,8 +127,8 @@ END;
 CREATE OR REPLACE FUNCTION insert_and_return_loan(
     p_account_name VARCHAR,
     p_loan_amount BIGINT,
-    p_loan_type loan_type_enum,
-    p_loan_created_date CHAR(8)
+    p_loan_type VARCHAR,
+    p_loan_created_date VARCHAR
 )
 RETURNS TABLE (
     loan_id UUID,
@@ -157,7 +157,7 @@ BEGIN
     ) VALUES (
         v_account_id,
         p_loan_amount,
-        p_loan_type,
+        p_loan_type::loan_type_enum,
         p_loan_created_date
     )
     RETURNING loan.loan_id INTO v_new_loan_id;
@@ -184,8 +184,8 @@ CREATE OR REPLACE FUNCTION insert_and_return_transaction(
     p_transaction_debit_ref VARCHAR,
     p_transaction_credit_ref VARCHAR,
     p_transaction_amount BIGINT,
-    p_transaction_date CHAR(8),
-    p_transaction_status transaction_status_enum
+    p_transaction_date VARCHAR,
+    p_transaction_status VARCHAR
 )
 RETURNS TABLE (
     transaction_id UUID,
@@ -230,7 +230,7 @@ BEGIN
         p_transaction_credit_ref,
         p_transaction_amount,
         p_transaction_date,
-        p_transaction_status
+        p_transaction_status::transaction_status_enum
     )
     RETURNING transaction.transaction_id INTO v_new_transaction_id;
 
@@ -263,7 +263,7 @@ RETURNS TABLE (
     interbank_transaction_id UUID,
     transaction_id UUID,
     external_account_id VARCHAR,
-    interbank_transaction_status interbank_transaction_status_enum
+    interbank_transaction_status VARCHAR
 ) 
 LANGUAGE plpgsql
 AS '
@@ -278,7 +278,7 @@ BEGIN
     ) VALUES (
         p_transaction_id,
         p_external_account_id,
-        p_interbank_transaction_status
+        p_interbank_transaction_status::interbank_transaction_status_enum
     )
     RETURNING interbank_transaction.interbank_transaction_id INTO v_new_interbank_transaction_id;
 
@@ -302,13 +302,13 @@ CREATE OR REPLACE FUNCTION update_and_return_interbank_transaction(
     p_interbank_transaction_id UUID,
     p_transaction_id UUID,
     p_external_account_id VARCHAR,
-    p_interbank_transaction_status interbank_transaction_status_enum
+    p_interbank_transaction_status VARCHAR
 )
 RETURNS TABLE (
     interbank_transaction_id UUID,
     transaction_id UUID,
     external_account_id VARCHAR,
-    interbank_transaction_status interbank_transaction_status_enum
+    interbank_transaction_status VARCHAR
 ) 
 LANGUAGE plpgsql
 AS '
@@ -328,7 +328,7 @@ BEGIN
         it.interbank_transaction_id,
         it.transaction_id,
         it.external_account_id,
-        it.interbank_transaction_status
+        it.interbank_transaction_status::interbank_transaction_status_enum
     FROM
         interbank_transaction it
     WHERE

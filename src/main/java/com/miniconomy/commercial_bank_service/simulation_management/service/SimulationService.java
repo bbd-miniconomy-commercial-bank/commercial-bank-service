@@ -1,20 +1,22 @@
 package com.miniconomy.commercial_bank_service.simulation_management.service;
 
-import java.net.URISyntaxException;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.miniconomy.commercial_bank_service.simulation_management.repository.SimulationManagementRepository;
+import com.miniconomy.commercial_bank_service.simulation_management.repository.SimulationRepository;
 import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
 
 @Service
 public class SimulationService {
 
-    private final SimulationManagementRepository simulationRepository;
+    @Value("${zues.endpoint}")
+    String zuesUrl;
 
-    public SimulationService(SimulationManagementRepository simulationRepository) {
+    private final SimulationRepository simulationRepository;
+
+    public SimulationService(SimulationRepository simulationRepository) {
         this.simulationRepository = simulationRepository;
         bootupSimulation();
     }
@@ -35,8 +37,7 @@ public class SimulationService {
 
     @Scheduled(cron = "0 */2 * * * *")
     public void updateSimulationDate() {
-        String currentDate = SimulationStore.getCurrentDate();
-        String updatedDate = incrementDate(currentDate);
+        String updatedDate = incrementDate();
         SimulationStore.setCurrentDate(updatedDate);
     }
 
@@ -48,7 +49,7 @@ public class SimulationService {
     private void fetchAndSetCurrentDate() {
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String currentDate = restTemplate.getForObject("https://api.zeus.projects.bbdgrad.com/date", String.class); //NEED TO BE FIXED
+            String currentDate = restTemplate.getForObject(zuesUrl + "/date", String.class); //NEED TO BE FIXED
             if (currentDate != null && !currentDate.equals(SimulationStore.getCurrentDate())) {
                 SimulationStore.setCurrentDate(currentDate);
             }
@@ -57,8 +58,8 @@ public class SimulationService {
         }
     }
 
-    private String incrementDate(String currentDate) {
-        String[] parts = currentDate.split("\\|");
+    private String incrementDate() {
+        String[] parts = SimulationStore.getCurrentDate().split("\\|");
         int day = Integer.parseInt(parts[0]);
         int month = Integer.parseInt(parts[1]);
         int year = Integer.parseInt(parts[2]);
@@ -70,13 +71,6 @@ public class SimulationService {
             if (month > 12) {
                 month = 1;
                 year++;
-
-                try {
-                    TaxService taxService = new TaxService();
-                    taxService.payTax(year - 1);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                }
             }
         }
 

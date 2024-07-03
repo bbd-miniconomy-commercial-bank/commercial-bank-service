@@ -1,4 +1,4 @@
-package com.miniconomy.commercial_bank_service.financial_management.controller;
+package com.miniconomy.commercial_bank_service.common.config;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,11 @@ public class GlobalExceptionHandler
     })
   public ResponseEntity<ResponseTemplate<Object>> handleDatabaseExceptions(DataAccessException ex)
   {
+    
+    ex.printStackTrace();
+
     ResponseTemplate<Object> response = new ResponseTemplate<>();
+    response.setStatus(HttpStatus.BAD_REQUEST.value());
     response.setMessage("Required fields not set in request body");
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -32,7 +36,10 @@ public class GlobalExceptionHandler
     })
   public ResponseEntity<ResponseTemplate<Object>> handleGeneralExceptions(Exception ex)
   {
+    ex.printStackTrace();
+
     ResponseTemplate<Object> response = new ResponseTemplate<>();
+    response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
   }

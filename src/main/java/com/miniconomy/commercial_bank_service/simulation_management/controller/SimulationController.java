@@ -18,12 +18,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Simulation", description = "Queries related to simulation management")
 @RestController
 @RequestMapping("/simulation")
-public class SimulationManagementController {
-
+public class SimulationController {
 
     private final SimulationService simulationService;
 
-    public SimulationManagementController(SimulationService simulationService) {
+    public SimulationController(SimulationService simulationService) {
         this.simulationService = simulationService;
     }
 

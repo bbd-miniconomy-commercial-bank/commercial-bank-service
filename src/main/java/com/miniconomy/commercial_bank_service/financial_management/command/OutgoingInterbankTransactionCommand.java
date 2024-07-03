@@ -50,6 +50,7 @@ public class OutgoingInterbankTransactionCommand extends TransactionCommandDecor
             }
         }
 
+        transaction.setCreditAccountName(creditAccountName);
         return transaction;
     }
 }

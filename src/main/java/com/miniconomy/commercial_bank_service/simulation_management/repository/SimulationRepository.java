@@ -3,8 +3,10 @@ package com.miniconomy.commercial_bank_service.simulation_management.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
 
-public class SimulationManagementRepository {
+@Repository
+public class SimulationRepository {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
