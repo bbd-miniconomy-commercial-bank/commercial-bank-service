@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.InterbankTransaction;
 import com.miniconomy.commercial_bank_service.financial_management.entity.OutgoingInterbankDeposit;
+import com.miniconomy.commercial_bank_service.financial_management.entity.OutgoingInterbankDepositCallback;
 import com.miniconomy.commercial_bank_service.financial_management.port.InterbankPort;
 import com.miniconomy.commercial_bank_service.financial_management.repository.InterbankTransactionRepository;
 import com.miniconomy.commercial_bank_service.financial_management.request.InterbankDepositRequest;
@@ -24,11 +25,19 @@ public class InterbankService {
     }
 
     public List<InterbankTransaction> processDeposits(List<InterbankDepositRequest> depositsRequests, String accountName) {
-        return new ArrayList<>();
+        return new ArrayList<>(); // IMPLEMENT
     }
 
     public Optional<InterbankTransaction> saveInterbankTransaction(InterbankTransaction interbankTransaction) {
         return interbankTransactionRepository.insert(interbankTransaction);
+    }
+
+    public Optional<InterbankTransaction> updateInterbankTransaction(InterbankTransaction interbankTransaction) {
+        return interbankTransactionRepository.update(interbankTransaction);
+    }
+
+    public void processDepositCallback(OutgoingInterbankDepositCallback outgoingInterbankDepositCallback) {
+        // IMPLEMENT
     }
 
     public boolean sendOutgoingDeposit(OutgoingInterbankDeposit outgoingInterbankDeposit) {
