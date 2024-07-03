@@ -1,4 +1,4 @@
-package com.miniconomy.commercial_bank_service.simulation_management.service;
+package com.miniconomy.commercial_bank_service.tax_management.service;
 
 import java.net.URI;
 import java.net.http.HttpClient;
