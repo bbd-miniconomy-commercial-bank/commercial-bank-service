@@ -22,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Positive;
 
 @Tag(name = "Transactions", description = "Queries related to service's transactions")
 @RestController
@@ -39,8 +41,11 @@ public class TransactionController {
     description = "Allows services to view their transactions"
   )
   @GetMapping(value = "", produces = "application/json")
-  public ResponseEntity<ResponseTemplate<ListResponseTemplate<TransactionResponse>>> getTransactions(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize, @RequestAttribute String accountName)
-  {
+  public ResponseEntity<ResponseTemplate<ListResponseTemplate<TransactionResponse>>> getTransactions(
+        @RequestParam(defaultValue = "1") @Positive(message = "page must be greater than or equal to 1.") int page, 
+        @RequestParam(defaultValue = "10") @Positive(message = "pageSize must be greater than or equal to 1")  @Max(value = 25, message = "Maximum pageSize is 25") int pageSize, 
+        @RequestAttribute String accountName
+  ) {
     
     ResponseTemplate<ListResponseTemplate<TransactionResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
