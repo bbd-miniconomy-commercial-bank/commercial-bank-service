@@ -7,6 +7,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.miniconomy.commercial_bank_service.simulation_management.repository.SimulationRepository;
 import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
+import com.miniconomy.commercial_bank_service.tax_management.service.TaxService;
 
 @Service
 public class SimulationService {
