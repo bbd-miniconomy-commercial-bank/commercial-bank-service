@@ -1,4 +1,4 @@
-package com.miniconomy.commercial_bank_service.common.simulation_management;
+package com.miniconomy.commercial_bank_service.simulation_management;
 
 import org.springframework.context.ApplicationEvent;
 
