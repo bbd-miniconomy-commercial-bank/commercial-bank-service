@@ -1,16 +1,10 @@
 package com.miniconomy.commercial_bank_service.simulation_management;
 
-import org.springframework.context.ApplicationEvent;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public class DateChangedEvent extends ApplicationEvent {
+@Data
+@AllArgsConstructor
+public class DateChangedEvent {
     private final String newDate;
-
-    public DateChangedEvent(Object source, String newDate) {
-        super(source);
-        this.newDate = newDate;
-    }
-
-    public String getNewDate() {
-        return newDate;
-    }
 }
