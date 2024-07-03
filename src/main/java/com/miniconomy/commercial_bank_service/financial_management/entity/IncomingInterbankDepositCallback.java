@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class OutgoingInterbankDepositCallback {
+public class IncomingInterbankDepositCallback {
     private String externalBankId;
     private String debitAccountId;
     private String creditAccountId;

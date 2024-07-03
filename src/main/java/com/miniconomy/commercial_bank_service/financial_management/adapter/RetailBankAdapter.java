@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.miniconomy.commercial_bank_service.financial_management.entity.OutgoingInterbankDeposit;
-import com.miniconomy.commercial_bank_service.financial_management.entity.OutgoingInterbankDepositCallback;
+import com.miniconomy.commercial_bank_service.financial_management.entity.IncomingInterbankDepositCallback;
 import com.miniconomy.commercial_bank_service.financial_management.request.OutgoingRetailBankRequest;
 import com.miniconomy.commercial_bank_service.financial_management.request.RetailBankCallbackRequest;
 import com.miniconomy.commercial_bank_service.financial_management.utils.InterbankUtils;
@@ -31,9 +31,9 @@ public class RetailBankAdapter implements InterbankAdapter {
         return response.getStatusCode() == HttpStatus.ACCEPTED;
     }
 
-    public boolean processInterbankDepositCallback(OutgoingInterbankDepositCallback outgoingInterbankDepositCallback) {
-        RetailBankCallbackRequest retailBankCallbackRequest = InterbankUtils.outgoingCallbackRetailBankRequestMapper(outgoingInterbankDepositCallback);
-        ResponseEntity<OutgoingRetailBankRequest> response = restTemplate.postForEntity(retailBankEndpoint + "api/transactions/" + outgoingInterbankDepositCallback.getReference() + "/status", retailBankCallbackRequest, OutgoingRetailBankRequest.class);
+    public boolean processInterbankDepositCallback(IncomingInterbankDepositCallback incomingInterbankDepositCallback) {
+        RetailBankCallbackRequest retailBankCallbackRequest = InterbankUtils.outgoingCallbackRetailBankRequestMapper(incomingInterbankDepositCallback);
+        ResponseEntity<OutgoingRetailBankRequest> response = restTemplate.postForEntity(retailBankEndpoint + "api/transactions/" + incomingInterbankDepositCallback.getReference() + "/status", retailBankCallbackRequest, OutgoingRetailBankRequest.class);
 
         return response.getStatusCode() == HttpStatus.ACCEPTED;
     }
