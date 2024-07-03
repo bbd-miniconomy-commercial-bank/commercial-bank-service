@@ -27,7 +27,11 @@ public class NotificationService {
         if (accountOptional.isPresent()) {
             String url = accountOptional.get().getAccountNotificationEndpoint();
             if (!url.isBlank()) {
-                restTemplate.postForEntity(url, notificationRequest, NotificationRequest.class);
+                try {
+                    restTemplate.postForEntity(url, notificationRequest, NotificationRequest.class);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }

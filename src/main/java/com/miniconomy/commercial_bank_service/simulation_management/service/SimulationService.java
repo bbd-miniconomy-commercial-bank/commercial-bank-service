@@ -49,7 +49,7 @@ public class SimulationService {
     private void fetchAndSetCurrentDate() {
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String currentDate = restTemplate.getForObject(zuesUrl + "/date", String.class); //NEED TO BE FIXED
+            String currentDate = restTemplate.getForObject(zuesUrl + "/date?time=" + System.currentTimeMillis(), String.class);
             if (currentDate != null && !currentDate.equals(SimulationStore.getCurrentDate())) {
                 SimulationStore.setCurrentDate(currentDate);
             }

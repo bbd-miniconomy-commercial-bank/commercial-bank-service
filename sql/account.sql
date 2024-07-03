@@ -15,7 +15,7 @@ INSERT INTO account (account_name, account_cn, account_notification_endpoint) VA
 ('commercial-bank', 'commercial_bank', ''),
 ('health-insurance', 'health_insurance', ''),
 ('life-insurance', 'life_insurance', ''),
-('short-term-insurance', 'short_term_insurance', ''),
+('short-term-insurance', 'short_term_insurance', 'https://api.insurance.projects.bbdgrad.com/api/banking/commercial'),
 ('health-care', 'health_care', ''),
 ('central-revenue-service', 'central_revenue', ''),
 ('labour-broker', 'labour', ''),
