@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
+import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
 
 import jakarta.servlet.Filter;
@@ -29,10 +30,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Component
 public class CertificateFilter implements Filter
@@ -76,9 +75,9 @@ public class CertificateFilter implements Filter
         try
         {
             X509Certificate clientCert = loadCertificateFromHeader(clientCertHeader);
-            List<X509Certificate> trustedCerts = loadTrustedCertificatesFromS3();
+            X509Certificate trustedCert = loadTrustedCertificateFromS3();
 
-            boolean isVerified = verifyCertificate(clientCert, trustedCerts);
+            boolean isVerified = verifyCertificate(clientCert, trustedCert);
             if (!isVerified)
             {
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate verification failed");
@@ -86,12 +85,15 @@ public class CertificateFilter implements Filter
             }
 
             String cn = extractCommonName(clientCert);
-            String accountName = accountService.findAccountNameByCn(cn);
-            if(accountName == null)
+            Optional<Account> accountOptional = accountService.retrieveAccountByCn(cn);
+            if(accountOptional.isEmpty())
             {
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + cn);
                 return;
             }
+
+            Account account = accountOptional.get();
+            String accountName = account.getAccountName();
             
             request.setAttribute("accountName", accountName);
 
@@ -110,51 +112,31 @@ public class CertificateFilter implements Filter
         return (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(certBytes));
     }
 
-    private List<X509Certificate> loadTrustedCertificatesFromS3() throws Exception
+    private X509Certificate loadTrustedCertificateFromS3() throws Exception
     {
-        List<X509Certificate> trustedCerts = new ArrayList<>();
-
         S3Object s3Object = amazonS3.getObject(bucketName, trustFileName);
         String certContent = new String(s3Object.getObjectContent().readAllBytes());
 
-        List<String> certStrings = splitCertificates(certContent);
-
-        for(String certString : certStrings)
+        try (PEMParser pemParser = new PEMParser(new InputStreamReader(new ByteArrayInputStream(certContent.getBytes()))))
         {
-            try (PEMParser pemParser = new PEMParser(new InputStreamReader(new ByteArrayInputStream(certString.getBytes()))))
-            {
-                X509CertificateHolder certificateHolder = (X509CertificateHolder) pemParser.readObject();
-                trustedCerts.add(new JcaX509CertificateConverter().getCertificate(certificateHolder));
-            }
+            X509CertificateHolder certificateHolder = (X509CertificateHolder) pemParser.readObject();
+            return new JcaX509CertificateConverter().getCertificate(certificateHolder);
         }
 
-        return trustedCerts;
     }
 
-    private List<String> splitCertificates(String certContent)
+    private boolean verifyCertificate(X509Certificate clientCert, X509Certificate trustedCert) throws Exception
     {
-        String[] certs = certContent.split("(?<=-----END CERTIFICATE-----)");
-        return List.of(certs).stream()
-            .map(String::trim)
-            .filter(cert -> !cert.isEmpty())
-            .collect(Collectors.toList());
-    }
-
-    private boolean verifyCertificate(X509Certificate clientCert, List<X509Certificate> trustedCerts) throws Exception
-    {
-        for (X509Certificate trustedCert : trustedCerts)
+        try
         {
-            try
-            {
-                clientCert.verify(trustedCert.getPublicKey());
-                return true;
-            }
-            catch (Exception e)
-            {
-                // Ignore and try the next trusted certificate
-            }
+            clientCert.verify(trustedCert.getPublicKey());
+            clientCert.checkValidity();
+            return true;
         }
-        return false;
+        catch (Exception e)
+        {
+            return false;
+        }
     }
 
     private String extractCommonName(X509Certificate certificate) throws Exception

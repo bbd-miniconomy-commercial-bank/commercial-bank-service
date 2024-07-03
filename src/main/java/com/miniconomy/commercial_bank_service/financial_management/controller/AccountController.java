@@ -8,7 +8,6 @@ import com.miniconomy.commercial_bank_service.financial_management.response.Resp
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
 import com.miniconomy.commercial_bank_service.financial_management.utils.AccountUtils;
 
-import java.util.HashMap;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Account", description = "Queries related to service's account")
 @RestController
 @RequestMapping("/account")
-class AccountController {
+public class AccountController {
     
   private final AccountService accountService;
 
@@ -47,7 +46,7 @@ class AccountController {
 
     if (accountOptional.isPresent()) {
       Account account = accountOptional.get();
-      AccountResponse accountResponse = AccountUtils.accountResponseMapper(account); // account balance is the sum of all transactions
+      AccountResponse accountResponse = AccountUtils.accountResponseMapper(account);
       response.setData(accountResponse);
     } else {
       status = HttpStatus.NOT_FOUND.value();
@@ -56,12 +55,6 @@ class AccountController {
 
     response.setStatus(status);
     return ResponseEntity.status(status).body(response);
-  }
-
-  public HashMap<String, Object> createEntity(String x, Object y) {
-    HashMap<String, Object> map = new HashMap<String, Object>();
-    map.put(x, y);
-    return map;
   }
 
 }

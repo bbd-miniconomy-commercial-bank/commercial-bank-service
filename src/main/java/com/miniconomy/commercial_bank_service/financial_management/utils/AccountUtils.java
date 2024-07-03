@@ -9,7 +9,7 @@ public class AccountUtils {
 
         return new AccountResponse(
             account.getAccountName(), 
-            4000 // Fix :)
+            account.getAccountBalance()
         );
     }
 }
