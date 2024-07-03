@@ -41,6 +41,7 @@ public class LoanInterestRepository {
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("loanType", loanInterest.getLoanType())
             .addValue("interestRate", loanInterest.getInterestRate());
+            
         namedParameterJdbcTemplate.update(sql, paramMap);
     }
 }

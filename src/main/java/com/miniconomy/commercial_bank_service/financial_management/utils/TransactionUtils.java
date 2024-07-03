@@ -1,5 +1,6 @@
 package com.miniconomy.commercial_bank_service.financial_management.utils;
 
+import com.miniconomy.commercial_bank_service.financial_management.FinancialDateStore;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
 import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusEnum;
 import com.miniconomy.commercial_bank_service.financial_management.request.TransactionRequest;
@@ -36,7 +37,7 @@ public class TransactionUtils {
             transactionRequest.getDebitRef(),
             transactionRequest.getCreditRef(),
             transactionRequest.getAmount(), 
-            null, // IMPLEMENT
+            FinancialDateStore.getDate(), // IMPLEMENT
             TransactionStatusEnum.pending
         );
     }

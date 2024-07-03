@@ -1,5 +1,6 @@
 package com.miniconomy.commercial_bank_service.financial_management.utils;
 
+import com.miniconomy.commercial_bank_service.financial_management.FinancialDateStore;
 import com.miniconomy.commercial_bank_service.financial_management.entity.DebitOrder;
 import com.miniconomy.commercial_bank_service.financial_management.request.DebitOrderRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.DebitOrderResponse;
@@ -29,7 +30,7 @@ public class DebitOrderUtils {
             debitOrderRequest.getDebitRef(),
             debitOrderRequest.getCreditRef(),
             debitOrderRequest.getAmount(),
-            null,
+            FinancialDateStore.getDate(),
             false
         );
     }

@@ -1,5 +1,6 @@
 package com.miniconomy.commercial_bank_service.financial_management.utils;
 
+import com.miniconomy.commercial_bank_service.financial_management.FinancialDateStore;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
 import com.miniconomy.commercial_bank_service.financial_management.request.LoanRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.LoanResponse;
@@ -23,7 +24,7 @@ public class LoanUtils {
             loanRequest.getAccountName(), 
             loanRequest.getAmount(), 
             loanRequest.getType(), 
-            null // IMPLEMENT
+            FinancialDateStore.getDate() 
         );
     }
 }
