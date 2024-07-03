@@ -1,8 +1,10 @@
 package com.miniconomy.commercial_bank_service.financial_management.utils;
 
-import com.miniconomy.commercial_bank_service.financial_management.entity.InterbankDeposit;
+import com.miniconomy.commercial_bank_service.financial_management.entity.IncomingInterbankDeposit;
 import com.miniconomy.commercial_bank_service.financial_management.entity.InterbankTransaction;
+import com.miniconomy.commercial_bank_service.financial_management.entity.OutgoingInterbankDeposit;
 import com.miniconomy.commercial_bank_service.financial_management.request.InterbankDepositRequest;
+import com.miniconomy.commercial_bank_service.financial_management.request.OutgoingRetailBankRequest;
 import com.miniconomy.commercial_bank_service.financial_management.response.InterbankDepositResponse;
 
 public class InterbankUtils {
@@ -15,13 +17,24 @@ public class InterbankUtils {
         );
     }
 
-    public static InterbankDeposit interbankDepositMapper(InterbankDepositRequest interbankDepositRequest) {
+    public static IncomingInterbankDeposit incomingInterbankDepositMapper(InterbankDepositRequest interbankDepositRequest) {
         
-        return new InterbankDeposit(
+        return new IncomingInterbankDeposit(
+            interbankDepositRequest.getDebitAccountName(),
             interbankDepositRequest.getCreditAccountName(),
             interbankDepositRequest.getAmount(),
             interbankDepositRequest.getDebitRef(),
             interbankDepositRequest.getCreditRef()
+        );
+    }
+
+    public static OutgoingRetailBankRequest outgoingRetailBankMapper(OutgoingInterbankDeposit outgoingInterbankDeposit) {
+
+        return new OutgoingRetailBankRequest(
+            Long.parseLong(outgoingInterbankDeposit.getCreditAccountId()), 
+            outgoingInterbankDeposit.getAmount(), 
+            outgoingInterbankDeposit.getReference(),
+            outgoingInterbankDeposit.getDebitAccountId()
         );
     }
 }

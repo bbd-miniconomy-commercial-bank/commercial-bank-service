@@ -65,14 +65,14 @@ public class DebitOrderRepository {
     public Optional<DebitOrder> insert(DebitOrder debitOrder) {
         String sql = "SELECT * " +
                      "FROM update_and_return_debit_order(:debitOrderId, :creditAccountName, :debitOrderDebitRef, :debitOrderCreditRef, :debitOrderAmount, :debitOrderCreatedDate, :debitOrderDisabled)";
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("debitOrderId", debitOrder.getDebitOrderId());
-        paramMap.put("creditAccountName", debitOrder.getCreditAccountName());
-        paramMap.put("debitOrderDebitRef", debitOrder.getDebitOrderDebitRef());
-        paramMap.put("debitOrderCreditRef", debitOrder.getDebitOrderCreditRef());
-        paramMap.put("debitOrderAmount", debitOrder.getDebitOrderAmount());
-        paramMap.put("debitOrderCreatedDate", debitOrder.getDebitOrderCreatedDate());
-        paramMap.put("debitOrderDisabled", debitOrder.isDebitOrderDisabled());
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("debitOrderId", debitOrder.getDebitOrderId())
+            .addValue("creditAccountName", debitOrder.getCreditAccountName())
+            .addValue("debitOrderDebitRef", debitOrder.getDebitOrderDebitRef())
+            .addValue("debitOrderCreditRef", debitOrder.getDebitOrderCreditRef())
+            .addValue("debitOrderAmount", debitOrder.getDebitOrderAmount())
+            .addValue("debitOrderCreatedDate", debitOrder.getDebitOrderCreatedDate())
+            .addValue("debitOrderDisabled", debitOrder.isDebitOrderDisabled());
         return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
                 .stream()
                 .findFirst();

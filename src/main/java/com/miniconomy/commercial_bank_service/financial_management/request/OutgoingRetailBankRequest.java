@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InterbankDepositRequest {
-    private String debitAccountName;
-    private String creditAccountName;
-    private Long amount;
-    private String debitRef;
-    private String creditRef;
+public class OutgoingRetailBankRequest {
+    private Long toPersonaId;
+    private long amountInMibiDough;
+    private String reference;
+    private String fromAccountId;
 }
