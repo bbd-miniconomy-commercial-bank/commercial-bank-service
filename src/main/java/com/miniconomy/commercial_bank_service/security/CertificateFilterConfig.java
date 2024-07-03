@@ -8,36 +8,36 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CertificateFilterConfig
 {
-    // @Value("${certificate.filter.enabled:true}")
-    // private boolean filterEnabled;
+    @Value("${certificate.filter.enabled:true}")
+    private boolean filterEnabled;
 
-    // private final CertificateFilter certificateFilter;
+    private final CertificateFilter certificateFilter;
     
-    // public CertificateFilterConfig(CertificateFilter certificateFilter) {
-    //     this.certificateFilter = certificateFilter;
-    // }
+    public CertificateFilterConfig(CertificateFilter certificateFilter) {
+        this.certificateFilter = certificateFilter;
+    }
 
-    // @Bean
-    // public FilterRegistrationBean<CertificateFilter> certificateFilterRegistration()
-    // {
-    //     FilterRegistrationBean<CertificateFilter> registrationBean = new FilterRegistrationBean<>();
+    @Bean
+    public FilterRegistrationBean<CertificateFilter> certificateFilterRegistration()
+    {
+        FilterRegistrationBean<CertificateFilter> registrationBean = new FilterRegistrationBean<>();
 
-    //     registrationBean.setFilter(certificateFilter);
-    //     registrationBean.addUrlPatterns("/loans");
-    //     registrationBean.addUrlPatterns("/loans/*");
+        registrationBean.setFilter(certificateFilter);
+        registrationBean.addUrlPatterns("/loans");
+        registrationBean.addUrlPatterns("/loans/*");
 
-    //     registrationBean.addUrlPatterns("/debitOrders");
-    //     registrationBean.addUrlPatterns("/debitOrders/*");
+        registrationBean.addUrlPatterns("/debitOrders");
+        registrationBean.addUrlPatterns("/debitOrders/*");
 
-    //     registrationBean.addUrlPatterns("/account/balance");
+        registrationBean.addUrlPatterns("/account/balance");
 
-    //     registrationBean.addUrlPatterns("/transactions");
-    //     registrationBean.addUrlPatterns("/transactions/*");
+        registrationBean.addUrlPatterns("/transactions");
+        registrationBean.addUrlPatterns("/transactions/*");
 
-    //     registrationBean.setOrder(1);
+        registrationBean.setOrder(1);
 
-    //     registrationBean.setEnabled(filterEnabled);
+        registrationBean.setEnabled(filterEnabled);
 
-    //     return registrationBean;
-    // }
+        return registrationBean;
+    }
 }

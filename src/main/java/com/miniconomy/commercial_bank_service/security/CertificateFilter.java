@@ -72,37 +72,49 @@ public class CertificateFilter implements Filter
             return;
         }
 
-        try
+        Optional<Account> accountOptional = accountService.retrieveAccountByCn(clientCertHeader);
+        if(accountOptional.isEmpty())
         {
-            X509Certificate clientCert = loadCertificateFromHeader(clientCertHeader);
-            X509Certificate trustedCert = loadTrustedCertificateFromS3();
+            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + clientCertHeader);
+            return;
+        }
 
-            boolean isVerified = verifyCertificate(clientCert, trustedCert);
-            if (!isVerified)
-            {
-                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate verification failed");
-                return;
-            }
+        Account account = accountOptional.get();
+        String accountName = account.getAccountName();
+        
+        request.setAttribute("accountName", accountName);
 
-            String cn = extractCommonName(clientCert);
-            Optional<Account> accountOptional = accountService.retrieveAccountByCn(cn);
-            if(accountOptional.isEmpty())
-            {
-                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + cn);
-                return;
-            }
+        // try
+        // {
+        //     X509Certificate clientCert = loadCertificateFromHeader(clientCertHeader);
+        //     X509Certificate trustedCert = loadTrustedCertificateFromS3();
 
-            Account account = accountOptional.get();
-            String accountName = account.getAccountName();
+        //     boolean isVerified = verifyCertificate(clientCert, trustedCert);
+        //     if (!isVerified)
+        //     {
+        //         res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate verification failed");
+        //         return;
+        //     }
+
+        //     String cn = extractCommonName(clientCert);
+        //     Optional<Account> accountOptional = accountService.retrieveAccountByCn(cn);
+        //     if(accountOptional.isEmpty())
+        //     {
+        //         res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + cn);
+        //         return;
+        //     }
+
+        //     Account account = accountOptional.get();
+        //     String accountName = account.getAccountName();
             
-            request.setAttribute("accountName", accountName);
+        //     request.setAttribute("accountName", accountName);
 
-            filterChain.doFilter(request, response);
-        }
-        catch (Exception e)
-        {
-            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing client certificate");
-        }
+        //     filterChain.doFilter(request, response);
+        // }
+        // catch (Exception e)
+        // {
+        //     res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing client certificate");
+        // }
     }
 
     private X509Certificate loadCertificateFromHeader(String clientCertHeader) throws Exception
