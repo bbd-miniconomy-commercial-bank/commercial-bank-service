@@ -13,7 +13,7 @@ import com.miniconomy.commercial_bank_service.financial_management.utils.Interba
 @Service
 public class RetailBankAdapter implements InterbankAdapter {
 
-    @Value("${externalbanks.retailbank.endpoint}")
+    @Value("${externalbank.retailbank.endpoint}")
     private String retailBankEndpoint;
 
     private final RestTemplate restTemplate;
