@@ -9,20 +9,6 @@ public class SimulationManagementRepository {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    private void deleteAllAccounts() {
-        String sql = "DELETE FROM account";
-
-        namedParameterJdbcTemplate.getJdbcOperations().update(sql);
-
-    }
-
-    private void deleteAllAccountsDelegation() {
-        String sql = "DELETE FROM account_delegation";
-
-        namedParameterJdbcTemplate.getJdbcOperations().update(sql);
-
-    }
-
     private void deleteDebitOrderTransactions() {
         String sql = "DELETE FROM debit_order_transaction";
 
@@ -78,9 +64,7 @@ public class SimulationManagementRepository {
         deleteAllLoanTransactions();
         deleteAllTransactions();
         deleteAllDebitOrders();
-        deleteAllLoans();
-        deleteAllAccountsDelegation();
-        deleteAllAccounts();     
+        deleteAllLoans();     
     }
       
 }

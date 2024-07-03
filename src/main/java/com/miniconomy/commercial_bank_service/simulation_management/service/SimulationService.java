@@ -7,18 +7,29 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.miniconomy.commercial_bank_service.simulation_management.repository.SimulationManagementRepository;
+import com.miniconomy.commercial_bank_service.simulation_management.store.DateStore;
+
 @Service
 public class SimulationService {
 
     private final RestTemplate restTemplate;
 
-    @Autowired
-    private final SimulationManagementStore SimulationManagementConfig;
+    private final DateStore SimulationManagementStore;
+
+    private final SimulationManagementRepository simulationRepository;
+
+    public void resetTables() {
+        simulationRepository.deleteAllTables();
+    }
 
     @Autowired
-    public SimulationService(SimulationManagementStore SimulationManagementConfig) {
+    public SimulationService(DateStore SimulationManagementStore, SimulationManagementRepository simulationRepository) {
+        
         this.restTemplate = new RestTemplate();
-        this.SimulationManagementConfig = SimulationManagementConfig;
+        this.SimulationManagementStore = SimulationManagementStore;
+        this.simulationRepository = simulationRepository;
+        initialize();
     }
 
     @PostConstruct
@@ -28,9 +39,9 @@ public class SimulationService {
 
     @Scheduled(cron = "0 */2 * * * *")
     public void updateSimulationDate() {
-        String currentDate = SimulationManagementConfig.getCurrentDate();
+        String currentDate = SimulationManagementStore.getCurrentDate();
         String updatedDate = incrementDate(currentDate);
-        SimulationManagementConfig.setCurrentDate(updatedDate);
+        SimulationManagementStore.setCurrentDate(updatedDate);
     }
 
     @Scheduled(cron = "0 */15 * * * *")
@@ -40,12 +51,12 @@ public class SimulationService {
 
     private void fetchAndSetCurrentDate() {
         try {
-            String currentDate = restTemplate.getForObject("https://api.zeus.projects.bbdgrad.com/date", String.class);
-            if (currentDate != null && !currentDate.equals(SimulationManagementConfig.getCurrentDate())) {
-                SimulationManagementConfig.setCurrentDate(currentDate);
+            String currentDate = restTemplate.getForObject("https://api.zeus.projects.bbdgrad.com/date", String.class); //NEED TO BE FIXED
+            if (currentDate != null && !currentDate.equals(SimulationManagementStore.getCurrentDate())) {
+                SimulationManagementStore.setCurrentDate(currentDate);
             }
         } catch (Exception e) {
-            SimulationManagementConfig.setCurrentDate("10|10|10");
+            SimulationManagementStore.setCurrentDate("10|10|10");
         }
     }
 
@@ -69,6 +80,6 @@ public class SimulationService {
     }
 
     public String getSimulationDate() {
-        return SimulationManagementConfig.getCurrentDate();
+        return SimulationManagementStore.getCurrentDate();
     }
 }

@@ -34,11 +34,8 @@ public class SimulationManagementController {
         int status = HttpStatus.OK.value();
 
         try {
-
-            String currentDate = simulationService.getSimulationDate();
-
-            
-            response.setData(currentDate);
+            simulationService.resetTables(); 
+            simulationService.initialize();
             response.setMessage("Successfully reset commercial Bank");
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR.value();
@@ -49,6 +46,5 @@ public class SimulationManagementController {
         return ResponseEntity.status(status).body(response);
     }
 
-    //resetiing / starting asap
 
 }
