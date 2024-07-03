@@ -74,7 +74,7 @@ public class LoanService {
     public void processLoans() {
 
         int loansPerBatch = 25;
-        int page = 1;
+        int page = 0;
 
         Pageable pageable = PageRequest.of(page, loansPerBatch);
         List<Loan> loans = loanRepository.findAll(pageable);

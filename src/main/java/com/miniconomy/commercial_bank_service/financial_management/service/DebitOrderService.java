@@ -99,7 +99,7 @@ public class DebitOrderService {
     public void processDebitOrders() {
 
         int debitOrderPerBatch = 25;
-        int page = 1;
+        int page = 0;
 
         Pageable pageable = PageRequest.of(page, debitOrderPerBatch);
         List<DebitOrder> debitOrders = debitOrderRepository.findAll(pageable);

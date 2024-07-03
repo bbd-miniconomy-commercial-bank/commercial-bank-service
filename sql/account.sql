@@ -18,7 +18,7 @@ INSERT INTO account (account_name, account_cn, account_notification_endpoint) VA
 ('short-term-insurance', 'short_term_insurance', 'https://api.insurance.projects.bbdgrad.com/api/banking/commercial'),
 ('health-care', 'health_care', ''),
 ('central-revenue-service', 'central_revenue', ''),
-('labour-broker', 'labour', ''),
+('labour-broker', 'labour', 'https://api.labour.projects.bbdgrad.com/api/account'),
 ('stock-exchange', 'stock_exchange', 'https://api.mese.projects.bbdgrad.com/transactionsCallBack'),
 ('real-estate-property-sales', 'real_estate_sales', ''),
 ('real-estate-rentals', 'real_estate_agent', ''),
