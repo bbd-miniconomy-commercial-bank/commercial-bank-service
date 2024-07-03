@@ -45,7 +45,7 @@ public class LoanInterestRepository {
                      "(loan_type, interest_rate) " + 
                      "VALUES (:loanType, :interestRate)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("loanType", loanInterest.getLoanType())
+            .addValue("loanType", loanInterest.getLoanType().toString())
             .addValue("interestRate", loanInterest.getInterestRate());
             
         try {

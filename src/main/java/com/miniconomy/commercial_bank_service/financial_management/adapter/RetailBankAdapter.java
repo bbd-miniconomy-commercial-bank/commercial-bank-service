@@ -1,5 +1,7 @@
 package com.miniconomy.commercial_bank_service.financial_management.adapter;
 
+import java.net.URI;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +27,17 @@ public class RetailBankAdapter implements InterbankAdapter {
     }
 
     public boolean processInterbankDeposit(OutgoingInterbankDeposit outgoingInterbankDeposit) {
+        String url = retailBankEndpoint + "/api/transactions/deposits";
+        System.out.println(url);
         OutgoingRetailBankRequest outgoingRetailBankRequest = InterbankUtils.outgoingRetailBankRequestMapper(outgoingInterbankDeposit);
-        ResponseEntity<OutgoingRetailBankRequest> response = restTemplate.postForEntity(retailBankEndpoint + "api/transaction/deposits", outgoingRetailBankRequest, OutgoingRetailBankRequest.class);
 
-        return response.getStatusCode() == HttpStatus.ACCEPTED;
+        try {
+            ResponseEntity<OutgoingRetailBankRequest> response = restTemplate.postForEntity(url, outgoingRetailBankRequest, OutgoingRetailBankRequest.class);
+            return response.getStatusCode() == HttpStatus.ACCEPTED;
+        } catch (Exception ex) {
+            return false;
+        }
+
     }
 
     public boolean processInterbankDepositCallback(IncomingInterbankDepositCallback incomingInterbankDepositCallback) {

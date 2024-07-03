@@ -107,7 +107,7 @@ public class TransactionRepository {
         String sql = "SELECT * " +
                      "FROM update_and_return_transaction(:transactionId, :debitAccountName, :creditAccountName, :tranasactionDebitRef, :tranasactionCreditRef, :transactionAmount, :transactionDate, :transactionStatus)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("transactionId", transaction.getTransactionId())
+            .addValue("transactionId", transaction.getTransactionId().toString())
             .addValue("debitAccountName", transaction.getDebitAccountName())
             .addValue("creditAccountName", transaction.getCreditAccountName())
             .addValue("tranasactionDebitRef", transaction.getTransactionDebitRef())

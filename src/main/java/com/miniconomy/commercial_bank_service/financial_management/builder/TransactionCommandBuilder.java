@@ -66,7 +66,7 @@ public class TransactionCommandBuilder {
             transactionCommand = new BasicTransactionCommand(transaction, transactionService, accountService);
         } else {
             String externalAccountId = transaction.getCreditAccountName();
-            transaction.setDebitAccountName("retail-bank");
+            transaction.setCreditAccountName("retail-bank");
             transactionCommand = new BasicTransactionCommand(transaction, transactionService, accountService);
             transactionCommand = new OutgoingInterbankTransactionCommand(transactionCommand, interbankService, "retail-bank", externalAccountId);
         }

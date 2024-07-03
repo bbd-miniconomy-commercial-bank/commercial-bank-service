@@ -136,3 +136,23 @@ JOIN
 JOIN 
     account a ON "do".debit_account_id = a.account_id;
 -- rollback DROP VIEW debit_order_transactions_view
+
+-- changeset ryanbasiltrickett:create-interbank-transaction-view
+CREATE VIEW interbank_transaction_view AS 
+SELECT
+    atv.transaction_id,
+    atv.debit_account_name,
+    atv.credit_account_name,
+    atv.transaction_debit_ref,
+    atv.transaction_credit_ref,
+    atv.transaction_amount,
+    atv.transaction_date,
+    atv.transaction_status,
+    it.interbank_transaction_id,
+    it.external_account_id,
+    it.interbank_transaction_status
+FROM
+    account_transaction_view atv
+JOIN
+    interbank_transaction it ON atv.transaction_id = it.transaction_id;
+-- rollback DROP VIEW interbank_transaction_view;

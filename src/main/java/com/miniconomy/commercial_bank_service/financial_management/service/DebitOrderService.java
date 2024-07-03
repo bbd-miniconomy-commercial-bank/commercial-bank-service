@@ -81,9 +81,8 @@ public class DebitOrderService {
         for (DebitOrder dbOrder : dbOrders) {
 
             Optional<Account> dbAcc = accountRepository.findByAccountName(dbOrder.getDebitAccountName());
-            Optional<Account> crAcc = accountRepository.findByAccountName(dbOrder.getCreditAccountName());
 
-            if (dbAcc.isPresent() && crAcc.isPresent()) {
+            if (dbAcc.isPresent()) {
                 
                 dbOrder.setDebitOrderCreatedDate(SimulationStore.getCurrentDate());
                 Optional<DebitOrder> savedDbo = debitOrderRepository.insert(dbOrder);

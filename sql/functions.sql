@@ -2,7 +2,7 @@
 
 -- changeset ryanbasiltrickett:update_debit_order_by_account_names_func
 CREATE OR REPLACE FUNCTION update_and_return_debit_order(
-    p_debit_order_id UUID,
+    p_debit_order_id VARCHAR,
     p_credit_account_name VARCHAR,
     p_debit_order_debit_ref VARCHAR,
     p_debit_order_credit_ref VARCHAR,
@@ -23,7 +23,7 @@ LANGUAGE plpgsql
 AS '
 BEGIN
     -- Update the debit order
-    UPDATE debit_order
+    UPDATE debit_order "do"
     SET
         credit_account_name = p_credit_account_name,
         debit_order_debit_ref = p_debit_order_debit_ref,
@@ -32,7 +32,7 @@ BEGIN
         debit_order_created_date = p_debit_order_created_date,
         debit_order_disabled = p_debit_order_disabled
     WHERE
-        debit_order_id = p_debit_order_id;
+        "do".debit_order_id = p_debit_order_id::UUID;
 
     -- Return the updated row
     RETURN QUERY
@@ -48,7 +48,7 @@ BEGIN
     FROM
         account_debit_order_view ado
     WHERE
-        ado.debit_order_id = v_new_debit_order_id;
+        ado.debit_order_id = p_debit_order_id::UUID;
 END;
 ';
 -- rollback DROP FUNCTION update_and_return_debit_order;
@@ -80,9 +80,9 @@ DECLARE
     v_new_debit_order_id UUID;
 BEGIN
     -- Get the account_id for the debit account name
-    SELECT account_id INTO v_debit_account_id
-    FROM account
-    WHERE account_name = p_debit_account_name;
+    SELECT a.account_id INTO v_debit_account_id
+    FROM account a
+    WHERE a.account_name = p_debit_account_name;
 
     -- Insert the new debit order and get the new ID
     INSERT INTO debit_order (
@@ -206,14 +206,14 @@ DECLARE
     v_new_transaction_id UUID;
 BEGIN
     -- Get the account_id for the debit account name
-    SELECT account_id INTO v_debit_account_id
-    FROM account
-    WHERE account_name = p_debit_account_name;
+    SELECT a.account_id INTO v_debit_account_id
+    FROM account a
+    WHERE a.account_name = p_debit_account_name;
 
     -- Get the account_id for the credit account name
-    SELECT account_id INTO v_credit_account_id
-    FROM account
-    WHERE account_name = p_credit_account_name;
+    SELECT a.account_id INTO v_credit_account_id
+    FROM account a
+    WHERE a.account_name = p_credit_account_name;
 
     -- Insert the new transaction and get the new ID
     INSERT INTO transaction (
@@ -256,7 +256,7 @@ END;
 
 -- changeset ryanbasiltrickett:update_and_return_transaction_func
 CREATE OR REPLACE FUNCTION update_and_return_transaction(
-    p_transaction_id UUID,
+    p_transaction_id VARCHAR,
     p_debit_account_name VARCHAR,
     p_credit_account_name VARCHAR,
     p_transaction_debit_ref VARCHAR,
@@ -282,17 +282,17 @@ DECLARE
     v_debit_account_id UUID;
 BEGIN
     -- Get the account_id for the debit account name
-    SELECT account_id INTO v_debit_account_id
-    FROM account
-    WHERE account_name = p_debit_account_name;
+    SELECT a.account_id INTO v_debit_account_id
+    FROM account a
+    WHERE a.account_name = p_debit_account_name;
 
     -- Get the account_id for the credit account name
-    SELECT account_id INTO v_credit_account_id
-    FROM account
-    WHERE account_name = p_credit_account_name;
+    SELECT a.account_id INTO v_credit_account_id
+    FROM account a
+    WHERE a.account_name = p_credit_account_name;
 
     -- Update the transaction
-    UPDATE transaction
+    UPDATE transaction t
     SET
         debit_account_id = v_debit_account_id,
         credit_account_id = v_credit_account_id,
@@ -302,7 +302,7 @@ BEGIN
         transaction_date = p_transaction_date,
         transaction_status = p_transaction_status::transaction_status_enum
     WHERE
-        transaction_id = p_transaction_id;
+        t.transaction_id = p_transaction_id::UUID;
 
     -- Return the inserted row
     RETURN QUERY
@@ -318,22 +318,22 @@ BEGIN
     FROM
         account_transaction_view at
     WHERE
-        at.transaction_id = p_transaction_id;
+        at.transaction_id = p_transaction_id::UUID;
 END;
 ';
 -- rollback DROP FUNCTION update_and_return_transaction;
 
 -- changeset ryanbasiltrickett:insert_and_return_interbank_transaction_func
 CREATE OR REPLACE FUNCTION insert_and_return_interbank_transaction(
-    p_transaction_id UUID,
+    p_transaction_id VARCHAR,
     p_external_account_id VARCHAR,
-    p_interbank_transaction_status interbank_transaction_status_enum
+    p_interbank_transaction_status VARCHAR
 )
 RETURNS TABLE (
     interbank_transaction_id UUID,
     transaction_id UUID,
     external_account_id VARCHAR,
-    interbank_transaction_status VARCHAR
+    interbank_transaction_status interbank_transaction_status_enum
 ) 
 LANGUAGE plpgsql
 AS '
@@ -346,7 +346,7 @@ BEGIN
         external_account_id,
         interbank_transaction_status
     ) VALUES (
-        p_transaction_id,
+        p_transaction_id::uuid,
         p_external_account_id,
         p_interbank_transaction_status::interbank_transaction_status_enum
     )
@@ -369,8 +369,8 @@ END;
 
 -- changeset ryanbasiltrickett:update_and_return_interbank_transaction_func
 CREATE OR REPLACE FUNCTION update_and_return_interbank_transaction(
-    p_interbank_transaction_id UUID,
-    p_transaction_id UUID,
+    p_interbank_transaction_id VARCHAR,
+    p_transaction_id VARCHAR,
     p_external_account_id VARCHAR,
     p_interbank_transaction_status VARCHAR
 )
@@ -384,13 +384,13 @@ LANGUAGE plpgsql
 AS '
 BEGIN
     -- Update the interbank transaction
-    UPDATE interbank_transaction
+    UPDATE interbank_transaction it
     SET
-        transaction_id = p_transaction_id,
+        transaction_id = p_transaction_id::uuid,
         external_account_id = p_external_account_id,
         interbank_transaction_status = p_interbank_transaction_status
     WHERE
-        interbank_transaction_id = p_interbank_transaction_id;
+        it.interbank_transaction_id = p_interbank_transaction_id::uuid;
 
     -- Return the inserted row
     RETURN QUERY
@@ -402,15 +402,15 @@ BEGIN
     FROM
         interbank_transaction it
     WHERE
-        it.interbank_transaction_id = p_interbank_transaction_id;
+        it.interbank_transaction_id = p_interbank_transaction_id::UUID;
 END;
 ';
 -- rollback DROP FUNCTION update_and_return_interbank_transaction;
 
 -- changeset ryanbasiltrickett:insert_and_return_loan_transaction_func
 CREATE OR REPLACE FUNCTION insert_and_return_loan_transaction(
-    p_loan_id UUID,
-    p_transaction_id UUID
+    p_loan_id VARCHAR,
+    p_transaction_id VARCHAR
 )
 RETURNS TABLE (
     loan_transaction_id UUID,
@@ -427,7 +427,7 @@ BEGIN
         loan_id,
         transaction_id
     ) VALUES (
-        p_loan_id,
+        p_loan_id::uuid,
         p_transaction_id
     )
     RETURNING loan_transaction.loan_transaction_id INTO v_new_loan_transaction_id;
@@ -448,8 +448,8 @@ END;
 
 -- changeset ryanbasiltrickett:insert_and_return_debit_order_transaction_func
 CREATE OR REPLACE FUNCTION insert_and_return_debit_order_transaction(
-    p_debit_order_id UUID,
-    p_transaction_id UUID
+    p_debit_order_id VARCHAR,
+    p_transaction_id VARCHAR
 )
 RETURNS TABLE (
     debit_order_transaction_id UUID,
@@ -466,8 +466,8 @@ BEGIN
         debit_order_id,
         transaction_id
     ) VALUES (
-        p_debit_order_id,
-        p_transaction_id
+        p_debit_order_id::uuid,
+        p_transaction_id::uuid
     )
     RETURNING debit_order_transaction.debit_order_transaction_id INTO v_new_debit_order_transaction_id;
 

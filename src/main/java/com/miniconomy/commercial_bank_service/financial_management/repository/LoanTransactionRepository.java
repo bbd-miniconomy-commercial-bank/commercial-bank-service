@@ -29,8 +29,8 @@ public class LoanTransactionRepository {
         String sql = "SELECT * " +
                      "FROM insert_and_return_loan_transaction(:loanId, :transactionId)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("loanId", loanTransaction.getLoanId())
-            .addValue("transactionId", loanTransaction.getTransactionId());
+            .addValue("loanId", loanTransaction.getLoanId().toString())
+            .addValue("transactionId", loanTransaction.getTransactionId().toString());
         
             try {
             return namedParameterJdbcTemplate.query(sql, paramMap, loanTransactionRowMapper)

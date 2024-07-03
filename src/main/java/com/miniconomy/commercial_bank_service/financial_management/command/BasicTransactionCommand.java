@@ -30,7 +30,7 @@ public class BasicTransactionCommand extends TransactionCommand {
         Optional<Account> dbAcc = accountService.retrieveAccountByName(transaction.getDebitAccountName());
         Optional<Account> crAcc = accountService.retrieveAccountByName(transaction.getCreditAccountName());
 
-        if (dbAcc.isPresent() && crAcc.isPresent()) {
+        if (dbAcc.isPresent() && crAcc.isPresent() && !transaction.getCreditAccountName().equals(transaction.getDebitAccountName())) {
             transaction.setTransactionDate(SimulationStore.getCurrentDate());
             Optional<Transaction> transactionOptional = transactionService.saveTransaction(transaction);
             if (transactionOptional.isPresent()) {

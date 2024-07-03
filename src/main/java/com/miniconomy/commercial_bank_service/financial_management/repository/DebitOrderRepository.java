@@ -74,7 +74,7 @@ public class DebitOrderRepository {
         String sql = "SELECT * " +
                      "FROM update_and_return_debit_order(:debitOrderId, :creditAccountName, :debitOrderDebitRef, :debitOrderCreditRef, :debitOrderAmount, :debitOrderCreatedDate, :debitOrderDisabled)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("debitOrderId", debitOrder.getDebitOrderId())
+            .addValue("debitOrderId", debitOrder.getDebitOrderId().toString())
             .addValue("creditAccountName", debitOrder.getCreditAccountName())
             .addValue("debitOrderDebitRef", debitOrder.getDebitOrderDebitRef())
             .addValue("debitOrderCreditRef", debitOrder.getDebitOrderCreditRef())

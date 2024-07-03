@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DebitOrder {
     private UUID debitOrderId;
-    private String creditAccountName;
     private String debitAccountName;
+    private String creditAccountName;
     private String debitOrderDebitRef;
     private String debitOrderCreditRef;
     private Long debitOrderAmount;

@@ -34,8 +34,8 @@ public class NotifyTransactionCommand extends TransactionCommandDecorator {
     public Transaction rollback() {
         notificationRequest.setType(NotificationTypeEnum.transaction_failed);
         this.notificationService.sendTransactionNotification(notificationRequest, accountName);
-        
-        return rollback();
+
+        return this.transactionCommand.rollback();
     }
     
 }

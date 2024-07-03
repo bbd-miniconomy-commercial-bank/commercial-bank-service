@@ -47,7 +47,7 @@ public class IncomingInterbankTransactionCommand extends TransactionCommandDecor
 
                 interbankService.processDepositCallback(incomingInterbankDepositCallback);
             } else {
-                return rollback();
+                return this.transactionCommand.rollback();
             }
         }
 
@@ -65,7 +65,7 @@ public class IncomingInterbankTransactionCommand extends TransactionCommandDecor
         incomingInterbankDepositCallback.setCompleted(false);
         interbankService.processDepositCallback(incomingInterbankDepositCallback);
         
-        return rollback();
+        return this.transactionCommand.rollback();
     }
     
 }

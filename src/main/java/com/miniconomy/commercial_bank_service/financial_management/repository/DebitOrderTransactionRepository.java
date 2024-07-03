@@ -29,8 +29,8 @@ public class DebitOrderTransactionRepository {
         String sql = "SELECT * " +
                      "FROM insert_and_return_debit_order_transaction(:debitOrderId, :transactionId)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("debitOrderId", debitOrderTransaction.getDebitOrderId())
-            .addValue("transactionId", debitOrderTransaction.getTransactionId());
+            .addValue("debitOrderId", debitOrderTransaction.getDebitOrderId().toString())
+            .addValue("transactionId", debitOrderTransaction.getTransactionId().toString());
         
         try {
             return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderTransactionRowMapper)

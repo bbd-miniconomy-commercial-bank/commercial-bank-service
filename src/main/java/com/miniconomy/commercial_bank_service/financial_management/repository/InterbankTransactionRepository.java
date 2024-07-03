@@ -20,10 +20,10 @@ public class InterbankTransactionRepository {
 
     private final RowMapper<InterbankTransaction> interbankTransactionRowMapper = (rs, rowNum) -> {
         InterbankTransaction interbankTransaction = new InterbankTransaction();
-        interbankTransaction.setInterbankTransactionId(UUID.fromString(rs.getString("account_id")));
-        interbankTransaction.setTransactionId(UUID.fromString(rs.getString("account_name")));
+        interbankTransaction.setInterbankTransactionId(UUID.fromString(rs.getString("interbank_transaction_id")));
+        interbankTransaction.setTransactionId(UUID.fromString(rs.getString("transaction_id")));
         interbankTransaction.setExternalAccountId(rs.getString("external_account_id"));
-        interbankTransaction.setInterbankTransactionStatus(InterbankTransactionStatusEnum.valueOf(rs.getString("account_cn")));
+        interbankTransaction.setInterbankTransactionStatus(InterbankTransactionStatusEnum.valueOf(rs.getString("interbank_transaction_status")));
         return interbankTransaction;
     };
     
@@ -31,9 +31,9 @@ public class InterbankTransactionRepository {
         String sql = "SELECT * " +
                      "FROM insert_and_return_interbank_transaction(:transactionId, :externalAccountId, :interbankTransactionStatus)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("transactionId", interbankTransaction.getTransactionId())
-            .addValue("externalAccountId", interbankTransaction.getExternalAccountId())
-            .addValue("interbankTransactionStatus", interbankTransaction.getInterbankTransactionId());
+            .addValue("transactionId", interbankTransaction.getTransactionId().toString())
+            .addValue("externalAccountId", interbankTransaction.getExternalAccountId().toString())
+            .addValue("interbankTransactionStatus", interbankTransaction.getInterbankTransactionStatus().toString());
         
         try {
             return namedParameterJdbcTemplate.query(sql, paramMap, interbankTransactionRowMapper)
@@ -49,10 +49,10 @@ public class InterbankTransactionRepository {
         String sql = "SELECT * " +
                      "FROM update_and_return_interbank_transaction(:interbankTransactionId, :transactionId, :externalAccountId, :interbankTransactionStatus)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("interbankTransactionId", interbankTransaction.getInterbankTransactionId())
-            .addValue("transactionId", interbankTransaction.getTransactionId())
-            .addValue("externalAccountId", interbankTransaction.getExternalAccountId())
-            .addValue("interbankTransactionStatus", interbankTransaction.getInterbankTransactionId());
+            .addValue("interbankTransactionId", interbankTransaction.getInterbankTransactionId().toString())
+            .addValue("transactionId", interbankTransaction.getTransactionId().toString())
+            .addValue("externalAccountId", interbankTransaction.getExternalAccountId().toString())
+            .addValue("interbankTransactionStatus", interbankTransaction.getInterbankTransactionStatus().toString());
         
         try {
             return namedParameterJdbcTemplate.query(sql, paramMap, interbankTransactionRowMapper)

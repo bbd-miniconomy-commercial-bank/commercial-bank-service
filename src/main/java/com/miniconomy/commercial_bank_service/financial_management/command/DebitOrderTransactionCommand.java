@@ -32,7 +32,7 @@ public class DebitOrderTransactionCommand extends TransactionCommandDecorator {
             if (debitOrderTransactionOptional.isPresent()) {
                 debitOrderTransaction = debitOrderTransactionOptional.get();
             } else {                
-                return rollback();
+                return this.transactionCommand.rollback();
             }
         }
 
@@ -41,7 +41,7 @@ public class DebitOrderTransactionCommand extends TransactionCommandDecorator {
 
     @Override
     public Transaction rollback() {
-        return rollback();
+        return this.transactionCommand.rollback();
     }
     
 }
