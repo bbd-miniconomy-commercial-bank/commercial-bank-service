@@ -1,4 +1,4 @@
-package com.miniconomy.commercial_bank_service.simulation_management;
+package com.miniconomy.commercial_bank_service.simulation_management.repository;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,9 +80,7 @@ public class SimulationManagementRepository {
         deleteAllDebitOrders();
         deleteAllLoans();
         deleteAllAccountsDelegation();
-        deleteAllAccounts();
-
-     
+        deleteAllAccounts();     
     }
       
 }

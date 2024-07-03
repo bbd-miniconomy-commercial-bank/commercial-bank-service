@@ -1,4 +1,4 @@
-package com.miniconomy.commercial_bank_service.simulation_management;
+package com.miniconomy.commercial_bank_service.simulation_management.service;
 
 import jakarta.annotation.PostConstruct;
 

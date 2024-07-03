@@ -1,4 +1,4 @@
-package com.miniconomy.commercial_bank_service.simulation_management;
+package com.miniconomy.commercial_bank_service.simulation_management.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
+import com.miniconomy.commercial_bank_service.simulation_management.service.SimulationService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
