@@ -355,3 +355,81 @@ BEGIN
 END;
 ';
 -- rollback DROP FUNCTION update_and_return_interbank_transaction;
+
+-- changeset ryanbasiltrickett:insert_and_return_loan_transaction_func
+CREATE OR REPLACE FUNCTION insert_and_return_loan_transaction(
+    p_loan_id UUID,
+    p_transaction_id UUID
+)
+RETURNS TABLE (
+    loan_transaction_id UUID,
+    loan_id UUID,
+    transaction_id UUID
+) 
+LANGUAGE plpgsql
+AS '
+DECLARE
+    v_new_loan_transaction_id UUID;
+BEGIN
+    -- Insert the new loan transaction and get the new ID
+    INSERT INTO loan_transaction (
+        loan_id,
+        transaction_id
+    ) VALUES (
+        p_loan_id,
+        p_transaction_id
+    )
+    RETURNING loan_transaction.loan_transaction_id INTO v_new_loan_transaction_id;
+
+    -- Return the inserted row
+    RETURN QUERY
+    SELECT
+        lt.loan_transaction_id,
+        lt.loan_id,
+        lt.transaction_id
+    FROM
+        loan_transaction lt
+    WHERE
+        lt.loan_transaction_id = v_new_loan_transaction_id;
+END;
+';
+-- rollback DROP FUNCTION insert_and_return_loan_transaction;
+
+-- changeset ryanbasiltrickett:insert_and_return_debit_order_transaction_func
+CREATE OR REPLACE FUNCTION insert_and_return_debit_order_transaction(
+    p_debit_order_id UUID,
+    p_transaction_id UUID
+)
+RETURNS TABLE (
+    debit_order_transaction_id UUID,
+    debit_order_id UUID,
+    transaction_id UUID
+) 
+LANGUAGE plpgsql
+AS '
+DECLARE
+    v_new_debit_order_transaction_id UUID;
+BEGIN
+    -- Insert the new debit order transaction and get the new ID
+    INSERT INTO debit_order_transaction (
+        debit_order_id,
+        transaction_id
+    ) VALUES (
+        p_debit_order_id,
+        p_transaction_id
+    )
+    RETURNING debit_order_transaction.debit_order_transaction_id INTO v_new_debit_order_transaction_id;
+
+    -- Return the inserted row
+    RETURN QUERY
+    SELECT
+        dot.debit_order_transaction_id,
+        dot.debit_order_id,
+        dot.transaction_id
+    FROM
+        debit_order_transaction dot
+    WHERE
+        dot.debit_order_transaction_id = v_new_debit_order_transaction_id;
+END;
+';
+-- rollback DROP FUNCTION insert_and_return_debit_order_transaction;

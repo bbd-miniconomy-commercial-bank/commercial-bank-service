@@ -1,23 +1,18 @@
 package com.miniconomy.commercial_bank_service.financial_management.repository;
 
 import java.util.UUID;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.miniconomy.commercial_bank_service.financial_management.command.TransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.entity.LoanTransaction;
 
 public class LoanTransactionRepository {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    LoanTransactionRepository(TransactionCommand transactionCommand, LoanTransactionService)
-    {
-
-    }
 
     private final RowMapper<LoanTransaction> LoanTransactionsRowMapper = (rs, rowNum) -> {
         LoanTransaction loanTransaction = new LoanTransaction();
@@ -27,14 +22,16 @@ public class LoanTransactionRepository {
         return loanTransaction;
     };
 
-    public void insert(UUID transactionId, UUID loanId) {
+    public Optional<LoanTransaction> insert(LoanTransaction loanTransaction) {
         String sql = "SELECT * " +
-                     "FROM insert_and_return_loan(:transactionId, :loanId)";
+                     "FROM insert_and_return_loan_transaction(:loanId, :transactionId)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("transactionId", transactionId)
-            .addValue("loanId", loanId);
+            .addValue("loanId", loanTransaction.getLoanId())
+            .addValue("transactionId", loanTransaction.getTransactionId());
           
-        namedParameterJdbcTemplate.query(sql, paramMap,LoanTransactionsRowMapper);
+        return namedParameterJdbcTemplate.query(sql, paramMap,LoanTransactionsRowMapper)
+            .stream()
+            .findFirst();
     }
 
 }

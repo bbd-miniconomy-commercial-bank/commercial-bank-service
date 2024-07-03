@@ -1,35 +1,31 @@
 package com.miniconomy.commercial_bank_service.financial_management.command;
 
-import java.util.UUID;
-
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
-import com.miniconomy.commercial_bank_service.financial_management.repository.LoanTransactionRepository;
-import com.miniconomy.commercial_bank_service.financial_management.repository.TransactionRepository;
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusEnum;
+import com.miniconomy.commercial_bank_service.financial_management.service.LoanService;
+
+import java.util.UUID;
 
 public class LoanTransactionCommand extends TransactionCommandDecorator {
 
-    public LoanTransactionCommand(TransactionCommand transactionCommand) {
+    private final LoanService loanService;
+    private final UUID loanId;
+
+    public LoanTransactionCommand(TransactionCommand transactionCommand, LoanService loanService, UUID loanId) {
         super(transactionCommand);
+        this.loanService = loanService;
+        this.loanId = loanId;
     }
     
     @Override
     public Transaction execute( ) {
         Transaction transaction = this.transactionCommand.execute();
-        // Add to Loan Transaction Table
-
-        return transaction;
-    }
-
-    public Transaction execute(UUID loanId) {
-        Transaction transaction = this.transactionCommand.execute();
-        // Add to Loan Transaction Table
         
+        // Add to Loan Transaction Table
+        if (!transaction.getTransactionStatus().equals(TransactionStatusEnum.failed)) {
+            loanService.connectLoanToTransaction(loanId, transaction.getTransactionId());
+        }
 
-        TransactionRepository transactionRepository = new TransactionRepository();
-        transactionRepository.insert(transaction);
-        LoanTransactionRepository loanTransactionRepository = new LoanTransactionRepository();
-        loanTransactionRepository.insert(transaction.getTransactionId(), loanId);
-        
         return transaction;
     }
     

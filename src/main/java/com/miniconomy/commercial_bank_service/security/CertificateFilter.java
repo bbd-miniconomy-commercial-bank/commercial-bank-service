@@ -15,6 +15,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
+import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -62,33 +63,28 @@ public class CertificateFilter implements Filter
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain filterChain) throws ServletException, IOException
     {
+
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-        String clientCertHeader = req.getHeader("X-Amzn-Mtls-Clientcert");
-
-        if (clientCertHeader == null)
-        {
-            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate required");
+        String clientCertHeader = req.getHeader("x-origin");
+        
+        if (!SimulationStore.getSimOnline()) {
+            res.sendError(HttpServletResponse.SC_FORBIDDEN, "Simulation is currently restarting, no requests accepted");
             return;
         }
 
         try
         {
-            X509Certificate clientCert = loadCertificateFromHeader(clientCertHeader);
-            X509Certificate trustedCert = loadTrustedCertificateFromS3();
-
-            boolean isVerified = verifyCertificate(clientCert, trustedCert);
-            if (!isVerified)
+            if (clientCertHeader == null)
             {
-                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate verification failed");
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate required");
                 return;
             }
 
-            String cn = extractCommonName(clientCert);
-            Optional<Account> accountOptional = accountService.retrieveAccountByCn(cn);
+            Optional<Account> accountOptional = accountService.retrieveAccountByCn(clientCertHeader);
             if(accountOptional.isEmpty())
             {
-                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + cn);
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + clientCertHeader);
                 return;
             }
 
@@ -96,18 +92,54 @@ public class CertificateFilter implements Filter
             String accountName = account.getAccountName();
             
             request.setAttribute("accountName", accountName);
-
             filterChain.doFilter(request, response);
         }
         catch (Exception e)
         {
             res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing client certificate");
         }
+
+        // try
+        // {
+        //     X509Certificate clientCert = loadCertificateFromHeader(clientCertHeader);
+        //     X509Certificate trustedCert = loadTrustedCertificateFromS3();
+
+        //     boolean isVerified = verifyCertificate(clientCert, trustedCert);
+        //     if (!isVerified)
+        //     {
+        //         res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate verification failed");
+        //         return;
+        //     }
+
+        //     String cn = extractCommonName(clientCert);
+        //     Optional<Account> accountOptional = accountService.retrieveAccountByCn(cn);
+        //     if(accountOptional.isEmpty())
+        //     {
+        //         res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + cn);
+        //         return;
+        //     }
+
+        //     Account account = accountOptional.get();
+        //     String accountName = account.getAccountName();
+            
+        //     request.setAttribute("accountName", accountName);
+
+        //     filterChain.doFilter(request, response);
+        // }
+        // catch (Exception e)
+        // {
+        //     res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing client certificate");
+        // }
     }
 
     private X509Certificate loadCertificateFromHeader(String clientCertHeader) throws Exception
-    {
-        byte[] certBytes = Base64.getDecoder().decode(clientCertHeader);
+    {        
+        String cleanedCertHeader = clientCertHeader.replace("-----BEGIN%20CERTIFICATE-----", "")
+                                                    .replace("-----END%20CERTIFICATE-----", "")
+                                                    .replace("%0A", "")
+                                                    .replace("%20", "");
+                                                    
+        byte[] certBytes = Base64.getDecoder().decode(cleanedCertHeader);
         CertificateFactory factory = CertificateFactory.getInstance("X.509");
         return (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(certBytes));
     }
