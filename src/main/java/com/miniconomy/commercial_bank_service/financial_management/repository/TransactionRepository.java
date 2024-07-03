@@ -43,6 +43,16 @@ public class TransactionRepository {
         return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper);
     }
 
+    public List<Transaction> findByAccountNameAndDate(String accountName, String year, Pageable pageable) {
+        String sql = "SELECT * FROM account_transaction_view WHERE transaction_date LIKE ':year|__|__' AND credit_account_name = :accountName OR debit_account_name = :accountName LIMIT :limit OFFSET :offset";
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("accountName", accountName)
+            .addValue("year", year)
+            .addValue("limit", pageable.getPageSize())
+            .addValue("offset", pageable.getOffset());
+        return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper);
+    }
+
     public Optional<Transaction> findById(UUID id, String accountName) {
         String sql = "SELECT * FROM account_transaction_view WHERE transaction_id = :transactionId AND account_name = :accountName";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()

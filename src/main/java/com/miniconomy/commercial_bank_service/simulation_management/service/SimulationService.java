@@ -1,5 +1,10 @@
 package com.miniconomy.commercial_bank_service.simulation_management.service;
 
+import jakarta.annotation.PostConstruct;
+
+import java.net.URISyntaxException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -68,6 +73,13 @@ public class SimulationService {
             if (month > 12) {
                 month = 1;
                 year++;
+
+                try {
+                    TaxService taxService = new TaxService();
+                    taxService.payTax(year - 1);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
