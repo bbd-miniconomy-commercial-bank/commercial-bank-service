@@ -64,25 +64,33 @@ public class CertificateFilter implements Filter
     {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
-        String clientCertHeader = req.getHeader("x-amzn-mtls-clientcert");
+        String clientCertHeader = req.getHeader("x-origin");
 
-        if (clientCertHeader == null)
+        try
         {
-            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate required");
-            return;
-        }
+            if (clientCertHeader == null)
+            {
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Client certificate required");
+                return;
+            }
 
-        Optional<Account> accountOptional = accountService.retrieveAccountByCn(clientCertHeader);
-        if(accountOptional.isEmpty())
+            Optional<Account> accountOptional = accountService.retrieveAccountByCn(clientCertHeader);
+            if(accountOptional.isEmpty())
+            {
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + clientCertHeader);
+                return;
+            }
+
+            Account account = accountOptional.get();
+            String accountName = account.getAccountName();
+            
+            request.setAttribute("accountName", accountName);
+            filterChain.doFilter(request, response);
+        }
+        catch (Exception e)
         {
-            res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Account not found for Common Name: " + clientCertHeader);
-            return;
+            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing client certificate");
         }
-
-        Account account = accountOptional.get();
-        String accountName = account.getAccountName();
-        
-        request.setAttribute("accountName", accountName);
 
         // try
         // {
