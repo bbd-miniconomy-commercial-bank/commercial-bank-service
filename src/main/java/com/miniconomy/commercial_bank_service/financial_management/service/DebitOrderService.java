@@ -83,7 +83,7 @@ public class DebitOrderService {
         return debitOrders;
     }
 
-    public List<DebitOrderTransaction> getDebitOrderTransactions() {
-        return debitOrderRepository.getAllDebitOrderTransactions();
+    public void connectDebitOrderToTransaction(UUID debitOrderId, UUID transactionId) {
+        
     }
 }

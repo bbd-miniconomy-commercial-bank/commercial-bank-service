@@ -8,9 +8,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.miniconomy.commercial_bank_service.financial_management.command.BasicTransactionCommand;
-import com.miniconomy.commercial_bank_service.financial_management.command.OutgoingInterbankTransactionCommand;
-import com.miniconomy.commercial_bank_service.financial_management.command.NotifyTransactionCommand;
+import com.miniconomy.commercial_bank_service.financial_management.builder.TransactionCommandBuilder;
 import com.miniconomy.commercial_bank_service.financial_management.command.TransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
@@ -24,14 +22,13 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
 
     private final AccountService accountService;
-    private final NotificationService notificationService;
-    private final InterbankService interbankService;
 
-    public TransactionService(TransactionRepository transactionRepository, AccountService accountService, NotificationService notificationService, InterbankService interbankService) {
+    private final TransactionCommandBuilder transactionCommandBuilder;
+
+    public TransactionService(TransactionRepository transactionRepository, AccountService accountService, TransactionCommandBuilder transactionCommandBuilder) {
         this.transactionRepository = transactionRepository;
         this.accountService = accountService;
-        this.notificationService = notificationService;
-        this.interbankService = interbankService;
+        this.transactionCommandBuilder = transactionCommandBuilder;
     }
 
     public List<Transaction> retrieveTransactions(String accountName, Pageable pageable) {
@@ -61,7 +58,7 @@ public class TransactionService {
             Transaction createdTransaction;
 
             if (transaction.getDebitAccountName().equals(accountName)) {
-                TransactionCommand transactionCommand = transactionCommandBuilder(transaction, false, true);
+                TransactionCommand transactionCommand = transactionCommandBuilder.buildTransactionCommand(transaction, false, true);
                 createdTransaction = TransactionInvoker.handler(transactionCommand); 
             } else {
                 createdTransaction = transaction;
@@ -74,26 +71,4 @@ public class TransactionService {
         return createdTransactions;
     }
 
-    private TransactionCommand transactionCommandBuilder(Transaction transaction, boolean notifyDebitAccount, boolean notifyCreditAccount) {
-        TransactionCommand transactionCommand;
-
-        Optional<Account> dbAccountOptional = accountService.retrieveAccountByName(transaction.getCreditAccountName());
-        if (dbAccountOptional.isPresent()) {
-            transactionCommand = new BasicTransactionCommand(transaction, this, accountService);
-        } else {
-            String externalAccountId = transaction.getCreditAccountName();
-            transaction.setDebitAccountName("retail-bank");
-            transactionCommand = new BasicTransactionCommand(transaction, this, accountService);
-            transactionCommand = new OutgoingInterbankTransactionCommand(transactionCommand, interbankService, "retail-bank", externalAccountId);
-        }
-
-        if (notifyDebitAccount) {
-            transactionCommand = new NotifyTransactionCommand(transactionCommand, notificationService, transaction.getDebitAccountName());
-        }
-        if (notifyCreditAccount) {
-            transactionCommand = new NotifyTransactionCommand(transactionCommand, notificationService, transaction.getDebitAccountName());
-        }
-
-        return transactionCommand;
-    }
 }

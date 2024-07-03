@@ -22,12 +22,12 @@ public class LoanTransactionRepository {
         return loanTransaction;
     };
 
-    public Optional<LoanTransaction> insert(UUID transactionId, UUID loanId) {
+    public Optional<LoanTransaction> insert(LoanTransaction loanTransaction) {
         String sql = "SELECT * " +
                      "FROM insert_and_return_loan_transaction(:loanId, :transactionId)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-            .addValue("loanId", loanId)
-            .addValue("transactionId", transactionId);
+            .addValue("loanId", loanTransaction.getLoanId())
+            .addValue("transactionId", loanTransaction.getTransactionId());
           
         return namedParameterJdbcTemplate.query(sql, paramMap,LoanTransactionsRowMapper)
             .stream()
