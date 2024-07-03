@@ -51,6 +51,10 @@ public class TransactionService {
         return this.transactionRepository.insert(transaction);
     }
 
+    public Optional<Transaction> updateTransaction(Transaction transaction) {
+        return this.transactionRepository.update(transaction);
+    }
+
     public List<Transaction> saveTransactions(List<Transaction> transactions, String accountName) {
         List<Transaction> createdTransactions = new ArrayList<>();
 

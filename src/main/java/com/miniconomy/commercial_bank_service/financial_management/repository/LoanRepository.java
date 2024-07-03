@@ -35,9 +35,15 @@ public class LoanRepository {
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("loanId", loanId.toString())
             .addValue("accountName", accountName);
-        return namedParameterJdbcTemplate.query(sql, paramMap, loanRowMapper)
-            .stream()
-            .findFirst();
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, loanRowMapper)
+                .stream()
+                .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     public List<Loan> findAll(Pageable pageable) {
@@ -45,7 +51,13 @@ public class LoanRepository {
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("limit", pageable.getPageSize())
             .addValue("offset", pageable.getOffset());
-        return namedParameterJdbcTemplate.query(sql, paramMap, loanRowMapper);
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, loanRowMapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     public List<Loan> findAllByAccountName(String accountName, Pageable pageable) {
@@ -54,7 +66,13 @@ public class LoanRepository {
             .addValue("accountName", accountName)
             .addValue("limit", pageable.getPageSize())
             .addValue("offset", pageable.getOffset());
-        return namedParameterJdbcTemplate.query(sql, paramMap, loanRowMapper);
+            
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, loanRowMapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     public Optional<Loan> insert(Loan loan) {
@@ -65,8 +83,14 @@ public class LoanRepository {
             .addValue("loanAmount", loan.getLoanAmount())
             .addValue("loanType", loan.getLoanType().toString())
             .addValue("loanCreatedDate", loan.getLoanCreatedDate());
-        return namedParameterJdbcTemplate.query(sql, paramMap, loanRowMapper)
-            .stream()
-            .findFirst();
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, loanRowMapper)
+                .stream()
+                .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 }

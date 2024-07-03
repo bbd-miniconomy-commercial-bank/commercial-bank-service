@@ -5,4 +5,5 @@ import com.miniconomy.commercial_bank_service.financial_management.entity.Transa
 public abstract class TransactionCommand {
     
     public abstract Transaction execute();
+    public abstract Transaction rollback();
 }

@@ -11,9 +11,10 @@ import java.util.Optional;
 
 public class IncomingInterbankTransactionCommand extends TransactionCommandDecorator {
 
-    private InterbankService interbankService;
+    private final InterbankService interbankService;
 
     private InterbankTransaction interbankTransaction;
+    private IncomingInterbankDepositCallback incomingInterbankDepositCallback;
 
     public IncomingInterbankTransactionCommand(TransactionCommand transactionCommand, InterbankService interbankService, InterbankTransaction interbankTransaction) {
         super(transactionCommand);
@@ -35,7 +36,7 @@ public class IncomingInterbankTransactionCommand extends TransactionCommandDecor
                 interbankTransaction = interbankTransactionOptional.get();
                 
                 // Notify Retial Bank
-                IncomingInterbankDepositCallback outgoingInterbankDepositCallback = new IncomingInterbankDepositCallback(
+                incomingInterbankDepositCallback = new IncomingInterbankDepositCallback(
                     "retail-bank", 
                     transaction.getDebitAccountName(), 
                     transaction.getCreditAccountName(), 
@@ -44,11 +45,27 @@ public class IncomingInterbankTransactionCommand extends TransactionCommandDecor
                     true
                 );
 
-                interbankService.processDepositCallback(outgoingInterbankDepositCallback);
+                interbankService.processDepositCallback(incomingInterbankDepositCallback);
+            } else {
+                return rollback();
             }
         }
 
         return transaction;
+    }
+
+    @Override
+    public Transaction rollback() {
+        interbankTransaction.setInterbankTransactionStatus(InterbankTransactionStatusEnum.failed);
+        Optional<InterbankTransaction> interbankTransactionOptional = interbankService.updateInterbankTransaction(interbankTransaction);
+
+        interbankTransaction = interbankTransactionOptional.get();
+        
+        // Notify Retial Bank
+        incomingInterbankDepositCallback.setCompleted(false);
+        interbankService.processDepositCallback(incomingInterbankDepositCallback);
+        
+        return rollback();
     }
     
 }

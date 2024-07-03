@@ -53,4 +53,9 @@ public class OutgoingInterbankTransactionCommand extends TransactionCommandDecor
         transaction.setCreditAccountName(creditAccountName);
         return transaction;
     }
+
+    @Override
+    public Transaction rollback() {
+        return rollback(); // WOULD PERFORM CANCEL DEPOSIT HERE
+    }
 }

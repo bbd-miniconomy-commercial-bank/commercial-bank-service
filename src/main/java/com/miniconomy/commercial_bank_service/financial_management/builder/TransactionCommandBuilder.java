@@ -12,12 +12,14 @@ import com.miniconomy.commercial_bank_service.financial_management.command.Outgo
 import com.miniconomy.commercial_bank_service.financial_management.command.TransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.entity.DebitOrder;
+import com.miniconomy.commercial_bank_service.financial_management.entity.DebitOrderTransaction;
 import com.miniconomy.commercial_bank_service.financial_management.entity.IncomingInterbankDeposit;
 import com.miniconomy.commercial_bank_service.financial_management.entity.InterbankTransaction;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
 import com.miniconomy.commercial_bank_service.financial_management.enumeration.InterbankTransactionStatusEnum;
 import com.miniconomy.commercial_bank_service.financial_management.enumeration.LoanTypeEnum;
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.NotificationTypeEnum;
 import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusEnum;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
 import com.miniconomy.commercial_bank_service.financial_management.service.DebitOrderService;
@@ -70,10 +72,10 @@ public class TransactionCommandBuilder {
         }
 
         if (notifyDebitAccount) {
-            transactionCommand = new NotifyTransactionCommand(transactionCommand, notificationService, transaction.getDebitAccountName());
+            transactionCommand = new NotifyTransactionCommand(transactionCommand, notificationService, transaction.getDebitAccountName(), NotificationTypeEnum.outgoing_payment);
         }
         if (notifyCreditAccount) {
-            transactionCommand = new NotifyTransactionCommand(transactionCommand, notificationService, transaction.getDebitAccountName());
+            transactionCommand = new NotifyTransactionCommand(transactionCommand, notificationService, transaction.getDebitAccountName(), NotificationTypeEnum.incoming_payment);
         }
 
         return transactionCommand;
@@ -116,7 +118,11 @@ public class TransactionCommandBuilder {
         );
 
         TransactionCommand transactionCommand = buildTransactionCommand(transaction, true, !interbankPayment);
-        transactionCommand = new DebitOrderTransactionCommand(transactionCommand, debitOrderService, debitOrder.getDebitOrderId());
+
+        DebitOrderTransaction debitOrderTransaction = new DebitOrderTransaction();
+        debitOrderTransaction.setDebitOrderId(debitOrder.getDebitOrderId());
+
+        transactionCommand = new DebitOrderTransactionCommand(transactionCommand, debitOrderService, debitOrderTransaction);
 
         return transactionCommand;
     }
@@ -136,12 +142,10 @@ public class TransactionCommandBuilder {
 
         TransactionCommand transactionCommand = buildTransactionCommand(transaction, false, true);
 
-        InterbankTransaction interbankTransaction = new InterbankTransaction(
-            null, 
-            null, 
-            incomingInterbankDeposit.getCreditAccountName(), 
-            InterbankTransactionStatusEnum.complete
-        );
+        InterbankTransaction interbankTransaction = new InterbankTransaction();
+        interbankTransaction.setExternalAccountId(incomingInterbankDeposit.getCreditAccountName());
+        interbankTransaction.setInterbankTransactionStatus(InterbankTransactionStatusEnum.complete);
+
         transactionCommand = new IncomingInterbankTransactionCommand(transactionCommand, interbankService, interbankTransaction);
 
         return transactionCommand;

@@ -254,6 +254,75 @@ END;
 ';
 -- rollback DROP FUNCTION insert_and_return_transaction;
 
+-- changeset ryanbasiltrickett:update_and_return_transaction_func
+CREATE OR REPLACE FUNCTION update_and_return_transaction(
+    p_transaction_id UUID,
+    p_debit_account_name VARCHAR,
+    p_credit_account_name VARCHAR,
+    p_transaction_debit_ref VARCHAR,
+    p_transaction_credit_ref VARCHAR,
+    p_transaction_amount BIGINT,
+    p_transaction_date VARCHAR,
+    p_transaction_status VARCHAR
+)
+RETURNS TABLE (
+    transaction_id UUID,
+    debit_account_name VARCHAR,
+    credit_account_name VARCHAR,
+    transaction_debit_ref VARCHAR,
+    transaction_credit_ref VARCHAR,
+    transaction_amount BIGINT,
+    transaction_date CHAR(8),
+    transaction_status transaction_status_enum
+) 
+LANGUAGE plpgsql
+AS '
+DECLARE
+    v_credit_account_id UUID;
+    v_debit_account_id UUID;
+BEGIN
+    -- Get the account_id for the debit account name
+    SELECT account_id INTO v_debit_account_id
+    FROM account
+    WHERE account_name = p_debit_account_name;
+
+    -- Get the account_id for the credit account name
+    SELECT account_id INTO v_credit_account_id
+    FROM account
+    WHERE account_name = p_credit_account_name;
+
+    -- Update the transaction
+    UPDATE transaction
+    SET
+        debit_account_id = v_debit_account_id,
+        credit_account_id = v_credit_account_id,
+        transaction_debit_ref = p_transaction_debit_ref,
+        transaction_credit_ref = p_transaction_credit_ref,
+        transaction_amount = p_transaction_amount,
+        transaction_date = p_transaction_date,
+        transaction_status = p_transaction_status::transaction_status_enum
+    WHERE
+        transaction_id = p_transaction_id;
+
+    -- Return the inserted row
+    RETURN QUERY
+    SELECT
+        at.transaction_id,
+        at.debit_account_name,
+        at.credit_account_name,
+        at.transaction_debit_ref,
+        at.transaction_credit_ref,
+        at.transaction_amount,
+        at.transaction_date,
+        at.transaction_status
+    FROM
+        account_transaction_view at
+    WHERE
+        at.transaction_id = p_transaction_id;
+END;
+';
+-- rollback DROP FUNCTION update_and_return_transaction;
+
 -- changeset ryanbasiltrickett:insert_and_return_interbank_transaction_func
 CREATE OR REPLACE FUNCTION insert_and_return_interbank_transaction(
     p_transaction_id UUID,

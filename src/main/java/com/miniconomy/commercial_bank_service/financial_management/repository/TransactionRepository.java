@@ -40,7 +40,13 @@ public class TransactionRepository {
             .addValue("accountName", accountName)
             .addValue("limit", pageable.getPageSize())
             .addValue("offset", pageable.getOffset());
-        return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper);
+            
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     public List<Transaction> findByAccountNameAndDate(String accountName, String year, Pageable pageable) {
@@ -50,7 +56,13 @@ public class TransactionRepository {
             .addValue("year", year)
             .addValue("limit", pageable.getPageSize())
             .addValue("offset", pageable.getOffset());
-        return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper);
+            
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     public Optional<Transaction> findById(UUID id, String accountName) {
@@ -58,9 +70,15 @@ public class TransactionRepository {
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("transactionId", id.toString())
             .addValue("accountName", accountName);
-        return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper)
-            .stream()
-            .findFirst();
+
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper)
+                .stream()
+                .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     public Optional<Transaction> insert(Transaction transaction) {
@@ -75,9 +93,37 @@ public class TransactionRepository {
             .addValue("transactionDate", transaction.getTransactionDate())
             .addValue("transactionStatus", transaction.getTransactionStatus().toString());
 
-        return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper)
-            .stream()
-            .findFirst();
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper)
+                .stream()
+                .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    public Optional<Transaction> update(Transaction transaction) {
+        String sql = "SELECT * " +
+                     "FROM update_and_return_transaction(:transactionId, :debitAccountName, :creditAccountName, :tranasactionDebitRef, :tranasactionCreditRef, :transactionAmount, :transactionDate, :transactionStatus)";
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("transactionId", transaction.getTransactionId())
+            .addValue("debitAccountName", transaction.getDebitAccountName())
+            .addValue("creditAccountName", transaction.getCreditAccountName())
+            .addValue("tranasactionDebitRef", transaction.getTransactionDebitRef())
+            .addValue("tranasactionCreditRef", transaction.getTransactionCreditRef())
+            .addValue("transactionAmount", transaction.getTransactionAmount())
+            .addValue("transactionDate", transaction.getTransactionDate())
+            .addValue("transactionStatus", transaction.getTransactionStatus().toString());
+
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper)
+                .stream()
+                .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 }
 

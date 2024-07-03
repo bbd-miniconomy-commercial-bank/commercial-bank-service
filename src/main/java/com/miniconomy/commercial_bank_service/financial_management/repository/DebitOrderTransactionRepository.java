@@ -31,9 +31,15 @@ public class DebitOrderTransactionRepository {
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("debitOrderId", debitOrderTransaction.getDebitOrderId())
             .addValue("transactionId", debitOrderTransaction.getTransactionId());
-        return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderTransactionRowMapper)
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderTransactionRowMapper)
                 .stream()
                 .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
 }

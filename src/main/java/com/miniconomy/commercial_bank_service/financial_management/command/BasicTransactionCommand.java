@@ -16,7 +16,7 @@ public class BasicTransactionCommand extends TransactionCommand {
     private final TransactionService transactionService;
     private final AccountService accountService;
 
-    public final Transaction transaction;
+    private Transaction transaction;
 
     public BasicTransactionCommand(@NotNull Transaction transaction, TransactionService transactionService, AccountService accountService) {
         this.transaction = transaction;
@@ -26,7 +26,6 @@ public class BasicTransactionCommand extends TransactionCommand {
 
     @Override
     public Transaction execute() {
-        Transaction createdTransaction;
 
         Optional<Account> dbAcc = accountService.retrieveAccountByName(transaction.getDebitAccountName());
         Optional<Account> crAcc = accountService.retrieveAccountByName(transaction.getCreditAccountName());
@@ -35,16 +34,30 @@ public class BasicTransactionCommand extends TransactionCommand {
             transaction.setTransactionDate(SimulationStore.getCurrentDate());
             Optional<Transaction> transactionOptional = transactionService.saveTransaction(transaction);
             if (transactionOptional.isPresent()) {
-                createdTransaction = transactionOptional.get();
+                transaction = transactionOptional.get();
             } else {
-                createdTransaction = transaction;
-                createdTransaction.setTransactionStatus(TransactionStatusEnum.failed);
+                transaction.setTransactionStatus(TransactionStatusEnum.failed);
             }
         } else {
-            createdTransaction = transaction;
-            createdTransaction.setTransactionStatus(TransactionStatusEnum.failed);
+            transaction.setTransactionStatus(TransactionStatusEnum.failed);
         }
 
-        return createdTransaction; 
+        return transaction; 
     }
+
+    @Override
+    public Transaction rollback() {
+        transaction.setTransactionStatus(TransactionStatusEnum.failed);
+        Optional<Transaction> transactionOptional = transactionService.updateTransaction(transaction);
+
+        if (transactionOptional.isEmpty()) {
+            System.out.println("ERROR OCCURED WHILE REVERTING TRANSACTION: " + transaction.getTransactionId());
+        } else {
+            transaction = transactionOptional.get();
+        }
+
+        return transaction;
+    }
+
+    
 }

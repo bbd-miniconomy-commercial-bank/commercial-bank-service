@@ -31,7 +31,13 @@ public class LoanInterestRepository {
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("limit", pageable.getPageSize())
             .addValue("offset", pageable.getOffset());
-        return namedParameterJdbcTemplate.query(sql, paramMap, loanInterestRowMapper);
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, loanInterestRowMapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     public void insert(LoanInterest loanInterest) {
@@ -42,6 +48,10 @@ public class LoanInterestRepository {
             .addValue("loanType", loanInterest.getLoanType())
             .addValue("interestRate", loanInterest.getInterestRate());
             
-        namedParameterJdbcTemplate.update(sql, paramMap);
+        try {
+            namedParameterJdbcTemplate.update(sql, paramMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

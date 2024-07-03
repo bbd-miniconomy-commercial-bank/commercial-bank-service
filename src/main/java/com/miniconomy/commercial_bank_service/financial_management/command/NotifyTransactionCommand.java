@@ -9,28 +9,33 @@ import com.miniconomy.commercial_bank_service.financial_management.utils.Transac
 public class NotifyTransactionCommand extends TransactionCommandDecorator {
 
     private NotificationService notificationService;
-    private String accountName;
 
-    public NotifyTransactionCommand(TransactionCommand transactionCommand, NotificationService notificationService, String accountName) {
+    private String accountName;
+    private NotificationRequest notificationRequest;
+
+    public NotifyTransactionCommand(TransactionCommand transactionCommand, NotificationService notificationService, String accountName, NotificationTypeEnum notificationType) {
         super(transactionCommand);
         this.notificationService = notificationService;
         this.accountName = accountName;
+        this.notificationRequest = new NotificationRequest(notificationType, null);
     }
 
     @Override
     public Transaction execute() {
         Transaction transaction = this.transactionCommand.execute();
 
-        NotificationTypeEnum notificationType = NotificationTypeEnum.incoming_payment; // IMPLEMENT
-
-        NotificationRequest notificationRequest = new NotificationRequest(
-            notificationType, 
-            TransactionUtils.transactionResponseMapper(transaction, accountName)
-        );
-
+        notificationRequest.setTransaction(TransactionUtils.transactionResponseMapper(transaction, accountName));
         this.notificationService.sendTransactionNotification(notificationRequest, accountName);
 
         return transaction;
+    }
+
+    @Override
+    public Transaction rollback() {
+        notificationRequest.setType(NotificationTypeEnum.transaction_failed);
+        this.notificationService.sendTransactionNotification(notificationRequest, accountName);
+        
+        return rollback();
     }
     
 }

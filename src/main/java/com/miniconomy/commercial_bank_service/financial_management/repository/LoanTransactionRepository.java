@@ -17,7 +17,7 @@ public class LoanTransactionRepository {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    private final RowMapper<LoanTransaction> LoanTransactionsRowMapper = (rs, rowNum) -> {
+    private final RowMapper<LoanTransaction> loanTransactionRowMapper = (rs, rowNum) -> {
         LoanTransaction loanTransaction = new LoanTransaction();
         loanTransaction.setLoanId(UUID.fromString(rs.getString("loan_id")));
         loanTransaction.setLoanTransactionId(UUID.fromString(rs.getString("loan_transaction_id")));
@@ -31,10 +31,15 @@ public class LoanTransactionRepository {
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("loanId", loanTransaction.getLoanId())
             .addValue("transactionId", loanTransaction.getTransactionId());
-          
-        return namedParameterJdbcTemplate.query(sql, paramMap,LoanTransactionsRowMapper)
-            .stream()
-            .findFirst();
+        
+            try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, loanTransactionRowMapper)
+                .stream()
+                .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
 }

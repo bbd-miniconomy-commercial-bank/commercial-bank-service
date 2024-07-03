@@ -117,13 +117,8 @@ public class DebitOrderService {
 
     }
 
-    public void connectDebitOrderToTransaction(UUID debitOrderId, UUID transactionId) {
-        DebitOrderTransaction debitOrderTransaction = new DebitOrderTransaction(
-            null,
-            debitOrderId,
-            transactionId
-        );
-
-        debitOrderTransactionRepository.insert(debitOrderTransaction);
+    public Optional<DebitOrderTransaction> saveDebitOrderTransaction(DebitOrderTransaction debitOrderTransaction) {
+        return debitOrderTransactionRepository.insert(debitOrderTransaction);
     }
+
 }

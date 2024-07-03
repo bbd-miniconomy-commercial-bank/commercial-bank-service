@@ -1,8 +1,6 @@
 package com.miniconomy.commercial_bank_service.financial_management.repository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,28 +34,40 @@ public class DebitOrderRepository {
 
     public Optional<DebitOrder> findById(UUID debitOrderId, String creditAccountName) {
         String sql = "SELECT * FROM account_debit_order_view WHERE debit_order_id = :debitOrderId AND credit_account_name = :creditAccountName";
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("debitOrderId", debitOrderId);
-        paramMap.put("creditAccountName", creditAccountName);
-        return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("debitOrderId", debitOrderId)
+            .addValue("creditAccountName", creditAccountName);
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
                 .stream()
                 .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     public Optional<DebitOrder> insert(DebitOrder debitOrder) {
         String sql = "SELECT * " +
                      "FROM insert_and_return_debit_order(:debitAccountName, :creditAccountName, :debitOrderDebitRef, :debitOrderCreditRef, :debitOrderAmount, :debitOrderCreatedDate, :debitOrderDisabled)";
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
-        .addValue("debitAccountName", debitOrder.getDebitAccountName())
+            .addValue("debitAccountName", debitOrder.getDebitAccountName())
             .addValue("creditAccountName", debitOrder.getCreditAccountName())
             .addValue("debitOrderDebitRef", debitOrder.getDebitOrderDebitRef())
             .addValue("debitOrderCreditRef", debitOrder.getDebitOrderCreditRef())
             .addValue("debitOrderAmount", debitOrder.getDebitOrderAmount())
             .addValue("debitOrderCreatedDate", debitOrder.getDebitOrderCreatedDate())
             .addValue("debitOrderDisabled", debitOrder.isDebitOrderDisabled());
-        return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
                 .stream()
                 .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     public Optional<DebitOrder> update(DebitOrder debitOrder) {
@@ -71,9 +81,15 @@ public class DebitOrderRepository {
             .addValue("debitOrderAmount", debitOrder.getDebitOrderAmount())
             .addValue("debitOrderCreatedDate", debitOrder.getDebitOrderCreatedDate())
             .addValue("debitOrderDisabled", debitOrder.isDebitOrderDisabled());
-        return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper)
                 .stream()
                 .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     public List<DebitOrder> findAllByCreditAccount(String creditAccountName, Pageable pageable) {
@@ -82,7 +98,13 @@ public class DebitOrderRepository {
             .addValue("creditAccountName", creditAccountName)
             .addValue("limit", pageable.getPageSize())
             .addValue("offset", pageable.getOffset());
-        return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper);
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     public List<DebitOrder> findAll(Pageable pageable) {
@@ -90,6 +112,12 @@ public class DebitOrderRepository {
         MapSqlParameterSource paramMap = new MapSqlParameterSource()
             .addValue("limit", pageable.getPageSize())
             .addValue("offset", pageable.getOffset());
-        return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper);
+            
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, debitOrderRowMapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 }

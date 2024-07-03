@@ -34,9 +34,15 @@ public class InterbankTransactionRepository {
             .addValue("transactionId", interbankTransaction.getTransactionId())
             .addValue("externalAccountId", interbankTransaction.getExternalAccountId())
             .addValue("interbankTransactionStatus", interbankTransaction.getInterbankTransactionId());
-        return namedParameterJdbcTemplate.query(sql, paramMap, interbankTransactionRowMapper)
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, interbankTransactionRowMapper)
                 .stream()
                 .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     public Optional<InterbankTransaction> update(InterbankTransaction interbankTransaction) {
@@ -47,9 +53,15 @@ public class InterbankTransactionRepository {
             .addValue("transactionId", interbankTransaction.getTransactionId())
             .addValue("externalAccountId", interbankTransaction.getExternalAccountId())
             .addValue("interbankTransactionStatus", interbankTransaction.getInterbankTransactionId());
-        return namedParameterJdbcTemplate.query(sql, paramMap, interbankTransactionRowMapper)
+        
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, interbankTransactionRowMapper)
                 .stream()
                 .findFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
 }

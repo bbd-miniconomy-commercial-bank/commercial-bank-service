@@ -28,5 +28,10 @@ public class LoanTransactionCommand extends TransactionCommandDecorator {
 
         return transaction;
     }
+
+    @Override
+    public Transaction rollback() {
+        return rollback();
+    }
     
 }
