@@ -21,24 +21,11 @@ RETURNS TABLE (
 ) 
 LANGUAGE plpgsql
 AS '
-DECLARE
-    v_credit_account_id UUID;
-    v_debit_account_id UUID;
 BEGIN
-    -- Get the account_id for the debit account name
-    SELECT account_id INTO v_debit_account_id
-    FROM account
-    WHERE account_name = p_debit_account_name;
-
-    -- Get the account_id for the credit account name
-    SELECT account_id INTO v_credit_account_id
-    FROM account
-    WHERE account_name = p_credit_account_name;
-
     -- Update the debit order
     UPDATE debit_order
     SET
-        credit_account_id = v_credit_account_id,
+        credit_account_name = p_credit_account_name,
         debit_order_debit_ref = p_debit_order_debit_ref,
         debit_order_credit_ref = p_debit_order_credit_ref,
         debit_order_amount = p_debit_order_amount,
@@ -89,7 +76,6 @@ RETURNS TABLE (
 LANGUAGE plpgsql
 AS '
 DECLARE
-    v_credit_account_id UUID;
     v_debit_account_id UUID;
     v_new_debit_order_id UUID;
 BEGIN
@@ -98,15 +84,10 @@ BEGIN
     FROM account
     WHERE account_name = p_debit_account_name;
 
-    -- Get the account_id for the credit account name
-    SELECT account_id INTO v_credit_account_id
-    FROM account
-    WHERE account_name = p_credit_account_name;
-
     -- Insert the new debit order and get the new ID
     INSERT INTO debit_order (
         debit_account_id,
-        credit_account_id,
+        credit_account_name,
         debit_order_debit_ref,
         debit_order_credit_ref,
         debit_order_amount,
@@ -114,7 +95,7 @@ BEGIN
         debit_order_disabled
     ) VALUES (
         v_debit_account_id,
-        v_credit_account_id,
+        p_credit_account_name,
         p_debit_order_debit_ref,
         p_debit_order_credit_ref,
         p_debit_order_amount,

@@ -4,14 +4,18 @@ import org.springframework.stereotype.Service;
 
 import com.miniconomy.commercial_bank_service.financial_management.command.BasicTransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.command.DebitOrderTransactionCommand;
+import com.miniconomy.commercial_bank_service.financial_management.command.IncomingInterbankTransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.command.LoanTransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.command.NotifyTransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.command.OutgoingInterbankTransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.command.TransactionCommand;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Account;
 import com.miniconomy.commercial_bank_service.financial_management.entity.DebitOrder;
+import com.miniconomy.commercial_bank_service.financial_management.entity.IncomingInterbankDeposit;
+import com.miniconomy.commercial_bank_service.financial_management.entity.InterbankTransaction;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Loan;
 import com.miniconomy.commercial_bank_service.financial_management.entity.Transaction;
+import com.miniconomy.commercial_bank_service.financial_management.enumeration.InterbankTransactionStatusEnum;
 import com.miniconomy.commercial_bank_service.financial_management.enumeration.LoanTypeEnum;
 import com.miniconomy.commercial_bank_service.financial_management.enumeration.TransactionStatusEnum;
 import com.miniconomy.commercial_bank_service.financial_management.service.AccountService;
@@ -53,8 +57,8 @@ public class TransactionCommandBuilder {
     public TransactionCommand buildTransactionCommand(Transaction transaction, boolean notifyDebitAccount, boolean notifyCreditAccount) {
         TransactionCommand transactionCommand;
 
-        Optional<Account> dbAccountOptional = accountService.retrieveAccountByName(transaction.getCreditAccountName());
-        if (dbAccountOptional.isPresent()) {
+        Optional<Account> crAccountOptional = accountService.retrieveAccountByName(transaction.getCreditAccountName());
+        if (crAccountOptional.isPresent()) {
             transactionCommand = new BasicTransactionCommand(transaction, transactionService, accountService);
         } else {
             String externalAccountId = transaction.getCreditAccountName();
@@ -111,6 +115,32 @@ public class TransactionCommandBuilder {
 
         TransactionCommand transactionCommand = buildTransactionCommand(transaction, true, !interbankPayment);
         transactionCommand = new DebitOrderTransactionCommand(transactionCommand, debitOrderService, debitOrder.getDebitOrderId());
+
+        return transactionCommand;
+    }
+
+    public TransactionCommand buildTransactionCommand(IncomingInterbankDeposit incomingInterbankDeposit) {
+
+        Transaction transaction = new Transaction(
+            null, 
+            "retail-bank", 
+            incomingInterbankDeposit.getCreditAccountName(), 
+            incomingInterbankDeposit.getDebitRef(), 
+            incomingInterbankDeposit.getCreditRef(), 
+            incomingInterbankDeposit.getAmount(), 
+            SimulationStore.getCurrentDate(), 
+            TransactionStatusEnum.complete
+        );
+
+        TransactionCommand transactionCommand = buildTransactionCommand(transaction, false, true);
+
+        InterbankTransaction interbankTransaction = new InterbankTransaction(
+            null, 
+            null, 
+            incomingInterbankDeposit.getCreditAccountName(), 
+            InterbankTransactionStatusEnum.complete
+        );
+        transactionCommand = new IncomingInterbankTransactionCommand(transactionCommand, interbankService, interbankTransaction);
 
         return transactionCommand;
     }

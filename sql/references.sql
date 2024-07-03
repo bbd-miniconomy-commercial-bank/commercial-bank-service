@@ -1,10 +1,5 @@
 -- liquibase formatted sql
 
--- changeset devwasabi2:add-fk-constraints-debit-order-credit-acc
-ALTER TABLE debit_order
-ADD CONSTRAINT fk_db_order_credit_account_id FOREIGN KEY (credit_account_id) REFERENCES account(account_id);
--- rollback ALTER TABLE debit_order DROP CONSTRAINT fk_db_order_credit_account_id
-
 -- changeset devwasabi2:add-fk-constraints-debit-order-debit-acc
 ALTER TABLE debit_order
 ADD CONSTRAINT fk_db_order_debit_account_id FOREIGN KEY (debit_account_id) REFERENCES account(account_id);

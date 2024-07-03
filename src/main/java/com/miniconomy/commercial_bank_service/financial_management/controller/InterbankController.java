@@ -2,6 +2,7 @@ package com.miniconomy.commercial_bank_service.financial_management.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.miniconomy.commercial_bank_service.financial_management.entity.IncomingInterbankDeposit;
 import com.miniconomy.commercial_bank_service.financial_management.entity.InterbankTransaction;
 import com.miniconomy.commercial_bank_service.financial_management.request.InterbankCallbackRequest;
 import com.miniconomy.commercial_bank_service.financial_management.request.InterbankDepositCreateRequest;
@@ -45,7 +46,11 @@ public class InterbankController {
     ResponseTemplate<ListResponseTemplate<InterbankDepositResponse>> response = new ResponseTemplate<>();
     int status = HttpStatus.OK.value();
     
-    List<InterbankTransaction> interbankTransactions = this.interbankService.processDeposits(interbankDepositCreateRequest.getDeposits(), accountName);
+    List<IncomingInterbankDeposit> incomingInterbankDeposits = interbankDepositCreateRequest.getDeposits().stream().map(
+          (depositRequest) -> InterbankUtils.incomingInterbankDepositMapper(depositRequest)
+        ).collect(Collectors.toList());
+
+    List<InterbankTransaction> interbankTransactions = this.interbankService.processDeposits(incomingInterbankDeposits, accountName);
     List<InterbankDepositResponse> interbankDepositResponses = interbankTransactions.stream().map(
             (deposit) -> InterbankUtils.interbankDepositResponseMapper(deposit)
           ).collect(Collectors.toList());

@@ -3,7 +3,7 @@ package com.miniconomy.commercial_bank_service.financial_management.utils;
 import com.miniconomy.commercial_bank_service.financial_management.entity.IncomingInterbankDeposit;
 import com.miniconomy.commercial_bank_service.financial_management.entity.InterbankTransaction;
 import com.miniconomy.commercial_bank_service.financial_management.entity.OutgoingInterbankDeposit;
-import com.miniconomy.commercial_bank_service.financial_management.entity.OutgoingInterbankDepositCallback;
+import com.miniconomy.commercial_bank_service.financial_management.entity.IncomingInterbankDepositCallback;
 import com.miniconomy.commercial_bank_service.financial_management.request.InterbankDepositRequest;
 import com.miniconomy.commercial_bank_service.financial_management.request.OutgoingRetailBankRequest;
 import com.miniconomy.commercial_bank_service.financial_management.request.RetailBankCallbackRequest;
@@ -40,8 +40,12 @@ public class InterbankUtils {
         );
     }
 
-    public static RetailBankCallbackRequest outgoingCallbackRetailBankRequestMapper(OutgoingInterbankDepositCallback outgoingInterbankDepositCallback) {
+    public static RetailBankCallbackRequest outgoingCallbackRetailBankRequestMapper(IncomingInterbankDepositCallback outgoingInterbankDepositCallback) {
 
-        return new RetailBankCallbackRequest(outgoingInterbankDepositCallback.isCompleted(), 0, "");
+        return new RetailBankCallbackRequest(
+            outgoingInterbankDepositCallback.isCompleted(), 
+        0, 
+        ""
+        );
     }
 }
