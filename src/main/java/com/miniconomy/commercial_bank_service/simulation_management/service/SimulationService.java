@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.miniconomy.commercial_bank_service.simulation_management.repository.SimulationRepository;
+import com.miniconomy.commercial_bank_service.simulation_management.response.SyncDateResponse;
 import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
 
+import jakarta.annotation.PostConstruct;
+
 import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 @Service
 public class SimulationService {
@@ -23,7 +25,8 @@ public class SimulationService {
         this.simulationRepository = simulationRepository;
     }
 
-    public void bootupSimulation() {
+    @PostConstruct
+    private void bootupSimulation() {
         fetchAndSetCurrentDate();
     }
 
@@ -55,13 +58,16 @@ public class SimulationService {
         System.out.println("SYNCING DATE");
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String currentDate = restTemplate.getForObject(zuesUrl + "/date?time=" + System.currentTimeMillis(), String.class);
-            if (currentDate != null && !currentDate.equals(SimulationStore.getCurrentDate())) {
+            SyncDateResponse syncDateResponse = restTemplate.getForObject(zuesUrl + "/date?time=" + System.currentTimeMillis(), SyncDateResponse.class);
+            if (syncDateResponse != null && syncDateResponse.getDate() != null && !syncDateResponse.getDate().equals(SimulationStore.getCurrentDate())) {
+                String currentDate = syncDateResponse.getDate();
+
                 System.out.println("DATE FROM ZUES: " + currentDate);
 
                 Pattern pattern = Pattern.compile("\\d+\\|\\d+\\|\\d+");
 
                 if (pattern.matcher(currentDate).matches()) {
+                    System.out.println("UPDATED TO DATE FROM ZUES");
                     SimulationStore.setCurrentDate(currentDate);
                 }
             }
