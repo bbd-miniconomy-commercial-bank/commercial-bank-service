@@ -1,5 +1,6 @@
 package com.miniconomy.commercial_bank_service.financial_management.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -23,6 +24,10 @@ public class AccountService
 
   public Optional<Account> retrieveAccountByCn(String accountCN) {
     return accountRepository.findByAccountCN(accountCN);
+  }
+
+  public List<Account> getAllAccounts() {
+    return accountRepository.findAllAccounts();
   }
 
   public Optional<Account> retrieveAccountByName(String accountName) {

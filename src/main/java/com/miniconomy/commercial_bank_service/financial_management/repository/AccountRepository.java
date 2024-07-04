@@ -1,5 +1,6 @@
 package com.miniconomy.commercial_bank_service.financial_management.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,6 +70,18 @@ public class AccountRepository {
         } catch (Exception e) {
             e.printStackTrace();
             return Optional.empty();
+        }
+    }
+
+    public List<Account> findAllAccounts() {
+        String sql = "SELECT * FROM account";
+        MapSqlParameterSource paramMap = new MapSqlParameterSource();
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
+                .stream().toList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
         }
     }
 }

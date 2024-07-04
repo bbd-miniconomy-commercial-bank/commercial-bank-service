@@ -90,4 +90,10 @@ public class LoanService {
         }
 
     }
+
+    public List<Loan> retrieveAllLoans(Pageable pageable) {
+        return loanRepository.findAll(pageable);
+    }
+
+
 }

@@ -125,6 +125,20 @@ public class TransactionRepository {
             return Optional.empty();
         }
     }
+
+    public List<Transaction> findAllTransactions(Pageable pageable) {
+        String sql = "SELECT * FROM account_transaction_view LIMIT :limit OFFSET :offset";
+        MapSqlParameterSource paramMap = new MapSqlParameterSource()
+            .addValue("limit", pageable.getPageSize())
+            .addValue("offset", pageable.getOffset());
+
+        try {
+            return namedParameterJdbcTemplate.query(sql, paramMap, transactionRowMapper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
+    }
 }
 
 

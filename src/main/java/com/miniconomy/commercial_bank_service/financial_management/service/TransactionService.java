@@ -75,4 +75,10 @@ public class TransactionService {
         return createdTransactions;
     }
 
+    public List<Transaction> retrieveAllTransactions(Pageable pageable) {
+        
+        List<Transaction> transactions = transactionRepository.findAllTransactions(pageable);
+
+        return transactions; // returns empty list if account not found
+    }
 }

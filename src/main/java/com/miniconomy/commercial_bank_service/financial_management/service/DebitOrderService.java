@@ -120,4 +120,8 @@ public class DebitOrderService {
         return debitOrderTransactionRepository.insert(debitOrderTransaction);
     }
 
+    public List<DebitOrder> retrieveAllDebitOrders(Pageable pageable) {
+        return debitOrderRepository.findAll(pageable);
+    }
+
 }
