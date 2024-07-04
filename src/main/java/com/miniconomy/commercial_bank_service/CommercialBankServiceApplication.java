@@ -23,7 +23,7 @@ public class CommercialBankServiceApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-				.allowedOrigins("*")
+				.allowedOrigins("https://api.commercialbank.projects.bbdgrad.com", "http://localhost:5173")
 				.allowedHeaders("*")
 				.allowCredentials(true)
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
