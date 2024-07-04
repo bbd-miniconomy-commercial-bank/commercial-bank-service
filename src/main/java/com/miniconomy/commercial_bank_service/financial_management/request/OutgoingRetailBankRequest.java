@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OutgoingRetailBankRequest {
-    private Long toPersonaId;
+    private long toPersonaId;
     private long amountInMibiDough;
     private String transactionRef;
     private String fromAccountId;

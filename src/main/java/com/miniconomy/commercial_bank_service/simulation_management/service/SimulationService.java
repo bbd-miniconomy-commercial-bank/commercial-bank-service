@@ -28,9 +28,11 @@ public class SimulationService {
     public void initializeSimulation() {
         SimulationStore.setCurrentDate("01|01|01");
         SimulationStore.setSimOnline(true);
+        System.out.println("SIMULATION INITIALIZED");
     }
 
     public void resetSimulation() {
+        System.out.println("SIMULATION RESETING");
         SimulationStore.setSimOnline(false);
         simulationRepository.deleteAllTables();
     }
