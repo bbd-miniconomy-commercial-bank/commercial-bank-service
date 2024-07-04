@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class OutgoingRetailBankRequest {
     private Long toPersonaId;
     private long amountInMibiDough;
-    private String reference;
+    private String transactionRef;
     private String fromAccountId;
 }
