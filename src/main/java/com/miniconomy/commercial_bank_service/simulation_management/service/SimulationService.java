@@ -61,11 +61,9 @@ public class SimulationService {
 
                 Pattern pattern = Pattern.compile("\\d+\\|\\d+\\|\\d+");
 
-                if (!pattern.matcher(currentDate).matches()) {
-                    currentDate = "01|01|01";
+                if (pattern.matcher(currentDate).matches()) {
+                    SimulationStore.setCurrentDate(currentDate);
                 }
-
-                SimulationStore.setCurrentDate(currentDate);
             }
         } catch (Exception e) {
             SimulationStore.setCurrentDate("01|01|01");
