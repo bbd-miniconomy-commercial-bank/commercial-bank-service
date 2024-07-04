@@ -13,7 +13,7 @@ CREATE TABLE debit_order (
 );
 -- rollback DROP TABLE debit_order
 
--- changeset devwasabi2:update-date-debit-order-table
+-- changeset ryanbasiltrickett:update-date-debit-order-table
 ALTER TABLE debit_order
-MODIFY COLUMN debit_order_created_date VARCHAR
+ALTER COLUMN debit_order_created_date VARCHAR
 -- rollback ALTER TABLE debit_order MODIFY COLUMN debit_order_created_date CHAR(8)

@@ -13,3 +13,10 @@ CREATE TABLE loan (
     loan_created_date CHAR(8) NOT NULL
 );
 -- rollback DROP TABLE loan
+
+
+
+-- changeset ryanbasiltrickett:update-date-loan-table
+ALTER TABLE loan
+ALTER COLUMN loan_created_date VARCHAR
+-- rollback ALTER TABLE loan MODIFY COLUMN loan_created_date CHAR(8)

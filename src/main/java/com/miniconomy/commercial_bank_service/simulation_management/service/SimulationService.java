@@ -8,6 +8,9 @@ import org.springframework.web.client.RestTemplate;
 import com.miniconomy.commercial_bank_service.simulation_management.repository.SimulationRepository;
 import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 @Service
 public class SimulationService {
 
@@ -55,6 +58,13 @@ public class SimulationService {
             String currentDate = restTemplate.getForObject(zuesUrl + "/date?time=" + System.currentTimeMillis(), String.class);
             if (currentDate != null && !currentDate.equals(SimulationStore.getCurrentDate())) {
                 System.out.println("DATE FROM ZUES: " + currentDate);
+
+                Pattern pattern = Pattern.compile("\\d+\\|\\d+\\|\\d+");
+
+                if (!pattern.matcher(currentDate).matches()) {
+                    currentDate = "01|01|01";
+                }
+
                 SimulationStore.setCurrentDate(currentDate);
             }
         } catch (Exception e) {

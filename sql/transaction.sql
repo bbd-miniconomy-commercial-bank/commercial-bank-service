@@ -16,3 +16,8 @@ CREATE TABLE transaction (
     transaction_status transaction_status_enum NOT NULL
 );
 -- rollback DROP TABLE transaction
+
+-- changeset ryanbasiltrickett:update-date-transaction-table
+ALTER TABLE transaction
+ALTER COLUMN transaction_date VARCHAR
+-- rollback ALTER TABLE transaction MODIFY COLUMN transaction_date CHAR(8)
