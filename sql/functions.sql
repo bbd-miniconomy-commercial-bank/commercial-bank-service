@@ -16,7 +16,7 @@ RETURNS TABLE (
     debit_order_debit_ref VARCHAR,
     debit_order_credit_ref VARCHAR,
     debit_order_amount BIGINT,
-    debit_order_created_date CHAR(8),
+    debit_order_created_date VARCHAR,
     debit_order_disabled BOOLEAN
 ) 
 LANGUAGE plpgsql
@@ -70,7 +70,7 @@ RETURNS TABLE (
     debit_order_debit_ref VARCHAR,
     debit_order_credit_ref VARCHAR,
     debit_order_amount BIGINT,
-    debit_order_created_date CHAR(8),
+    debit_order_created_date VARCHAR,
     debit_order_disabled BOOLEAN
 ) 
 LANGUAGE plpgsql
@@ -135,7 +135,7 @@ RETURNS TABLE (
     account_name VARCHAR,
     loan_amount BIGINT,
     loan_type loan_type_enum,
-    loan_created_date CHAR(8)
+    loan_created_date VARCHAR
 ) 
 LANGUAGE plpgsql
 AS '
@@ -195,7 +195,7 @@ RETURNS TABLE (
     transaction_debit_ref VARCHAR,
     transaction_credit_ref VARCHAR,
     transaction_amount BIGINT,
-    transaction_date CHAR(8),
+    transaction_date VARCHAR,
     transaction_status transaction_status_enum
 ) 
 LANGUAGE plpgsql
@@ -272,7 +272,7 @@ RETURNS TABLE (
     transaction_debit_ref VARCHAR,
     transaction_credit_ref VARCHAR,
     transaction_amount BIGINT,
-    transaction_date CHAR(8),
+    transaction_date VARCHAR,
     transaction_status transaction_status_enum
 ) 
 LANGUAGE plpgsql

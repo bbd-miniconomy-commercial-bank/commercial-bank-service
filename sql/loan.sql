@@ -18,5 +18,5 @@ CREATE TABLE loan (
 
 -- changeset ryanbasiltrickett:update-date-loan-table
 ALTER TABLE loan
-ALTER COLUMN loan_created_date VARCHAR
--- rollback ALTER TABLE loan MODIFY COLUMN loan_created_date CHAR(8)
+ALTER COLUMN loan_created_date TYPE VARCHAR(100)
+-- rollback ALTER TABLE loan ALTER COLUMN loan_created_date TYPE CHAR(8)

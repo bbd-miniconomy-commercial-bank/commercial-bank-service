@@ -19,5 +19,5 @@ CREATE TABLE transaction (
 
 -- changeset ryanbasiltrickett:update-date-transaction-table
 ALTER TABLE transaction
-ALTER COLUMN transaction_date VARCHAR
--- rollback ALTER TABLE transaction MODIFY COLUMN transaction_date CHAR(8)
+ALTER COLUMN transaction_date TYPE VARCHAR(100)
+-- rollback ALTER TABLE transaction ALTER COLUMN transaction_date TYPE CHAR(8)
