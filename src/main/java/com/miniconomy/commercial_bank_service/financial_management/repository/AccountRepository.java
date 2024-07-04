@@ -74,7 +74,7 @@ public class AccountRepository {
     }
 
     public List<Account> findAllAccounts() {
-        String sql = "SELECT * FROM account";
+        String sql = "SELECT * FROM account_balances_view";
         MapSqlParameterSource paramMap = new MapSqlParameterSource();
         try {
             return namedParameterJdbcTemplate.query(sql, paramMap, accountRowMapper)
