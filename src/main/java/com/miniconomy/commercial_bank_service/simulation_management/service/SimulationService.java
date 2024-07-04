@@ -18,10 +18,9 @@ public class SimulationService {
 
     public SimulationService(SimulationRepository simulationRepository) {
         this.simulationRepository = simulationRepository;
-        bootupSimulation();
     }
 
-    private void bootupSimulation() {
+    public void bootupSimulation() {
         fetchAndSetCurrentDate();
     }
 
@@ -39,6 +38,7 @@ public class SimulationService {
 
     @Scheduled(cron = "0 */2 * * * *")
     public void updateSimulationDate() {
+        System.out.println("DATE UPDATED");
         String updatedDate = incrementDate();
         SimulationStore.setCurrentDate(updatedDate);
     }
@@ -49,10 +49,12 @@ public class SimulationService {
     }
 
     private void fetchAndSetCurrentDate() {
+        System.out.println("SYNCING DATE");
         try {
             RestTemplate restTemplate = new RestTemplate();
             String currentDate = restTemplate.getForObject(zuesUrl + "/date?time=" + System.currentTimeMillis(), String.class);
             if (currentDate != null && !currentDate.equals(SimulationStore.getCurrentDate())) {
+                System.out.println("DATE FROM ZUES: " + currentDate);
                 SimulationStore.setCurrentDate(currentDate);
             }
         } catch (Exception e) {
@@ -62,10 +64,20 @@ public class SimulationService {
 
     private String incrementDate() {
         String[] parts = SimulationStore.getCurrentDate().split("\\|");
-        int day = Integer.parseInt(parts[0]);
+        int year = Integer.parseInt(parts[0]);
         int month = Integer.parseInt(parts[1]);
-        int year = Integer.parseInt(parts[2]);
-
-        return String.format("%02d|%02d|%02d", day, month, year);
+        int day = Integer.parseInt(parts[2]);
+ 
+        day++;
+        if (day > 30) {
+            day = 1;
+            month++;
+            if (month > 12) {
+                month = 1;
+                year++;
+            }
+        }
+ 
+        return String.format("%02d|%02d|%02d", year, month, day);
     }
 }

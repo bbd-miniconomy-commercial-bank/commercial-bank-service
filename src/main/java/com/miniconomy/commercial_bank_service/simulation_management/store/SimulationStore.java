@@ -29,7 +29,7 @@ public class SimulationStore {
         if (!currentDate.equals(newDate)) {
             currentDate = newDate;
 
-            if (newDate.startsWith("30")) {
+            if (newDate.endsWith("30")) {
                 financialDateChangeObserver.update(new EndOfMonthEvent());
             }
         }

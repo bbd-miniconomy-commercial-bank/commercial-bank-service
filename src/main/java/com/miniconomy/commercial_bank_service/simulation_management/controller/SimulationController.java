@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.miniconomy.commercial_bank_service.financial_management.response.ResponseTemplate;
 import com.miniconomy.commercial_bank_service.simulation_management.enumeration.SetupActionEnum;
 import com.miniconomy.commercial_bank_service.simulation_management.request.SetupRequest;
 import com.miniconomy.commercial_bank_service.simulation_management.service.SimulationService;
+import com.miniconomy.commercial_bank_service.simulation_management.store.SimulationStore;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -33,9 +33,13 @@ public class SimulationController {
     @PostMapping(value = "/setup", produces = "application/json")
     public ResponseEntity<Object> postSetup(@RequestBody SetupRequest setupRequest) {
         
+        if (setupRequest.getAction().equals(SetupActionEnum.start) && SimulationStore.getSimOnline()) {
+            simulationService.resetSimulation(); 
+        }
+
         if (setupRequest.getAction().equals(SetupActionEnum.reset)) {
             simulationService.resetSimulation(); 
-        } else {
+        } else if (setupRequest.getAction().equals(SetupActionEnum.start)) {
             simulationService.initializeSimulation();
         }
 
