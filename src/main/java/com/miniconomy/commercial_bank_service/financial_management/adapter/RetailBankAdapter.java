@@ -30,7 +30,7 @@ public class RetailBankAdapter implements InterbankAdapter {
         OutgoingRetailBankRequest outgoingRetailBankRequest = InterbankUtils.outgoingRetailBankRequestMapper(outgoingInterbankDeposit);
 
         try {
-            ResponseEntity<OutgoingRetailBankRequest> response = restTemplate.postForEntity(url, outgoingRetailBankRequest, OutgoingRetailBankRequest.class);
+            ResponseEntity<Object> response = restTemplate.postForEntity(url, outgoingRetailBankRequest, Object.class);
             return response.getStatusCode() == HttpStatus.ACCEPTED;
         } catch (Exception ex) {
             return false;
@@ -42,7 +42,7 @@ public class RetailBankAdapter implements InterbankAdapter {
         RetailBankCallbackRequest retailBankCallbackRequest = InterbankUtils.outgoingCallbackRetailBankRequestMapper(incomingInterbankDepositCallback);
 
         try {
-            ResponseEntity<OutgoingRetailBankRequest> response = restTemplate.postForEntity(retailBankEndpoint + "/api/transactions/" + incomingInterbankDepositCallback.getReference() + "/status", retailBankCallbackRequest, OutgoingRetailBankRequest.class);
+            ResponseEntity<Object> response = restTemplate.postForEntity(retailBankEndpoint + "/api/transactions/" + incomingInterbankDepositCallback.getReference() + "/status", retailBankCallbackRequest, Object.class);
             return response.getStatusCode() == HttpStatus.OK;
         } catch (Exception ex) {
             return false;

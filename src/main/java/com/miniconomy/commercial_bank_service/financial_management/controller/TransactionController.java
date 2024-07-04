@@ -103,6 +103,7 @@ public class TransactionController {
     ).collect(Collectors.toList());
 
     List<Transaction> savedTransactions = this.transactionService.saveTransactions(transactions, accountName);
+
     List<TransactionResponse> transactionResponses = savedTransactions.stream().map(
             (transaction) -> TransactionUtils.transactionResponseMapper(transaction, accountName)
           ).collect(Collectors.toList());

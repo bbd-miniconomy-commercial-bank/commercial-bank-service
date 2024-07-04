@@ -1,5 +1,6 @@
 package com.miniconomy.commercial_bank_service.financial_management.service;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,6 +21,7 @@ public class NotificationService {
         this.accountService = accountService;
     }
 
+    @Async
     public void sendTransactionNotification(NotificationRequest notificationRequest, String accountName) {
         
         Optional<Account> accountOptional = accountService.retrieveAccountByName(accountName);
@@ -28,7 +30,7 @@ public class NotificationService {
             String url = accountOptional.get().getAccountNotificationEndpoint();
             if (!url.isBlank()) {
                 try {
-                    restTemplate.postForEntity(url, notificationRequest, NotificationRequest.class);
+                    restTemplate.postForLocation(url, notificationRequest);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

@@ -75,7 +75,7 @@ public class TransactionCommandBuilder {
             transactionCommand = new NotifyTransactionCommand(transactionCommand, notificationService, transaction.getDebitAccountName(), NotificationTypeEnum.outgoing_payment);
         }
         if (notifyCreditAccount) {
-            transactionCommand = new NotifyTransactionCommand(transactionCommand, notificationService, transaction.getDebitAccountName(), NotificationTypeEnum.incoming_payment);
+            transactionCommand = new NotifyTransactionCommand(transactionCommand, notificationService, transaction.getCreditAccountName(), NotificationTypeEnum.incoming_payment);
         }
 
         return transactionCommand;

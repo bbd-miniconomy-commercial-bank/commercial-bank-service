@@ -25,7 +25,7 @@ public class NotifyTransactionCommand extends TransactionCommandDecorator {
         Transaction transaction = this.transactionCommand.execute();
 
         notificationRequest.setTransaction(TransactionUtils.transactionResponseMapper(transaction, accountName));
-        this.notificationService.sendTransactionNotification(notificationRequest, accountName);
+        // this.notificationService.sendTransactionNotification(notificationRequest, accountName);
 
         return transaction;
     }

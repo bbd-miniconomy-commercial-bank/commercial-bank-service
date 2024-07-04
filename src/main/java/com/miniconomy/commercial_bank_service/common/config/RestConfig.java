@@ -25,6 +25,6 @@ public class RestConfig {
         // Set the interceptors to the RestTemplate
         restTemplate.setInterceptors(interceptors);
 
-        return new RestTemplate();
+        return restTemplate;
     }
 }
