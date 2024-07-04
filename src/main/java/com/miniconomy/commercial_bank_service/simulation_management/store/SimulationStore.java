@@ -1,25 +1,21 @@
 package com.miniconomy.commercial_bank_service.simulation_management.store;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.miniconomy.commercial_bank_service.financial_management.observer.FinancialDateChangeObserver;
 import com.miniconomy.commercial_bank_service.simulation_management.event.EndOfMonthEvent;
-import com.miniconomy.commercial_bank_service.simulation_management.observer.SimulationStoreObserver;
 
 import jakarta.validation.constraints.NotNull;
-
-import java.util.List;
 
 @Component
 public class SimulationStore {
 
-    private static String currentDate = "01|01|01"; // Initial date in the format dd|MM|yy
+    private static String currentDate = "01|01|01";
     private static boolean simOnline = true;
 
-    private static List<SimulationStoreObserver> SimulationStoreObservers = List.of(); 
-
-    public static void attachObserver(@NotNull SimulationStoreObserver SimulationStoreObserver) {
-        SimulationStoreObservers.add(SimulationStoreObserver);
-    }
+    @Autowired
+    private static FinancialDateChangeObserver financialDateChangeObserver;
 
     public static void setSimOnline(boolean newSimOnline) {
         simOnline = newSimOnline;
@@ -34,9 +30,7 @@ public class SimulationStore {
             currentDate = newDate;
 
             if (newDate.startsWith("30")) {
-                for (SimulationStoreObserver SimulationStoreObserver : SimulationStoreObservers) {
-                    SimulationStoreObserver.update(new EndOfMonthEvent());
-                }
+                financialDateChangeObserver.update(new EndOfMonthEvent());
             }
         }
     }
